@@ -715,10 +715,14 @@
         function addToCart() {
             const params = new URLSearchParams(window.location.search);
             const name = params.get('name');
+            const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+            const prod = products.find(p => p.name === name);
+            const price = prod ? parseFloat(prod.price) : 0;
+            const image = prod ? (prod.image || '../image.png') : '../image.png';
             let cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
             const item = cart.find(i => i.name === name);
             if (item) item.qty++;
-            else cart.push({ name, qty: 1 });
+            else cart.push({ name, qty: 1, price, image });
             localStorage.setItem('wandeath_cart', JSON.stringify(cart));
             updateCartBadge();
             alert('Adicionado ao carrinho!');

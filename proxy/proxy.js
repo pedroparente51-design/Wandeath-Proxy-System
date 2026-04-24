@@ -4,10 +4,16 @@ function addToCart(name, btn) {
     let cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
     const existing = cart.find(item => item.name === name);
     
+    // Buscar price e image do produto para salvar junto
+    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+    const prod = products.find(p => p.name === name);
+    const price = prod ? parseFloat(prod.price) : 0;
+    const image = prod ? (prod.image || '../image.png') : '../image.png';
+
     if (existing) {
         existing.qty += qty;
     } else {
-        cart.push({ name, qty });
+        cart.push({ name, qty, price, image });
     }
     
     localStorage.setItem('wandeath_cart', JSON.stringify(cart));

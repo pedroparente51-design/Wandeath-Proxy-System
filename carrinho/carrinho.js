@@ -129,19 +129,24 @@ function renderCart() {
     let subtotal = 0;
 
     cart.forEach((item, index) => {
+        // Usa dados do produto no localStorage, ou fallback nos dados do próprio item do carrinho
         const prod = products.find(p => p.name === item.name);
-        if (!prod) return;
+        const name  = item.name;
+        const price = prod ? parseFloat(prod.price) : parseFloat(item.price || 0);
+        const image = prod ? (prod.image || '../image.png') : (item.image || '../image.png');
 
-        const totalItem = parseFloat(prod.price) * item.qty;
+        if (!price) return; // se não tem preço nenhum, pula
+
+        const totalItem = price * item.qty;
         subtotal += totalItem;
 
         // Render main list item
         const row = document.createElement('div');
         row.className = 'cart-item';
         row.innerHTML = `
-            <img src="${prod.image || '../image.png'}" alt="${prod.name}">
+            <img src="${image}" alt="${name}">
             <div class="info">
-                <h5>${prod.name}</h5>
+                <h5>${name}</h5>
                 <div class="cart-item-qty">
                     <button onclick="updateQty(${index}, -1)">-</button>
                     <span>${item.qty}</span>
@@ -163,10 +168,10 @@ function renderCart() {
             sItem.className = 'summary-product-item';
             sItem.innerHTML = `
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span style="font-size:13px; font-weight:600;">${prod.name}</span>
+                    <span style="font-size:13px; font-weight:600;">${name}</span>
                     <span style="font-size:13px; font-weight:700;">R$ ${totalItem.toFixed(2)}</span>
                 </div>
-                <div style="font-size:11px; color:var(--text-sec);">${item.qty}x R$ ${parseFloat(prod.price).toFixed(2)}</div>
+                <div style="font-size:11px; color:var(--text-sec);">${item.qty}x R$ ${price.toFixed(2)}</div>
             `;
             summaryList.appendChild(sItem);
         }
