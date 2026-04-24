@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initProxyChecker();
     initCheckout();
     initSearch();
+    initSearchSuggestions();
 });
 
 function initSearch() {
@@ -1019,6 +1020,87 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-/* ─── End of Chatbox Logic ─── */
+function initSearchSuggestions() {
+    const searchInputs = document.querySelectorAll('.search-pill input');
+    
+    searchInputs.forEach(input => {
+        // Criar container de sugestões se não existir
+        let suggestionsBox = input.parentElement.querySelector('.search-suggestions');
+        if (!suggestionsBox) {
+            suggestionsBox = document.createElement('div');
+            suggestionsBox.className = 'search-suggestions';
+            suggestionsBox.style.cssText = `
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.95);
+                border: 1px solid var(--border);
+                border-top: none;
+                border-radius: 0 0 12px 12px;
+                z-index: 9999;
+                display: none;
+                backdrop-filter: blur(20px);
+                max-height: 400px;
+                overflow-y: auto;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            `;
+            input.parentElement.style.position = 'relative';
+            input.parentElement.appendChild(suggestionsBox);
+        }
 
+        input.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+            
+            if (term.length < 1) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            const matches = allProducts.filter(p => 
+                p.name.toLowerCase().includes(term) || 
+                p.category.toLowerCase().includes(term)
+            ).slice(0, 6);
+
+            if (matches.length > 0) {
+                suggestionsBox.innerHTML = matches.map(p => `
+                    <div class="suggestion-item" onclick="window.location.href='./produto/produto.html?name=${encodeURIComponent(p.name)}'" style="
+                        padding: 12px 20px;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        cursor: pointer;
+                        border-bottom: 1px solid rgba(255,255,255,0.05);
+                        transition: 0.2s;
+                    ">
+                        <img src="${p.image || './image.png'}" style="width: 35px; height: 35px; border-radius: 4px; object-fit: cover;">
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px; font-weight: 700; color: #fff;">${p.name}</div>
+                            <div style="font-size: 11px; color: var(--primary);">R$ ${parseFloat(p.price).toFixed(2)}</div>
+                        </div>
+                        <i data-lucide="arrow-up-right" style="width: 14px; opacity: 0.5;"></i>
+                    </div>
+                `).join('');
+                suggestionsBox.style.display = 'block';
+                if (window.lucide) lucide.createIcons();
+                
+                // Add hover effect
+                suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
+                    item.onmouseenter = () => item.style.background = 'rgba(238, 0, 0, 0.1)';
+                    item.onmouseleave = () => item.style.background = 'transparent';
+                });
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        // Fechar ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!input.parentElement.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    }
+}
 
