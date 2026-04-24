@@ -1341,98 +1341,43 @@ body {
 .checkout-grid {
     display: grid;
     grid-template-columns: 1fr 380px;
-    gap: 30px;
-    margin-top: 20px;
+    gap: 40px;
     align-items: start;
-}
-
-.cart-items {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.cart-item {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 80px 1fr auto auto;
-    align-items: center;
-    gap: 20px;
-    transition: 0.3s;
-}
-
-.cart-item img {
-    width: 80px;
-    height: 80px;
-    border-radius: 10px;
-    object-fit: cover;
-}
-
-.cart-item-info h4 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.cart-item-info p {
-    font-size: 13px;
-    color: var(--text-sec);
-}
-
-.cart-item-qty {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 8px 12px;
-    border-radius: 8px;
-}
-
-.cart-item-qty button {
-    background: none;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    width: 20px;
-    transition: 0.3s;
-}
-
-.cart-item-qty button:hover {
-    color: var(--primary);
-}
-
-.cart-item-total {
-    font-size: 16px;
-    font-weight: 800;
-    min-width: 100px;
-    text-align: right;
-}
-
-.cart-item-remove {
-    background: none;
-    border: none;
-    color: var(--text-sec);
-    cursor: pointer;
-    transition: 0.3s;
-    padding: 5px;
-}
-
-.cart-item-remove:hover {
-    color: var(--primary);
 }
 
 @media (max-width: 1024px) {
     .checkout-grid {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
+}
 
-    .checkout-sidebar {
-        position: static;
-    }
+/* Sidebar */
+.checkout-sidebar {
+    position: sticky;
+    top: 130px;
+}
+
+.order-summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px;
+}
+
+.order-summary-card h4 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.order-summary-card h4 i {
+    color: #22c55e;
+    width: 20px;
 }
 
 .payment-methods {

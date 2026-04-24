@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout - Wandeath VIP</title>
     <link rel="stylesheet" href="./carrinho.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="rx-theme-rh7">
     <div id="mouse-glow"></div>
     <div class="mesh-gradient"></div>
@@ -39,7 +42,7 @@
     <main class="page-wrap checkout-page">
         <div class="container">
             <h2 class="checkout-title">Finalizar <span>Compra</span></h2>
-            
+
             <div class="checkout-grid">
                 <!-- Left: Cart Items & Contact -->
                 <div class="checkout-main">
@@ -95,9 +98,9 @@
                             <h4>Resumo do Pedido</h4>
                             <i data-lucide="shield-check"></i>
                         </div>
-                        
+
                         <div id="cart-summary-items" class="summary-items-list"></div>
-                        
+
                         <div class="coupon-area">
                             <label>Cupom de Desconto</label>
                             <div class="coupon-input-group">
@@ -125,7 +128,7 @@
                         <button class="btn-checkout-finalize" onclick="finalizeCartPurchase()">
                             Finalizar Pedido <i data-lucide="arrow-right"></i>
                         </button>
-                        
+
                         <div class="secure-footer">
                             <i data-lucide="lock"></i>
                             <span>Pagamento 100% seguro via Mercado Pago</span>
@@ -136,8 +139,8 @@
         </div>
     </main>
 
-            <p style="color: var(--text-sec); font-size: 13px;">&copy; 2026 Wandeath VIP. Todos os direitos reservados.</p>
-        </div>
+    <p style="color: var(--text-sec); font-size: 13px;">&copy; 2026 Wandeath VIP. Todos os direitos reservados.</p>
+    </div>
     </footer>
 
     <script src="./carrinho.js"></script>
@@ -145,4 +148,5 @@
         lucide.createIcons();
     </script>
 </body>
+
 </html>
