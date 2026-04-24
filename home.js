@@ -109,6 +109,14 @@ function initCheckout() {
 
 function initOrdersModal() {
     const modal = document.getElementById('orders-modal');
+    if (!modal) {
+        // Fallback: define global open function for the redirect
+        window.wandeathOpenOrders = (e) => {
+            if (e) e.preventDefault();
+            window.location.href = './pedidos/pedidos.html';
+        };
+        return;
+    }
     const closeBtn = document.querySelector('.close-modal');
 
     // Specific selector for the profile dropdown 'Meus Pedidos'
@@ -655,7 +663,7 @@ function checkLoginState() {
                     </div>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="#" onclick="window.wandeathOpenOrders(event)"><i data-lucide="package" style="width: 16px;"></i> Meus Pedidos</a>
+                    <a href="./pedidos/pedidos.html"><i data-lucide="package" style="width: 16px;"></i> Meus Pedidos</a>
                     <div style="height: 1px; background: var(--border); margin: 5px 0;"></div>
                     <a href="#" onclick="window.wandeathLogout(event)" style="color: #ff4a4a;"><i data-lucide="log-out" style="width: 16px;"></i> Sair da conta</a>
                 </div>
