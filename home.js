@@ -280,7 +280,7 @@ https://wa.me/5592981794179
 }
 
 function processPurchase(name) {
-    window.location.href = `../produto/produto.html?name=${encodeURIComponent(name)}`;
+    window.location.href = `./produto/produto.html?name=${encodeURIComponent(name)}`;
 }
 
 window.processPurchase = processPurchase;
