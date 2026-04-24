@@ -41,71 +41,91 @@
 
     <main class="page-wrap checkout-page">
         <div class="container">
-            <h2 class="checkout-title">Finalizar <span>Compra</span></h2>
-
             <div class="checkout-grid">
-                <!-- Left: Cart Items & Contact -->
+                <!-- Left Column -->
                 <div class="checkout-main">
-                    <section class="checkout-section">
-                        <div class="section-header">
-                            <i data-lucide="shopping-bag"></i>
-                            <h4>Seus Itens</h4>
-                        </div>
-                        <div id="cart-items-list" class="cart-items">
-                            <!-- Items rendered via JS -->
-                        </div>
-                    </section>
-
-                    <section class="checkout-section">
-                        <div class="section-header">
-                            <i data-lucide="user"></i>
-                            <h4>Suas Informações</h4>
-                        </div>
-                        <div class="checkout-form-box">
-                            <div class="form-group">
-                                <label>Nome completo</label>
-                                <input type="text" id="checkout-name" placeholder="Como quer ser chamado?">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="checkout-email" placeholder="seu@email.com">
-                            </div>
-                        </div>
-                    </section>
-
+                    <!-- Payment Method -->
                     <section class="checkout-section">
                         <div class="section-header">
                             <i data-lucide="credit-card"></i>
-                            <h4>Método de Pagamento</h4>
+                            <h4>Formas de pagamento</h4>
                         </div>
                         <div class="payment-method-card active">
                             <div class="pix-badge-small">PIX</div>
                             <div class="payment-info">
-                                <strong>Pagar com Pix</strong>
-                                <span>Aprovação instantânea • Entrega imediata</span>
+                                <strong>Pix</strong>
+                                <p style="font-size: 12px; color: var(--text-sec); margin: 2px 0;">Mais rápido</p>
+                                <span style="font-size: 11px; color: #22c55e;">Aprovação imediata</span>
                             </div>
                             <div class="check-mark">
                                 <i data-lucide="check"></i>
                             </div>
                         </div>
                     </section>
+
+                    <!-- Contact Info -->
+                    <section class="checkout-section">
+                        <div class="section-header">
+                            <i data-lucide="user"></i>
+                            <h4>Informações de contato</h4>
+                        </div>
+                        <div class="checkout-form-box">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Nome completo</label>
+                                <input type="text" id="checkout-name" placeholder="Digite seu nome completo">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Email</label>
+                                <input type="email" id="checkout-email" placeholder="seu@email.com">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Telefone</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                        <span>🇧🇷</span>
+                                        <span>+55</span>
+                                    </div>
+                                    <input type="tel" id="checkout-phone" placeholder="(00) 00000-0000" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="terms-check" checked style="accent-color: var(--primary);">
+                            <label for="terms-check" style="font-size: 13px; color: var(--text-sec);">Eu aceito os termos e condições desta compra.</label>
+                        </div>
+                    </section>
+
+                    <!-- Action Button Mobile/Bottom -->
+                    <button class="btn-checkout-finalize" onclick="finalizeCartPurchase()" style="margin-top: 20px;">
+                        <div style="text-align: left;">
+                            <span style="display: block; font-size: 14px; opacity: 0.8;">Pagar</span>
+                            <span id="cart-final-total-btn" style="font-size: 20px; font-weight: 900;">R$ 0,00</span>
+                        </div>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
                 </div>
 
-                <!-- Right: Summary -->
+                <!-- Right Column (Summary) -->
                 <div class="checkout-sidebar">
                     <div class="order-summary-card">
                         <div class="summary-header">
-                            <h4>Resumo do Pedido</h4>
-                            <i data-lucide="shield-check"></i>
+                            <h4>Resumo do pedido</h4>
+                            <div class="secure-badge" style="font-size: 10px; color: #22c55e; border: 1px solid rgba(34,197,94,0.3); padding: 4px 8px; border-radius: 50px;">
+                                <i data-lucide="shield-check" style="width: 10px; height: 10px;"></i> Pagamento seguro
+                            </div>
                         </div>
 
-                        <div id="cart-summary-items" class="summary-items-list"></div>
+                        <!-- Product List in Summary -->
+                        <div id="cart-summary-items" class="summary-items-list" style="margin-bottom: 25px;">
+                            <!-- Items via JS -->
+                        </div>
 
                         <div class="coupon-area">
-                            <label>Cupom de Desconto</label>
+                            <label>Digite seu cupom de desconto</label>
                             <div class="coupon-input-group">
                                 <input type="text" id="cart-coupon-input" placeholder="CÓDIGO">
-                                <button onclick="applyCartCoupon()">APLICAR</button>
+                                <button onclick="applyCartCoupon()">Aplicar</button>
                             </div>
                             <div id="coupon-msg"></div>
                         </div>
@@ -115,23 +135,14 @@
                                 <span>Subtotal</span>
                                 <span id="cart-subtotal">R$ 0,00</span>
                             </div>
-                            <div class="total-line discount" id="cart-discount-line" style="display:none;">
-                                <span>Desconto</span>
-                                <span id="cart-discount-val">- R$ 0,00</span>
+                            <div class="total-line" id="cart-discount-line" style="display:none;">
+                                <span>Descontos</span>
+                                <span id="cart-discount-val" style="color: #22c55e;">R$ 0,00</span>
                             </div>
-                            <div class="total-line main-total">
-                                <span>Total a pagar</span>
+                            <div class="total-line main-total" style="border-top: 1px solid var(--border); margin-top: 20px; padding-top: 20px;">
+                                <span>Total</span>
                                 <span id="cart-final-total">R$ 0,00</span>
                             </div>
-                        </div>
-
-                        <button class="btn-checkout-finalize" onclick="finalizeCartPurchase()">
-                            Finalizar Pedido <i data-lucide="arrow-right"></i>
-                        </button>
-
-                        <div class="secure-footer">
-                            <i data-lucide="lock"></i>
-                            <span>Pagamento 100% seguro via Mercado Pago</span>
                         </div>
                     </div>
                 </div>

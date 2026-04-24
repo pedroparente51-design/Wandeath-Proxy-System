@@ -63,16 +63,22 @@ function renderCart() {
         `;
         list.appendChild(row);
 
-        // Render in sidebar summary
+        // Render in sidebar summary (Now according to the new request)
         if (summaryList) {
             const sItem = document.createElement('div');
-            sItem.style.display = 'flex';
-            sItem.style.justifyContent = 'space-between';
-            sItem.style.fontSize = '13px';
-            sItem.style.marginBottom = '8px';
+            sItem.className = 'summary-product-item';
+            sItem.style.marginBottom = '20px';
             sItem.innerHTML = `
-                <span style="color:var(--text-sec);">${item.qty}x ${prod.name}</span>
-                <span style="font-weight:700;">R$ ${totalItem.toFixed(2)}</span>
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <span style="font-weight: 700; font-size: 14px; flex: 1; padding-right: 15px;">🛜 ${prod.name}</span>
+                    <span style="font-weight: 700; font-size: 14px; color: var(--text-main);">R$ ${parseFloat(prod.price).toFixed(2)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; color: var(--text-sec); font-size: 13px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 4px; border: 1px solid var(--border);">
+                        ${item.qty}
+                    </div>
+                    <span style="font-weight: 600;">R$ ${totalItem.toFixed(2)}</span>
+                </div>
             `;
             summaryList.appendChild(sItem);
         }
@@ -100,6 +106,7 @@ function removeCartItem(index) {
 function updateTotals(subtotal) {
     const subtotalEl = document.getElementById('cart-subtotal');
     const totalEl = document.getElementById('cart-final-total');
+    const totalBtnEl = document.getElementById('cart-final-total-btn');
     const discountLine = document.getElementById('cart-discount-line');
     const discountEl = document.getElementById('cart-discount-val');
 
@@ -112,7 +119,7 @@ function updateTotals(subtotal) {
         
         if (discountLine) {
             discountLine.style.display = 'flex';
-            discountEl.innerText = `- R$ ${discountVal.toFixed(2)}`;
+            discountEl.innerText = `R$ ${discountVal.toFixed(2)}`;
         }
     } else {
         if (discountLine) discountLine.style.display = 'none';
@@ -120,6 +127,7 @@ function updateTotals(subtotal) {
 
     if (subtotalEl) subtotalEl.innerText = `R$ ${subtotal.toFixed(2)}`;
     if (totalEl) totalEl.innerText = `R$ ${total.toFixed(2)}`;
+    if (totalBtnEl) totalBtnEl.innerText = `R$ ${total.toFixed(2)}`;
     
     window.lastSubtotal = subtotal;
     window.lastTotal = total;
