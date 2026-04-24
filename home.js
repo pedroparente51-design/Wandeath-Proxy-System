@@ -53,11 +53,13 @@ function initSearch() {
             }
 
             results.forEach(prod => {
-                // Reaproveita a lógica de criação de card (precisaria estar em uma função separada para ser DRY ideal, mas vamos injetar aqui)
                 const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
+                const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
+                
                 const productCard = document.createElement('div');
-                productCard.className = 'product-card rx-reveal active';
+                productCard.className = 'product-card rx-reveal';
                 productCard.innerHTML = `
+                    ${tagHtml}
                     <div class="product-img">
                         <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='../logo.png'">
                         <div class="img-overlay"></div>
@@ -71,11 +73,14 @@ function initSearch() {
                             </div>
                         </div>
                     </div>
-                    <div class="product-footer" style="padding: 15px;">
-                        <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Ver Detalhes</button>
+                    <div class="product-footer" style="padding: 15px; margin-top: auto;">
+                        <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Comprar agora</button>
                     </div>
                 `;
                 grid.appendChild(productCard);
+                
+                // Forçar animação de entrada
+                setTimeout(() => productCard.classList.add('rx-reveal--visible'), 10);
             });
         });
     });

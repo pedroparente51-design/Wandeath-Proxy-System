@@ -9,7 +9,59 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollProgress();
     initNeuralNetwork();
     initFAQ();
+    loadProductDetails();
 });
+
+function loadProductDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get('name');
+    const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+    
+    const product = allProducts.find(p => p.name === productName);
+    
+    if (product) {
+        document.getElementById('prod-title').textContent = "🛜 " + product.name;
+        document.getElementById('prod-price').textContent = "R$ " + parseFloat(product.price).toFixed(2);
+        document.getElementById('prod-img').src = product.image;
+        
+        // Stock logic
+        const stockLines = product.delivery ? product.delivery.trim().split('\n') : [];
+        const stockCount = stockLines.length;
+        document.getElementById('prod-stock').textContent = stockCount + " EM ESTOQUE";
+        
+        // Description
+        const descEl = document.getElementById('prod-desc-text');
+        if (descEl) descEl.textContent = product.description;
+    } else {
+        document.getElementById('prod-title').textContent = "Produto não encontrado";
+    }
+}
+
+function buyNow() {
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get('name');
+    const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+    const product = allProducts.find(p => p.name === productName);
+    
+    if (product) {
+        const cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+        const existing = cart.find(item => item.name === product.name);
+        
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({ ...product, qty: 1 });
+        }
+        
+        localStorage.setItem('wandeath_cart', JSON.stringify(cart));
+        window.location.href = '../carrinho/carrinho.html';
+    }
+}
+
+window.buyNow = buyNow;
+window.addToCart = function() {
+    buyNow(); // Por enquanto simplificado
+};
 
 /* ─── Mouse Follow Glow ─────────────────────────── */
 function initMouseGlow() {
