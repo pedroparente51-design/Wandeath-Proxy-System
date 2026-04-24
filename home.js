@@ -25,7 +25,7 @@ function initSearch() {
     // A busca agora é tratada majoritariamente pelo initSearchSuggestions para mostrar o dropdown.
     // Esta função pode ser mantida para busca via "Enter" se desejar, mas vamos desativar a atualização em tempo real no grid para não "quebrar" os destaques.
     const searchInputs = document.querySelectorAll('.search-pill input');
-    
+
     searchInputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -34,8 +34,8 @@ function initSearch() {
                 if (!grid || !term) return;
 
                 const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-                const results = allProducts.filter(p => 
-                    p.name.toLowerCase().includes(term) || 
+                const results = allProducts.filter(p =>
+                    p.name.toLowerCase().includes(term) ||
                     p.category.toLowerCase().includes(term)
                 );
 
@@ -89,13 +89,13 @@ function initCheckout() {
     if (!modal) return;
 
     if (closeBtn) closeBtn.onclick = () => modal.classList.remove('show');
-    
+
     if (confirmBtn) {
         confirmBtn.onclick = () => {
             const name = document.getElementById('checkout-name').value;
             const email = document.getElementById('checkout-email').value;
             if (!name || !email) return alert('Por favor, preencha seu nome e email.');
-            
+
             finalizePurchase();
         };
     }
@@ -106,8 +106,8 @@ function initOrdersModal() {
     const closeBtn = document.querySelector('.close-modal');
 
     // Specific selector for the profile dropdown 'Meus Pedidos'
-    const profileOrders = document.querySelector('.header-user-btn .dropdown-menu a:nth-child(1)'); 
-    
+    const profileOrders = document.querySelector('.header-user-btn .dropdown-menu a:nth-child(1)');
+
     const toggleModal = (e) => {
         if (e) {
             e.preventDefault();
@@ -119,7 +119,7 @@ function initOrdersModal() {
 
     if (profileOrders) profileOrders.onclick = toggleModal;
     if (closeBtn) closeBtn.onclick = toggleModal;
-    
+
     // Close on outside click
     window.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.remove('show');
@@ -178,7 +178,7 @@ function initProxyChecker() {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             contents.forEach(c => c.style.display = 'none');
-            
+
             tab.classList.add('active');
             const target = document.getElementById(tab.dataset.tab);
             if (target) target.style.display = 'block';
@@ -193,7 +193,7 @@ function initProxyChecker() {
         rawBtn.addEventListener('click', () => {
             const val = rawInput.value.trim();
             if (!val) return alert('Cole sua proxy!');
-            
+
             const parts = val.split(':');
             if (parts.length >= 4) {
                 const [ip, port, user, pass] = parts;
@@ -216,32 +216,16 @@ function renderStoreProducts(filter = 'all') {
     // Default products if none exist
     if (products.length === 0) {
         products = [
-            { 
-                name: "Proxy Residencial Rotativa", 
-                price: "13.99", 
-                category: "rotativa", 
-                image: "../img-rotativa/1gb.png", 
-                tag: "MAIS VENDIDO", 
-                description: `🌐 Proxy Residencial Rotativa BR - 1GB 🔄
-⚙️Formato: IP:PORTA:USUÁRIO:SENHA
-
-🔐Garanta privacidade, segurança e eficiência com nossa Proxy Rotativo Residencial BR! Com um IP novo a cada conexão, você navega de forma anônima e evita bloqueios, tornando suas operações mais seguras e eficazes.
-
-🔍 Consumo em tempo real: Acesse nosso site para verificação de GBs disponíveis.
-https://rh7checker.com/ (insira o usuário e senha da proxy comprada)
-
-📞 Equipe de Suporte 24/7:
-Chat ao vivo rápido e eficaz exclusivo no site
-https://wa.me/5592981794179
-
-🚀 Benefícios:
-✅ Ideal para Cooperação com Casas Chinesas 🇨🇳 – Acesso eficiente e sem restrições.
-✅ Privacidade Reforçada 🔐 – Proteção total com IPs rotativos, dificultando rastreamentos.
-✅ Alto Desempenho ⚡ – Conexão rápida e estável para todas as suas necessidades online.
-✅ Mais Segurança 🛡️ – Blindagem contra ataques e monitoramento indesejado.`, 
-                delivery: "187.12.44.1:8080:wandeath_user:pass123\n187.12.44.2:8080:wandeath_user:pass123\n187.12.44.3:8080:wandeath_user:pass123", 
-                minQty: 1, 
-                maxQty: 100 
+            {
+                name: "Proxy Residencial Rotativa",
+                price: "13.99",
+                category: "rotativa",
+                image: "../img-rotativa/1gb.png",
+                tag: "MAIS VENDIDO",
+                description: ``,
+                delivery: "187.12.44.1:8080:wandeath_user:pass123\n187.12.44.2:8080:wandeath_user:pass123\n187.12.44.3:8080:wandeath_user:pass123",
+                minQty: 1,
+                maxQty: 100
             },
             { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "../img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G).", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
             { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados estáveis.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
@@ -271,7 +255,7 @@ https://wa.me/5592981794179
         productCard.className = 'product-card rx-reveal';
 
         const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
-        const imgUrl  = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
+        const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
 
         // Descrição curta: primeiros 80 chars
         const shortDesc = prod.description
@@ -335,7 +319,7 @@ function updateCartBadge() {
 
 window.updateCartBadge = updateCartBadge;
 
-window.logout = function() {
+window.logout = function () {
     localStorage.removeItem('wandeath_user');
     window.location.reload();
 };
@@ -343,11 +327,11 @@ window.logout = function() {
 function checkLoginState() {
     const user = localStorage.getItem('wandeath_user');
     const userBtn = document.querySelector('.header-user-btn');
-    
+
     if (!userBtn) return;
 
     userBtn.style.setProperty('display', 'flex', 'important');
-    
+
     const userIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 
     if (user) {
@@ -364,12 +348,12 @@ function checkLoginState() {
         userBtn.onclick = null;
         userBtn.innerHTML = `${userIcon}<span>Área do Cliente</span>`;
         userBtn.title = 'Área do Cliente';
-        
+
         const path = window.location.pathname;
         let loginPath = '../login/login.html';
         if (path.includes('/login/')) loginPath = './login.html';
         else if (path.endsWith('index.html') && !path.includes('/home/')) loginPath = 'login/login.html';
-        
+
         userBtn.href = loginPath;
     }
 }
@@ -377,7 +361,7 @@ function checkLoginState() {
 function renderUserOrders() {
     const list = document.getElementById('my-orders-list');
     if (!list) return;
-    
+
     const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
     if (orders.length === 0) {
         list.innerHTML = '<p style="text-align: center; color: var(--text-sec); padding: 40px;">Você ainda não possui pedidos.</p>';
@@ -405,10 +389,10 @@ const MP_ACCESS_TOKEN = 'APP_USR-6939778403757007-042321-66d2bef7d6ee6c3d3c26970
 async function finalizePurchase() {
     const name = document.getElementById('checkout-name').value;
     const email = document.getElementById('checkout-email').value;
-    
+
     if (!name || !email) return alert('Por favor, preencha seu nome e email.');
     if (!window.currentCheckout) return alert('Nenhum produto selecionado.');
-    
+
     const { product, qty } = window.currentCheckout;
     const total = parseFloat(product.price) * qty;
     const checkoutBody = document.querySelector('.checkout-body');
@@ -537,9 +521,9 @@ function showPaymentSuccess(product, qty, total, deliveredItems = []) {
 
     const itemsHtml = deliveredItems.map((line, i) => `
         <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
-            <span style="font-size:11px; font-weight:800; color:var(--text-sec); min-width:20px;">${i+1}</span>
+            <span style="font-size:11px; font-weight:800; color:var(--text-sec); min-width:20px;">${i + 1}</span>
             <span style="flex:1; font-family:monospace; font-size:13px; color:#ccc; word-break:break-all;">${line}</span>
-            <button onclick="copyToClipboard('${line.replace(/'/g,"\\'")}', this)" style="background:none; border:none; color:var(--text-sec); cursor:pointer; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:700;">Copiar</button>
+            <button onclick="copyToClipboard('${line.replace(/'/g, "\\'")}', this)" style="background:none; border:none; color:var(--text-sec); cursor:pointer; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:700;">Copiar</button>
         </div>`).join('');
 
     const allText = deliveredItems.join('\n');
@@ -553,7 +537,7 @@ function showPaymentSuccess(product, qty, total, deliveredItems = []) {
             <div style="text-align: left; max-width: 550px; margin: 0 auto;">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
                     <span style="font-size:12px; font-weight:700; color:var(--text-sec); text-transform:uppercase; letter-spacing:1px;">Seus Produtos</span>
-                    <button onclick="copyToClipboard('${allText.replace(/'/g,"\\'")}', this)" style="background:rgba(238,0,0,0.1); border:1px solid rgba(238,0,0,0.2); color:var(--primary); padding:6px 14px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">Copiar tudo</button>
+                    <button onclick="copyToClipboard('${allText.replace(/'/g, "\\'")}', this)" style="background:rgba(238,0,0,0.1); border:1px solid rgba(238,0,0,0.2); color:var(--primary); padding:6px 14px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">Copiar tudo</button>
                 </div>
                 <div style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
                     ${itemsHtml}
@@ -574,7 +558,7 @@ function showPaymentSuccess(product, qty, total, deliveredItems = []) {
     `;
 }
 
-window.copyToClipboard = function(text, btn) {
+window.copyToClipboard = function (text, btn) {
     navigator.clipboard.writeText(text).then(() => {
         const orig = btn.innerText;
         btn.innerText = '✓ Copiado';
@@ -587,7 +571,7 @@ window.copyToClipboard = function(text, btn) {
 };
 
 
-window.copyPixCode = function() {
+window.copyPixCode = function () {
     const input = document.getElementById('pix-copy-input');
     if (input) {
         input.select();
@@ -596,14 +580,14 @@ window.copyPixCode = function() {
     }
 };
 
-window.simulatePaymentSuccess = function() {
+window.simulatePaymentSuccess = function () {
     completePurchaseProcess();
 };
 
 function completePurchaseProcess() {
     if (!window.currentCheckout) return;
     const { product, qty } = window.currentCheckout;
-    
+
     try {
         const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
         const prodIndex = products.findIndex(p => p.name === product.name);
@@ -638,7 +622,7 @@ function completePurchaseProcess() {
             total: total
         });
         localStorage.setItem('wandeath_orders', JSON.stringify(orders));
-        
+
         showPaymentSuccess(product, qty, total, deliveredItems);
     } catch (e) {
         console.error('completePurchaseProcess error:', e);
@@ -662,7 +646,7 @@ function checkLoginState() {
     const isLoggedIn = localStorage.getItem('wandeath_logged_in');
     const userDataStr = localStorage.getItem('wandeath_user');
     const userBtn = document.querySelector('.header-user-btn');
-    
+
     if (isLoggedIn === 'true' && userBtn) {
         let name = "Admin";
         if (userDataStr) {
@@ -671,9 +655,9 @@ function checkLoginState() {
                 if (user && user.name) {
                     name = user.name.split(' ')[0]; // First name only
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
-        
+
         userBtn.outerHTML = `
             <div class="nav-dropdown profile-dropdown">
                 <a href="javascript:void(0);" class="header-user-btn dropdown-toggle" style="display: flex; align-items: center; gap: 10px;">
@@ -694,25 +678,25 @@ function checkLoginState() {
         `;
 
         if (typeof lucide !== 'undefined') lucide.createIcons();
-        
-        window.wandeathLogout = function(e) {
+
+        window.wandeathLogout = function (e) {
             e.preventDefault();
-            if(confirm('Tem certeza que deseja sair?')) {
+            if (confirm('Tem certeza que deseja sair?')) {
                 localStorage.removeItem('wandeath_logged_in');
                 window.location.reload();
             }
         };
 
-window.goToPaymentStep = function() {
-    document.getElementById('checkout-step-info').style.display = 'none';
-    document.getElementById('checkout-step-payment').style.display = 'grid';
-    if (window.lucide) lucide.createIcons();
-};
+        window.goToPaymentStep = function () {
+            document.getElementById('checkout-step-info').style.display = 'none';
+            document.getElementById('checkout-step-payment').style.display = 'grid';
+            if (window.lucide) lucide.createIcons();
+        };
 
-window.backToInfoStep = function() {
-    document.getElementById('checkout-step-info').style.display = 'block';
-    document.getElementById('checkout-step-payment').style.display = 'none';
-};
+        window.backToInfoStep = function () {
+            document.getElementById('checkout-step-info').style.display = 'block';
+            document.getElementById('checkout-step-payment').style.display = 'none';
+        };
     }
 }
 
@@ -915,7 +899,7 @@ function initInteractiveBackground() {
             const speed = (index + 1) * 20;
             const xOffset = (window.innerWidth / 2 - e.clientX) * speed / 1000;
             const yOffset = (window.innerHeight / 2 - e.clientY) * speed / 1000;
-            
+
             shape.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
         });
     });
@@ -948,9 +932,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderMessages() {
         const historyStr = localStorage.getItem('wandeath_chat_history');
         const history = historyStr ? JSON.parse(historyStr) : [];
-        
+
         chatboxMessages.innerHTML = '';
-        
+
         if (history.length === 0) {
             chatboxMessages.innerHTML = `
                 <div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">
@@ -986,7 +970,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         localStorage.setItem('wandeath_chat_history', JSON.stringify(history));
-        
+
         chatboxInput.value = '';
         renderMessages();
     }
@@ -1005,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function initSearchSuggestions() {
     const searchInputs = document.querySelectorAll('.search-pill input');
-    
+
     searchInputs.forEach(input => {
         // Criar container de sugestões se não existir
         let suggestionsBox = input.parentElement.querySelector('.search-suggestions');
@@ -1035,14 +1019,14 @@ function initSearchSuggestions() {
         input.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase().trim();
             const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-            
+
             if (term.length < 1) {
                 suggestionsBox.style.display = 'none';
                 return;
             }
 
-            const matches = allProducts.filter(p => 
-                p.name.toLowerCase().includes(term) || 
+            const matches = allProducts.filter(p =>
+                p.name.toLowerCase().includes(term) ||
                 p.category.toLowerCase().includes(term)
             ).slice(0, 6);
 
@@ -1067,7 +1051,7 @@ function initSearchSuggestions() {
                 `).join('');
                 suggestionsBox.style.display = 'block';
                 if (window.lucide) lucide.createIcons();
-                
+
                 // Add hover effect
                 suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
                     item.onmouseenter = () => item.style.background = 'rgba(238, 0, 0, 0.1)';
