@@ -2,7 +2,13 @@
 const SUPABASE_URL = 'https://ljeohtdmxsfulsnmfegj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_wUXSeCpUm0Ab__szSmOkFQ_Zx8Vm0DF';
 
-// Initialize Supabase Client
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Initialize Supabase Client (SDK expõe window.supabase.createClient)
+const supabaseClient = window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+    : null;
 
-console.log('Supabase connected successfully!');
+if (supabaseClient) {
+    console.log('Supabase connected successfully!');
+} else {
+    console.warn('Supabase SDK não carregado — continuando sem autenticação.');
+}
