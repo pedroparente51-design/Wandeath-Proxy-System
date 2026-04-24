@@ -5,24 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wandeath VIP - Painel Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="./admin.css">
 </head>
 
 <body>
     <!-- Admin Login Overlay -->
-    <div id="admin-login-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a0a; z-index: 9999; display: flex; align-items: center; justify-content: center;">
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center;">
+    <div id="admin-login-overlay"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a0a; z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center;">
             <img src="../image.png" alt="Logo" style="height: 60px; margin-bottom: 30px;">
             <h2 style="color: #fff; margin-bottom: 20px;">Acesso Restrito</h2>
-            <p style="color: var(--text-sec); margin-bottom: 30px; font-size: 14px;">Faça login com o e-mail de administrador.</p>
+            <p style="color: var(--text-sec); margin-bottom: 30px; font-size: 14px;">Faça login com o e-mail de
+                administrador.</p>
             <form id="admin-login-form" style="display: flex; flex-direction: column; gap: 15px;">
-                <input type="email" id="admin-email" placeholder="E-mail" required style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
-                <input type="password" id="admin-pass" placeholder="Senha" required style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
-                <button type="submit" style="background: #ee0000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">Entrar no Painel</button>
+                <input type="email" id="admin-email" placeholder="E-mail" required
+                    style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
+                <input type="password" id="admin-pass" placeholder="Senha" required
+                    style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
+                <button type="submit"
+                    style="background: #ee0000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">Entrar
+                    no Painel</button>
             </form>
-            <p id="admin-login-error" style="color: #ff4a4a; font-size: 13px; margin-top: 15px; display: none;">Credenciais inválidas!</p>
-            
+            <p id="admin-login-error" style="color: #ff4a4a; font-size: 13px; margin-top: 15px; display: none;">
+                Credenciais inválidas!</p>
+
             <div style="display: flex; align-items: center; gap: 15px; margin: 25px 0;">
                 <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
                 <span style="color: var(--text-sec); font-size: 12px; font-weight: 700;">OU</span>
@@ -30,11 +39,14 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="simulateAdminOAuth('Google')" style="background: #fff; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
+                <button onclick="simulateAdminOAuth('Google')"
+                    style="background: #fff; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
+                        alt="Google">
                     Logar com Google
                 </button>
-                <button onclick="simulateAdminOAuth('Discord')" style="background: #5865F2; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <button onclick="simulateAdminOAuth('Discord')"
+                    style="background: #5865F2; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
                     <i data-lucide="message-square" style="width: 18px;"></i>
                     Logar com Discord
                 </button>
@@ -214,9 +226,9 @@
                             <div class="form-group">
                                 <label>Categoria</label>
                                 <select id="prod-category">
-                                    <option value="rotativa">Proxy Rotativa</option>
-                                    <option value="fixa">Proxy Fixa</option>
-                                    <option value="outros">Outros Produtos</option>
+                                    <option value="rotativa">Proxy Residencial Rotativa</option>
+                                    <option value="mobile">Proxy Mobile Premium</option>
+                                    <option value="fixa">Proxy Residencial Fixa</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -241,10 +253,12 @@
                             </div>
                             <div class="form-group">
                                 <label>Estoque / Entrega (1 item por linha)</label>
-                                <textarea id="prod-delivery" rows="3" placeholder="Ex: ip:porta:user:pass (pule linha para o próximo item)"></textarea>
+                                <textarea id="prod-delivery" rows="3"
+                                    placeholder="Ex: ip:porta:user:pass (pule linha para o próximo item)"></textarea>
                             </div>
                         </div>
-                        <button id="add-product-btn" class="btn-primary-admin" style="margin-top: 20px;"><i data-lucide="plus"></i> Cadastrar Produto</button>
+                        <button id="add-product-btn" class="btn-primary-admin" style="margin-top: 20px;"><i
+                                data-lucide="plus"></i> Cadastrar Produto</button>
                     </div>
 
                     <div class="products-list-container">
@@ -282,11 +296,13 @@
                                 <input type="number" id="coupon-limit" placeholder="50" min="1">
                             </div>
                         </div>
-                        <button id="add-coupon-btn" class="btn-primary-admin" style="margin-top: 20px;"><i data-lucide="plus"></i> Criar Cupom</button>
+                        <button id="add-coupon-btn" class="btn-primary-admin" style="margin-top: 20px;"><i
+                                data-lucide="plus"></i> Criar Cupom</button>
                     </div>
                     <div class="products-list-container">
                         <h3>Cupons Cadastrados</h3>
-                        <div id="coupons-list" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;"></div>
+                        <div id="coupons-list" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -308,7 +324,9 @@
                         <tbody id="customers-list-body">
                             <!-- Mock customers -->
                             <tr>
-                                <td><div class="avatar-small">A</div></td>
+                                <td>
+                                    <div class="avatar-small">A</div>
+                                </td>
                                 <td>Admin Teste</td>
                                 <td>admin@teste.com</td>
                                 <td>R$ 450,00</td>
@@ -323,7 +341,8 @@
             <div class="admin-section" id="section-settings" style="display: none;">
                 <div class="settings-form">
                     <h3 style="margin-top: 30px; color: #009ee3; display: flex; align-items: center; gap: 10px;">
-                        <img src="https://www.mercadopago.com/instore/merchant/assets/icon-mp.png" style="width: 24px;"> Integração Mercado Pago
+                        <img src="https://www.mercadopago.com/instore/merchant/assets/icon-mp.png" style="width: 24px;">
+                        Integração Mercado Pago
                     </h3>
                     <div class="form-grid">
                         <div class="form-group">

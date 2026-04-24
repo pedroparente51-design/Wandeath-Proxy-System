@@ -217,7 +217,7 @@ function renderStoreProducts(filter = 'all') {
     if (products.length === 0) {
         products = [
             { 
-                name: "Proxy Residencial Rotativa BR - 1GB", 
+                name: "Proxy Residencial Rotativa", 
                 price: "13.99", 
                 category: "rotativa", 
                 image: "../img-rotativa/1gb.png", 
@@ -243,8 +243,8 @@ https://wa.me/5592981794179
                 minQty: 1, 
                 maxQty: 100 
             },
-            { name: "Rotativa Mobile Premium", price: "27.79", category: "rotativa", image: "../img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G).", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
-            { name: "Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados estáveis.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
+            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "../img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G).", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
+            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados estáveis.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
         ];
         localStorage.setItem('wandeath_products', JSON.stringify(products));
     }
