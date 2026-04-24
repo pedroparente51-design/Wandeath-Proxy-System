@@ -33,6 +33,33 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     };
 
+    window.simulateAdminOAuth = function(provider) {
+        // Simulando fluxo OAuth para admin (como é um mockup, qualquer login no painel libera o admin)
+        const width = 500, height = 600;
+        const left = (window.innerWidth / 2) - (width / 2);
+        const top = (window.innerHeight / 2) - (height / 2);
+        
+        const popup = window.open('', '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+        
+        let color = provider === 'Google' ? '#fff' : '#5865F2';
+        let bg = provider === 'Google' ? '#111' : '#36393f';
+        
+        popup.document.write(`
+            <html style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 50px; background: ${bg}; color: #fff;">
+                <h2 style="margin-top: 40px;">Conectando com ${provider}...</h2>
+                <p style="color: #aaa;">Verificando permissões de administrador.</p>
+                <div style="margin: 50px auto; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: ${color}; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+            </html>
+        `);
+
+        setTimeout(() => {
+            popup.close();
+            localStorage.setItem('wandeath_admin_logged', 'true');
+            adminOverlay.style.display = 'none';
+        }, 2000);
+    };
+
     // Ajusta o botão de voltar à loja para deslogar também do painel admin, se quiser.
     // Mas o mais seguro é adicionar um botão "Sair" ou apenas deixar o admin_logged persistente.
     // Vou substituir a ação do botão "Voltar à Loja" para fazer o logout do painel.
