@@ -23,7 +23,7 @@ function renderCart() {
     if (!list) return;
 
     if (cart.length === 0) {
-        list.innerHTML = '<div style="text-align:center; padding:100px 20px;"><div style="font-size:40px; margin-bottom:20px;">🛒</div><h3 style="margin-bottom:10px;">Seu carrinho está vazio</h3><p style="color:var(--text-sec); margin-bottom:25px;">Parece que você ainda não adicionou nada.</p><a href="../home/index.html#produtos" style="background:var(--primary); color:#fff; padding:12px 30px; border-radius:10px; text-decoration:none; font-weight:800;">Ver Produtos</a></div>';
+        list.innerHTML = '<div style="text-align:center; padding:100px 20px;"><div style="font-size:40px; margin-bottom:20px;">🛒</div><h3 style="margin-bottom:10px;">Seu carrinho está vazio</h3><p style="color:var(--text-sec); margin-bottom:25px;">Parece que você ainda não adicionou nada.</p><a href="../index.html#produtos" style="background:var(--primary); color:#fff; padding:12px 30px; border-radius:10px; text-decoration:none; font-weight:800;">Ver Produtos</a></div>';
         if (summaryList) summaryList.innerHTML = '<div style="font-size:12px; color:var(--text-sec);">Nenhum item</div>';
         updateTotals(0);
         return;

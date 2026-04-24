@@ -6,7 +6,7 @@
     <title>Produto - RH7 PROXYS</title>
     
     <!-- Link para o CSS Global da Loja (Para não quebrar header, fontes e resets) -->
-    <link rel="stylesheet" href="../home/home.css">
+    <link rel="stylesheet" href="../home.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -103,7 +103,7 @@
     
     <!-- Topbar Notification (do home.css) -->
     <div class="rx-topbar">
-        <a class="rx-topbar__link" href="../home/index.html">
+        <a class="rx-topbar__link" href="../index.html">
             🔥 RH7 PROXYS • A MAIOR E MELHOR LOJA DE PROXYS DA AMÉRICA LATINA
         </a>
     </div>
@@ -111,12 +111,12 @@
     <!-- Header (do home.css para não quebrar a navbar) -->
     <header class="main-header" style="position: fixed; width: 100%; top: 40px; z-index: 2000;">
         <div class="container header-inner">
-            <a href="../home/index.html" class="logo">
+            <a href="../index.html" class="logo">
                 <img src="../image.png" alt="RH7 PROXYS">
             </a>
             
             <nav class="header-nav-main">
-                <a href="../home/index.html">Início</a>
+                <a href="../index.html">Início</a>
                 <div class="nav-dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle" style="color: #fff;">Produtos <i data-lucide="chevron-down"></i></a>
                     <div class="dropdown-menu">
@@ -124,7 +124,7 @@
                         <a href="../proxy/proxyfixa.html">Proxy Fixa</a>
                     </div>
                 </div>
-                <a href="../home/index.html#diferenciais">Diferenciais</a>
+                <a href="../index.html#diferenciais">Diferenciais</a>
             </nav>
 
             <div class="header-right">
@@ -142,7 +142,7 @@
 
     <main class="product-page-wrap">
         <div class="container">
-            <a href="../home/index.html" class="back-link">
+            <a href="../index.html" class="back-link">
                 <i data-lucide="arrow-left"></i> Voltar ao início
             </a>
 
@@ -252,7 +252,7 @@
                 <div class="rh7-footer-col">
                     <h4>Links</h4>
                     <ul class="rh7-footer-links">
-                        <li><a href="../home/index.html">Início</a></li>
+                        <li><a href="../index.html">Início</a></li>
                         <li><a href="#">Termos de Uso</a></li>
                         <li><a href="#">Política de Privacidade</a></li>
                     </ul>
@@ -281,7 +281,7 @@
             const prod = products.find(p => p.name === name);
 
             if (!prod) {
-                window.location.href = '../home/index.html';
+                window.location.href = '../index.html';
                 return;
             }
 

@@ -214,7 +214,7 @@
 
     <div class="login-container rx-reveal">
         <div class="auth-card">
-            <a href="../home/index.html">
+            <a href="../index.html">
                 <img src="https://i.ibb.co/JRn4JGTk/Chat-GPT-Image-22-de-abr-de-2026-01-41-06.png" alt="Wandeath VIP"
                     class="auth-logo">
             </a>
@@ -318,7 +318,7 @@
             
             // Auto login
             localStorage.setItem('wandeath_logged_in', 'true');
-            window.location.href = '../home/index.html';
+            window.location.href = '../index.html';
         });
 
         document.getElementById('login-form').addEventListener('submit', function(e) {
@@ -333,7 +333,7 @@
                 if (user.email === email && user.password === password) {
                     localStorage.setItem('wandeath_logged_in', 'true');
                     alert('Login realizado com sucesso! Bem-vindo de volta, ' + user.name);
-                    window.location.href = '../home/index.html';
+                    window.location.href = '../index.html';
                     return;
                 }
             }
@@ -342,7 +342,7 @@
             if (email === 'admin@admin.com' && password === 'admin') {
                 localStorage.setItem('wandeath_logged_in', 'true');
                 alert('Login de Administrador realizado!');
-                window.location.href = '../home/index.html';
+                window.location.href = '../index.html';
             } else {
                 alert('E-mail ou senha incorretos! (Tente criar uma conta primeiro ou use admin@admin.com / admin)');
             }
@@ -376,7 +376,7 @@
                 localStorage.setItem('wandeath_user', JSON.stringify(user));
                 localStorage.setItem('wandeath_logged_in', 'true');
                 alert('Autenticado via ' + provider + ' com sucesso!');
-                window.location.href = '../home/index.html';
+                window.location.href = '../index.html';
             }, 2500);
         }
 
