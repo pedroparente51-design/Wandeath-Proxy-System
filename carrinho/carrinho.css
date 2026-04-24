@@ -1112,143 +1112,147 @@ body {
         display: flex;
         flex-direction: column;
         align-items: center;
-    }/* Cart Items */
-.cart-items {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+    }
 
-.cart-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 1fr auto auto auto auto;
-    align-items: center;
-    gap: 30px;
-    transition: 0.3s;
-}
+    /* Cart Items */
+    .cart-items {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-.cart-item:hover {
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.cart-item-info {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.cart-item-info img {
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
-    object-fit: cover;
-    background: #000;
-}
-
-.cart-item-info h4 {
-    font-size: 16px;
-    margin-bottom: 5px;
-}
-
-.cart-item-info p {
-    font-size: 13px;
-    color: var(--text-sec);
-}
-
-.cart-item-qty {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 8px 15px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-}
-
-.cart-item-qty button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-}
-
-.cart-item-qty button:hover {
-    color: var(--primary);
-}
-
-.cart-item-qty span {
-    font-weight: 800;
-    font-size: 14px;
-    min-width: 20px;
-    text-align: center;
-}
-
-.cart-item-total {
-    font-size: 16px;
-    font-weight: 800;
-    color: #fff;
-    min-width: 100px;
-    text-align: right;
-}
-
-.cart-item-remove {
-    background: rgba(239, 68, 68, 0.05);
-    border: 1px solid rgba(239, 68, 68, 0.1);
-    color: var(--primary);
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.cart-item-remove:hover {
-    background: var(--primary);
-    color: #fff;
-    transform: scale(1.1);
-}
-
-/* Summary Lines */
-.summary-line {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: var(--text-sec);
-}
-
-.summary-line.total {
-    color: #fff;
-}
-
-@media (max-width: 768px) {
     .cart-item {
-        grid-template-columns: 1fr auto;
-        gap: 15px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr auto auto auto auto;
+        align-items: center;
+        gap: 30px;
+        transition: 0.3s;
     }
+
+    .cart-item:hover {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .cart-item-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
     .cart-item-info img {
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #000;
     }
+
+    .cart-item-info h4 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .cart-item-info p {
+        font-size: 13px;
+        color: var(--text-sec);
+    }
+
+    .cart-item-qty {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 8px 15px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+    }
+
+    .cart-item-qty button {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+
+    .cart-item-qty button:hover {
+        color: var(--primary);
+    }
+
+    .cart-item-qty span {
+        font-weight: 800;
+        font-size: 14px;
+        min-width: 20px;
+        text-align: center;
+    }
+
     .cart-item-total {
-        grid-column: 1;
-        text-align: left;
+        font-size: 16px;
+        font-weight: 800;
+        color: #fff;
+        min-width: 100px;
+        text-align: right;
     }
-}
+
+    .cart-item-remove {
+        background: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.1);
+        color: var(--primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .cart-item-remove:hover {
+        background: var(--primary);
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    /* Summary Lines */
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: var(--text-sec);
+    }
+
+    .summary-line.total {
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .cart-item {
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+        }
+
+        .cart-item-info img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .cart-item-total {
+            grid-column: 1;
+            text-align: left;
+        }
+    }
 
     .stats-grid {
         grid-template-columns: 1fr 1fr;
@@ -1397,7 +1401,9 @@ body {
     transition: 0.3s;
 }
 
-.cart-item-qty button:hover { color: var(--primary); }
+.cart-item-qty button:hover {
+    color: var(--primary);
+}
 
 .cart-item-total {
     font-size: 16px;
@@ -1415,12 +1421,15 @@ body {
     padding: 5px;
 }
 
-.cart-item-remove:hover { color: var(--primary); }
+.cart-item-remove:hover {
+    color: var(--primary);
+}
 
 @media (max-width: 1024px) {
     .checkout-grid {
         grid-template-columns: 1fr;
     }
+
     .checkout-sidebar {
         position: static;
     }
