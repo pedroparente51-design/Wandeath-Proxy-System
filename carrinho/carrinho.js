@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
     renderCart();
     initCartCheckout();
+    updateCartBadge();
 });
 
 window.currentCoupon = null;
@@ -318,3 +319,12 @@ function completeCartOrder() {
 window.updateCartQty = updateCartQty;
 window.removeCartItem = removeCartItem;
 window.applyCartCoupon = applyCartCoupon;
+function updateCartBadge() {
+    const badge = document.getElementById('cart-count');
+    if (!badge) return;
+    const cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+}
+window.updateCartBadge = updateCartBadge;
