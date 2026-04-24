@@ -16,7 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
     initOrdersModal();
     initProxyChecker();
     initCheckout();
+    initSearch();
 });
+
+function initSearch() {
+    const searchInput = document.querySelector('.search-pill input');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.product-card');
+        
+        cards.forEach(card => {
+            const title = card.querySelector('.product-title').textContent.toLowerCase();
+            if (title.includes(term)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+}
 
 // ─── Orders Logic ───
 // ─── Checkout Logic ───
