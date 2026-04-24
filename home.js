@@ -20,20 +20,63 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initSearch() {
-    const searchInput = document.querySelector('.search-pill input');
-    if (!searchInput) return;
+    const searchInputs = document.querySelectorAll('.search-pill input');
+    
+    searchInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const grid = document.getElementById('products-grid');
+            if (!grid) return;
 
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const cards = document.querySelectorAll('.product-card');
-        
-        cards.forEach(card => {
-            const title = card.querySelector('.product-title').textContent.toLowerCase();
-            if (title.includes(term)) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
+            // Se o campo estiver vazio, renderiza conforme o estado atual (abas)
+            if (term === '') {
+                const activeTab = document.querySelector('.tab-btn.active');
+                const filter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
+                renderStoreProducts(filter);
+                return;
             }
+
+            // Busca em todos os produtos do localStorage
+            const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+            const results = allProducts.filter(p => 
+                p.name.toLowerCase().includes(term) || 
+                p.category.toLowerCase().includes(term)
+            );
+
+            // Renderiza os resultados da busca
+            grid.innerHTML = '';
+            grid.classList.remove('featured-layout'); // Remove layout de destaque na busca para mostrar lista
+
+            if (results.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-sec); padding: 40px;">Nenhum produto encontrado para "' + term + '".</p>';
+                return;
+            }
+
+            results.forEach(prod => {
+                // Reaproveita a lógica de criação de card (precisaria estar em uma função separada para ser DRY ideal, mas vamos injetar aqui)
+                const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card rx-reveal active';
+                productCard.innerHTML = `
+                    <div class="product-img">
+                        <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='../logo.png'">
+                        <div class="img-overlay"></div>
+                    </div>
+                    <div class="product-content">
+                        <h4 class="product-title">🛜 ${prod.name}</h4>
+                        <div class="price-section">
+                            <div class="price-info">
+                                <p class="price-val">R$ ${parseFloat(prod.price).toFixed(2)}</p>
+                                <p class="price-label">À vista no Pix</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-footer" style="padding: 15px;">
+                        <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Ver Detalhes</button>
+                    </div>
+                `;
+                grid.appendChild(productCard);
+            });
         });
     });
 }
