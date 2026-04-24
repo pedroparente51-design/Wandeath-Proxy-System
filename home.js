@@ -220,15 +220,15 @@ function renderStoreProducts(filter = 'all') {
                 name: "Proxy Residencial Rotativa",
                 price: "13.99",
                 category: "rotativa",
-                image: "../img-rotativa/1gb.png",
+                image: "img-rotativa/1gb.png",
                 tag: "MAIS VENDIDO",
-                description: ``,
-                delivery: "187.12.44.1:8080:wandeath_user:pass123\n187.12.44.2:8080:wandeath_user:pass123\n187.12.44.3:8080:wandeath_user:pass123",
+                description: "IPs residenciais rotativos com alta reputação e baixa detecção. Ideal para operações em massa.",
+                delivery: "187.12.44.1:8080:wandeath_user:pass123\n187.12.44.2:8080:wandeath_user:pass123",
                 minQty: 1,
                 maxQty: 100
             },
-            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "../img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G).", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
-            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados estáveis.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
+            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G) para máxima autenticidade e alta taxa de sucesso.", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
+            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados e estáveis para operações de longa duração e alta confiabilidade.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
         ];
         localStorage.setItem('wandeath_products', JSON.stringify(products));
     }
@@ -236,9 +236,8 @@ function renderStoreProducts(filter = 'all') {
     // Filter logic
     let filteredProducts = [];
     if (filter === 'all') {
-        // "Destaques" should only show 3 items
         filteredProducts = products.slice(0, 3);
-        grid.classList.add('featured-layout');
+        grid.classList.remove('featured-layout'); // tarot cards em tamanho cheio
     } else {
         filteredProducts = products.filter(p => p.category === filter);
         grid.classList.remove('featured-layout');
