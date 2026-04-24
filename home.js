@@ -4,21 +4,27 @@
 */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initMouseGlow();
-    initScrollReveal();
-    initScrollProgress();
-    initNeuralNetwork();
-    initInteractiveBackground();
-    initFAQ();
-    checkLoginState();
-    renderStoreProducts();
-    initProductTabs();
-    initOrdersModal();
-    initProxyChecker();
-    initCheckout();
-    initSearch();
-    initSearchSuggestions();
-    updateCartBadge();
+    const safeRun = (name, fn) => {
+        try { fn(); } catch (e) { console.error(`[Wandeath] Erro em ${name}:`, e); }
+    };
+
+    safeRun('initMouseGlow', initMouseGlow);
+    safeRun('initScrollReveal', initScrollReveal);
+    safeRun('initScrollProgress', initScrollProgress);
+    safeRun('initNeuralNetwork', initNeuralNetwork);
+    safeRun('initInteractiveBackground', initInteractiveBackground);
+    safeRun('initFAQ', initFAQ);
+    safeRun('checkLoginState', checkLoginState);
+    safeRun('renderStoreProducts', renderStoreProducts);
+    safeRun('initProductTabs', initProductTabs);
+    safeRun('initOrdersModal', initOrdersModal);
+    safeRun('initProxyChecker', initProxyChecker);
+    safeRun('initCheckout', initCheckout);
+    safeRun('initSearch', initSearch);
+    safeRun('initSearchSuggestions', initSearchSuggestions);
+    safeRun('updateCartBadge', updateCartBadge);
+
+    console.log('[Wandeath] Todas as funções foram executadas.');
 });
 
 function initSearch() {
@@ -210,11 +216,17 @@ function renderStoreProducts(filter = 'all') {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
 
-    let productsStr = localStorage.getItem('wandeath_products');
-    let products = productsStr ? JSON.parse(productsStr) : [];
+    let products = [];
+    try {
+        let productsStr = localStorage.getItem('wandeath_products');
+        products = productsStr ? JSON.parse(productsStr) : [];
+    } catch (e) {
+        console.error('[Wandeath] Erro ao carregar produtos:', e);
+        products = [];
+    }
 
     // Default products if none exist
-    if (products.length === 0) {
+    if (!Array.isArray(products) || products.length === 0) {
         products = [
             {
                 name: "Proxy Residencial Rotativa",
@@ -236,12 +248,19 @@ function renderStoreProducts(filter = 'all') {
     // Filter logic
     let filteredProducts = [];
     if (filter === 'all') {
-        filteredProducts = products.slice(0, 3);
-        grid.classList.remove('featured-layout'); // tarot cards em tamanho cheio
+        // Prioritize specific tags for highlights, or just the first 3
+        const highlights = products.filter(p => 
+            p.tag && (p.tag.includes('DESTACADO') || p.tag.includes('MAIS VENDIDO') || p.tag.includes('Premium') || p.tag.includes('Destaque'))
+        );
+        filteredProducts = highlights.length > 0 ? highlights : products.slice(0, 3);
+        
+        // Add featured layout for the highlights section
+        grid.classList.add('featured-layout');
     } else {
         filteredProducts = products.filter(p => p.category === filter);
         grid.classList.remove('featured-layout');
     }
+    
     grid.innerHTML = '';
 
     if (filteredProducts.length === 0) {
@@ -256,7 +275,7 @@ function renderStoreProducts(filter = 'all') {
         const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
         const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
 
-        // Descrição curta: primeiros 80 chars
+        // Descrição curta
         const shortDesc = prod.description
             ? (prod.description.length > 90 ? prod.description.substring(0, 90) + '…' : prod.description)
             : 'Solução premium para máxima performance.';
@@ -323,39 +342,6 @@ window.logout = function () {
     window.location.reload();
 };
 
-function checkLoginState() {
-    const user = localStorage.getItem('wandeath_user');
-    const userBtn = document.querySelector('.header-user-btn');
-
-    if (!userBtn) return;
-
-    userBtn.style.setProperty('display', 'flex', 'important');
-
-    const userIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-
-    if (user) {
-        const userData = JSON.parse(user);
-        userBtn.classList.add('logged-in');
-        userBtn.innerHTML = `${userIcon}<span>${userData.username || 'Meu Perfil'}</span>`;
-        userBtn.title = userData.username || 'Meu Perfil';
-        userBtn.onclick = (e) => {
-            e.preventDefault();
-            window.location.href = './orders.html';
-        };
-    } else {
-        userBtn.classList.remove('logged-in');
-        userBtn.onclick = null;
-        userBtn.innerHTML = `${userIcon}<span>Área do Cliente</span>`;
-        userBtn.title = 'Área do Cliente';
-
-        const path = window.location.pathname;
-        let loginPath = '../login/login.html';
-        if (path.includes('/login/')) loginPath = './login.html';
-        else if (path.endsWith('index.html') && !path.includes('/home/')) loginPath = 'login/login.html';
-
-        userBtn.href = loginPath;
-    }
-}
 
 function renderUserOrders() {
     const list = document.getElementById('my-orders-list');
