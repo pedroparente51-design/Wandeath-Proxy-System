@@ -13,28 +13,19 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            REPO_NAME=$(basename ${{ github.repository }})
+            TARGET="wandeath.com"
+            cd /var/www/$TARGET || exit 1
             
-            # Descobre qual é a pasta certa baseada no nome do repositório
-            if [ "$REPO_NAME" == "wandeath" ]; then 
-              TARGET="wandeath.com"
-            else 
-              TARGET="joaoreidosbugs.com"
-            fi
-            
-            cd /var/www/$TARGET
-            
-            # Avisa o git que esta pasta é segura
+            # Garante que o git não reclame de permissão
             git config --global --add safe.directory /var/www/$TARGET
             
-            # Se a pasta estiver vazia, clona. Se já tiver o site, apenas atualiza.
-            if [ ! -d ".git" ]; then
-              git clone git@github.com:pedroparente51-design/$REPO_NAME.git .
-            else
-              git fetch origin main
-              git reset --hard origin/main
-            fi
+            # Sincroniza com o GitHub usando a chave de deploy
+            ssh-agent sh -c 'ssh-add /root/.ssh/gha_deploy; git fetch origin main && git reset --hard origin/main'
             
-            # Ajusta permissões e avisa o Nginx
-            sudo chown -R deployer:www-data /var/www/$TARGET
-            sudo systemctl reload nginx
+            # Ajusta permissões para o servidor web
+            chown -R deployer:www-data /var/www/$TARGET
+            chmod -R 775 /var/www/$TARGET
+            
+            # Recarrega o Nginx para aplicar qualquer mudança (se necessário)
+            systemctl reload nginx
+            echo "🚀 Deploy concluído com sucesso em $TARGET!"
