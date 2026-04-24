@@ -258,9 +258,15 @@ function renderStoreProducts(filter = 'all') {
     if (filter === 'all') {
         // Prioritize specific tags for highlights, or just the first 3
         const highlights = products.filter(p => 
-            p.tag && (p.tag.includes('DESTACADO') || p.tag.includes('MAIS VENDIDO') || p.tag.includes('Premium') || p.tag.includes('Destaque'))
+            p.tag && (
+                p.tag.includes('DESTACADO') || 
+                p.tag.includes('MAIS VENDIDO') || 
+                p.tag.includes('Premium') || 
+                p.tag.includes('Destaque') || 
+                p.tag.includes('Contingência')
+            )
         );
-        filteredProducts = highlights.length > 0 ? highlights : products.slice(0, 3);
+        filteredProducts = highlights.length > 0 ? highlights : products.slice(0, 4);
         
         // Add featured layout for the highlights section
         grid.classList.add('featured-layout');
@@ -651,6 +657,9 @@ function checkLoginState() {
             } catch (e) { }
         }
 
+        const isSubDir = window.location.pathname.includes('/produto/') || window.location.pathname.includes('/login/') || window.location.pathname.includes('/pedidos/') || window.location.pathname.includes('/carrinho/');
+        const prefix = isSubDir ? '../' : './';
+
         userBtn.outerHTML = `
             <div class="nav-dropdown profile-dropdown">
                 <a href="javascript:void(0);" class="header-user-btn dropdown-toggle" style="display: flex; align-items: center; gap: 10px;">
@@ -663,7 +672,7 @@ function checkLoginState() {
                     </div>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="./pedidos/pedidos.html"><i data-lucide="package" style="width: 16px;"></i> Meus Pedidos</a>
+                    <a href="${prefix}pedidos/pedidos.html"><i data-lucide="package" style="width: 16px;"></i> Meus Pedidos</a>
                     <div style="height: 1px; background: var(--border); margin: 5px 0;"></div>
                     <a href="#" onclick="window.wandeathLogout(event)" style="color: #ff4a4a;"><i data-lucide="log-out" style="width: 16px;"></i> Sair da conta</a>
                 </div>
@@ -1018,9 +1027,12 @@ function initSearchSuggestions() {
                 p.category.toLowerCase().includes(term)
             ).slice(0, 6);
 
+            const isSubDirLocal = window.location.pathname.includes('/produto/') || window.location.pathname.includes('/login/') || window.location.pathname.includes('/pedidos/') || window.location.pathname.includes('/carrinho/');
+            const prefixLocal = isSubDirLocal ? '../' : './';
+
             if (matches.length > 0) {
                 suggestionsBox.innerHTML = matches.map(p => `
-                    <div class="suggestion-item" onclick="window.location.href='./produto/produto.html?name=${encodeURIComponent(p.name)}'" style="
+                    <div class="suggestion-item" onclick="window.location.href='${prefixLocal}produto/produto.html?name=${encodeURIComponent(p.name)}'" style="
                         padding: 12px 20px;
                         display: flex;
                         align-items: center;
@@ -1029,7 +1041,7 @@ function initSearchSuggestions() {
                         border-bottom: 1px solid rgba(255,255,255,0.05);
                         transition: 0.2s;
                     ">
-                        <img src="${p.image || './image.png'}" style="width: 35px; height: 35px; border-radius: 4px; object-fit: cover;">
+                        <img src="${p.image.startsWith('http') ? p.image : prefixLocal + p.image}" style="width: 35px; height: 35px; border-radius: 4px; object-fit: cover;">
                         <div style="flex: 1;">
                             <div style="font-size: 13px; font-weight: 700; color: #fff;">${p.name}</div>
                             <div style="font-size: 11px; color: var(--primary);">R$ ${parseFloat(p.price).toFixed(2)}</div>

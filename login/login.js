@@ -1,29 +1,147 @@
 /* 
-   CALIXTO VIP - ELITE ENGINE
-   Neural network particles + Mouse glow + Scroll effects
+   Wandeath VIP - Login Engine
+   Extracted from inline HTML for better performance and organization.
 */
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
     initMouseGlow();
-    initScrollReveal();
-    initScrollProgress();
     initNeuralNetwork();
-    initFAQ();
+
+    // Form Submissions
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
+
+    // Social Buttons
+    const googleBtn = document.querySelector('.btn-google');
+    const discordBtn = document.querySelector('.btn-discord');
+
+    if (googleBtn) {
+        googleBtn.addEventListener('click', e => {
+            e.preventDefault();
+            simulateOAuth('Google', 'google_user@gmail.com', 'Usuário Google');
+        });
+    }
+    if (discordBtn) {
+        discordBtn.addEventListener('click', e => {
+            e.preventDefault();
+            simulateOAuth('Discord', 'discord_user#1234', 'Usuário Discord');
+        });
+    }
 });
 
-/* ─── Mouse Follow Glow ─────────────────────────── */
+function toggleAuth(e) {
+    e.preventDefault();
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const title = document.getElementById('auth-title');
+    const subtitle = document.getElementById('auth-subtitle');
+    const footerText = document.getElementById('auth-footer-text');
+    const divider = document.getElementById('auth-divider');
+
+    if (loginForm.style.display !== 'none') {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        title.innerText = 'Crie sua conta';
+        subtitle.innerText = 'Comece sua jornada elite no Wandeath VIP.';
+        divider.innerText = 'OU CADASTRE COM E-MAIL';
+        footerText.innerHTML = 'Já tem uma conta? <a href="#" onclick="toggleAuth(event)">Entre aqui</a>';
+    } else {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        title.innerText = 'Acesse sua conta';
+        subtitle.innerText = 'Seja bem-vindo de volta ao ecossistema VIP.';
+        divider.innerText = 'OU COM E-MAIL';
+        footerText.innerHTML = 'Não tem uma conta? <a href="#" onclick="toggleAuth(event)">Crie agora</a>';
+    }
+}
+window.toggleAuth = toggleAuth;
+
+function handleRegister(e) {
+    e.preventDefault();
+    const inputs = this.querySelectorAll('input');
+    const name = inputs[0].value;
+    const email = inputs[1].value;
+    const password = inputs[2].value;
+
+    const user = { name, email, password };
+    localStorage.setItem('wandeath_user', JSON.stringify(user));
+
+    alert('Conta criada com sucesso! Redirecionando...');
+    localStorage.setItem('wandeath_logged_in', 'true');
+    window.location.href = '../index.html';
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    const inputs = this.querySelectorAll('input');
+    const email = inputs[0].value;
+    const password = inputs[1].value;
+
+    const storedData = localStorage.getItem('wandeath_user');
+    if (storedData) {
+        const user = JSON.parse(storedData);
+        if (user.email === email && user.password === password) {
+            localStorage.setItem('wandeath_logged_in', 'true');
+            alert('Login realizado com sucesso! Bem-vindo de volta, ' + user.name);
+            window.location.href = '../index.html';
+            return;
+        }
+    }
+
+    if (email === 'admin@admin.com' && password === 'admin') {
+        localStorage.setItem('wandeath_logged_in', 'true');
+        alert('Login de Administrador realizado!');
+        window.location.href = '../index.html';
+    } else {
+        alert('E-mail ou senha incorretos! (Tente criar uma conta primeiro ou use admin@admin.com / admin)');
+    }
+}
+
+function simulateOAuth(provider, mockEmail, mockName) {
+    const width = 500;
+    const height = 600;
+    const left = (window.innerWidth / 2) - (width / 2);
+    const top = (window.innerHeight / 2) - (height / 2);
+
+    const popup = window.open('', '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+
+    let color = provider === 'Google' ? '#fff' : '#5865F2';
+    let bg = provider === 'Google' ? '#111' : '#36393f';
+
+    popup.document.write(`
+        <html style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 50px; background: ${bg}; color: #fff;">
+            <h2 style="margin-top: 40px;">Conectando com ${provider}...</h2>
+            <p style="color: #aaa;">Aguardando autorização segura.</p>
+            <div style="margin: 50px auto; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: ${color}; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+        </html>
+    `);
+
+    setTimeout(() => {
+        popup.close();
+        const user = { name: mockName, email: mockEmail, provider: provider };
+        localStorage.setItem('wandeath_user', JSON.stringify(user));
+        localStorage.setItem('wandeath_logged_in', 'true');
+        alert('Autenticado via ' + provider + ' com sucesso!');
+        window.location.href = '../index.html';
+    }, 2500);
+}
+
+/* ─── Neural Network & Mouse Effects ─── */
 function initMouseGlow() {
     const glow = document.getElementById('mouse-glow');
     if (!glow) return;
-
     let mouseX = 0, mouseY = 0;
     let ballX = 0, ballY = 0;
-
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
     function animate() {
         ballX += (mouseX - ballX) * 0.08;
         ballY += (mouseY - ballY) * 0.08;
@@ -34,165 +152,21 @@ function initMouseGlow() {
     animate();
 }
 
-/* ─── Scroll Reveal ─────────────────────────────── */
-function initScrollReveal() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('rx-reveal--visible');
-            }
-        });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.rx-reveal').forEach(el => observer.observe(el));
-}
-
-/* ─── Scroll Progress Bar ───────────────────────── */
-function initScrollProgress() {
-    const bar = document.getElementById('scroll-bar');
-    if (!bar) return;
-    window.addEventListener('scroll', () => {
-        const h = document.documentElement;
-        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-        bar.style.width = pct + '%';
-    });
-}
-
-/* ─── Neural Network Canvas ─────────────────────── */
 function initNeuralNetwork() {
     const canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-
     let W, H, particles = [];
-    let mouse = { x: -9999, y: -9999 };
-    const COUNT       = 90;
-    const MAX_DIST    = 160;
-    const MOUSE_DIST  = 200;
-
-    /* Colors from CSS vars (match #ee0000) */
-    const COL_DOT     = 'rgba(238, 0, 0, 0.55)';
-    const COL_LINE    = 'rgba(238, 0, 0, {o})';
-    const COL_MOUSE   = 'rgba(238, 0, 0, {o})';
-
-    function resize() {
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', () => { resize(); spawnParticles(); });
-    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
+    const COUNT = 60;
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
     class Particle {
-        constructor() { this.reset(true); }
-
-        reset(rand = false) {
-            this.x  = rand ? Math.random() * W : (Math.random() < 0.5 ? 0 : W);
-            this.y  = rand ? Math.random() * H : Math.random() * H;
-            this.vx = (Math.random() - 0.5) * 0.6;
-            this.vy = (Math.random() - 0.5) * 0.6;
-            this.r  = Math.random() * 1.8 + 0.4;
-            this.alpha = Math.random() * 0.5 + 0.3;
-        }
-
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            /* Subtle mouse attraction */
-            const dx = mouse.x - this.x;
-            const dy = mouse.y - this.y;
-            const d  = Math.sqrt(dx * dx + dy * dy);
-            if (d < MOUSE_DIST) {
-                this.x += dx * 0.004;
-                this.y += dy * 0.004;
-            }
-
-            /* Bounce off edges */
-            if (this.x < 0 || this.x > W) this.vx *= -1;
-            if (this.y < 0 || this.y > H) this.vy *= -1;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-            ctx.fillStyle = COL_DOT;
-            ctx.fill();
-        }
+        constructor() { this.reset(); }
+        reset() { this.x = Math.random() * W; this.y = Math.random() * H; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.r = Math.random()*2; }
+        update() { this.x += this.vx; this.y += this.vy; if(this.x<0||this.x>W)this.vx*=-1; if(this.y<0||this.y>H)this.vy*=-1; }
+        draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(238,0,0,0.4)'; ctx.fill(); }
     }
-
-    function spawnParticles() {
-        particles = [];
-        for (let i = 0; i < COUNT; i++) particles.push(new Particle());
-    }
-
-    function drawConnections() {
-        for (let i = 0; i < particles.length; i++) {
-            const a = particles[i];
-
-            /* Particle → Particle lines */
-            for (let j = i + 1; j < particles.length; j++) {
-                const b  = particles[j];
-                const dx = a.x - b.x;
-                const dy = a.y - b.y;
-                const d  = Math.sqrt(dx * dx + dy * dy);
-
-                if (d < MAX_DIST) {
-                    const opacity = (1 - d / MAX_DIST) * 0.18;
-                    ctx.strokeStyle = COL_LINE.replace('{o}', opacity);
-                    ctx.lineWidth   = 0.6;
-                    ctx.beginPath();
-                    ctx.moveTo(a.x, a.y);
-                    ctx.lineTo(b.x, b.y);
-                    ctx.stroke();
-                }
-            }
-
-            /* Particle → Mouse lines */
-            const mdx = a.x - mouse.x;
-            const mdy = a.y - mouse.y;
-            const md  = Math.sqrt(mdx * mdx + mdy * mdy);
-
-            if (md < MOUSE_DIST) {
-                const opacity = (1 - md / MOUSE_DIST) * 0.55;
-                ctx.strokeStyle = COL_MOUSE.replace('{o}', opacity);
-                ctx.lineWidth   = 1;
-                ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(mouse.x, mouse.y);
-                ctx.stroke();
-            }
-        }
-    }
-
-    function loop() {
-        ctx.clearRect(0, 0, W, H);
-        particles.forEach(p => { p.update(); p.draw(); });
-        drawConnections();
-        requestAnimationFrame(loop);
-    }
-
-    resize();
-    spawnParticles();
-    loop();
-}
-
-/* ─── FAQ Accordion ─────────────────────────────── */
-function initFAQ() {
-    document.querySelectorAll('.faq-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const content = item.querySelector('.faq-content');
-            const isOpen  = content.style.display === 'block';
-
-            /* Close all */
-            document.querySelectorAll('.faq-content').forEach(c => c.style.display = 'none');
-            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-
-            /* Toggle clicked */
-            if (!isOpen) {
-                content.style.display = 'block';
-                item.classList.add('open');
-            }
-        });
-    });
+    function spawn() { for(let i=0;i<COUNT;i++) particles.push(new Particle()); }
+    function loop() { ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
+    resize(); spawn(); loop();
 }
