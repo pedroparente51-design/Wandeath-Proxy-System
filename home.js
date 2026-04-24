@@ -21,31 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartBadge();
 });
 
-function initScrollReveal() {
-    const elements = document.querySelectorAll('.rx-reveal');
-    if (!elements.length) return;
-
-    if (!('IntersectionObserver' in window)) {
-        // Fallback: mostra tudo imediatamente
-        elements.forEach(el => el.classList.add('rx-reveal--visible'));
-        return;
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('rx-reveal--visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    elements.forEach(el => observer.observe(el));
-
-    // Expõe o observer para que outros scripts possam usá-lo
-    window.revealObserver = observer;
-}
-
 function initSearch() {
     // A busca agora é tratada majoritariamente pelo initSearchSuggestions para mostrar o dropdown.
     // Esta função pode ser mantida para busca via "Enter" se desejar, mas vamos desativar a atualização em tempo real no grid para não "quebrar" os destaques.
