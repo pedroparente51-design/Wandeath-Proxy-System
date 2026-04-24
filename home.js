@@ -269,36 +269,24 @@ https://wa.me/5592981794179
     filteredProducts.forEach(prod => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card rx-reveal';
-        
-        const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
-        const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
-        
-        // Stock logic: each line is 1 unit
-        const stockLines = prod.delivery ? prod.delivery.trim().split('\n') : [];
-        const stockCount = stockLines.length;
 
-        const isFeatured = filter === 'all';
-        const buttonsHtml = isFeatured ? `
-            <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Comprar agora</button>
-        ` : `
-            <input type="number" class="qty-input" value="${prod.minQty || 1}" min="${prod.minQty || 1}" max="${prod.maxQty || 100}" 
-                    style="width: 55px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; font-size: 12px;">
-            <button class="btn-buy" style="padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; cursor: pointer;" onclick="addToCart('${prod.name}', this)">Carrinho</button>
-            <button class="btn-buy btn-shine" style="flex: 1; padding: 10px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}', this)">Comprar</button>
-        `;
+        const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
+        const imgUrl  = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
+
+        // Descrição curta: primeiros 80 chars
+        const shortDesc = prod.description
+            ? (prod.description.length > 90 ? prod.description.substring(0, 90) + '…' : prod.description)
+            : 'Solução premium para máxima performance.';
 
         productCard.innerHTML = `
             ${tagHtml}
             <div class="product-img">
-                <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='../logo.png'">
+                <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='./logo.png'">
                 <div class="img-overlay"></div>
             </div>
             <div class="product-content">
                 <h4 class="product-title">🛜 ${prod.name}</h4>
-                <div class="stock-info" style="font-size: 11px; margin: 10px 0; display: flex; justify-content: space-between;">
-                    <span style="color: ${stockCount > 0 ? '#00ff66' : '#ff4a4a'}">Estoque: ${stockCount}</span>
-                    <span style="color: var(--text-sec)">Mín: ${prod.minQty || 1}</span>
-                </div>
+                <p class="product-desc">${shortDesc}</p>
                 <div class="price-section">
                     <div class="price-info">
                         <p class="price-val">R$ ${parseFloat(prod.price).toFixed(2)}</p>
@@ -307,13 +295,16 @@ https://wa.me/5592981794179
                     <div class="pix-badge"><span>☠</span></div>
                 </div>
             </div>
-            <div class="product-footer" style="display: flex; gap: 8px; align-items: center; padding: 15px;">
-                ${buttonsHtml}
+            <div class="product-footer">
+                <a href="./produto/produto.html?name=${encodeURIComponent(prod.name)}"
+                   class="btn-buy btn-shine"
+                   style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; background:var(--primary); border:none; border-radius:8px; color:#fff; font-weight:800; font-size:14px; cursor:pointer; text-decoration:none; transition:0.3s;">
+                    Ver Produto
+                </a>
             </div>
         `;
         grid.appendChild(productCard);
-        
-        // Observe new card for reveal
+
         if (window.revealObserver) window.revealObserver.observe(productCard);
     });
 
