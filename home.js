@@ -21,68 +21,59 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initSearch() {
+    // A busca agora é tratada majoritariamente pelo initSearchSuggestions para mostrar o dropdown.
+    // Esta função pode ser mantida para busca via "Enter" se desejar, mas vamos desativar a atualização em tempo real no grid para não "quebrar" os destaques.
     const searchInputs = document.querySelectorAll('.search-pill input');
     
     searchInputs.forEach(input => {
-        input.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const grid = document.getElementById('products-grid');
-            if (!grid) return;
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const term = e.target.value.toLowerCase().trim();
+                const grid = document.getElementById('products-grid');
+                if (!grid || !term) return;
 
-            // Se o campo estiver vazio, renderiza conforme o estado atual (abas)
-            if (term === '') {
-                const activeTab = document.querySelector('.tab-btn.active');
-                const filter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
-                renderStoreProducts(filter);
-                return;
-            }
+                const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+                const results = allProducts.filter(p => 
+                    p.name.toLowerCase().includes(term) || 
+                    p.category.toLowerCase().includes(term)
+                );
 
-            // Busca em todos os produtos do localStorage
-            const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-            const results = allProducts.filter(p => 
-                p.name.toLowerCase().includes(term) || 
-                p.category.toLowerCase().includes(term)
-            );
+                grid.innerHTML = '';
+                grid.classList.remove('featured-layout');
 
-            // Renderiza os resultados da busca
-            grid.innerHTML = '';
-            grid.classList.remove('featured-layout'); // Remove layout de destaque na busca para mostrar lista
+                if (results.length === 0) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-sec); padding: 40px;">Nenhum produto encontrado para "' + term + '".</p>';
+                    return;
+                }
 
-            if (results.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-sec); padding: 40px;">Nenhum produto encontrado para "' + term + '".</p>';
-                return;
-            }
-
-            results.forEach(prod => {
-                const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
-                const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
-                
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card rx-reveal';
-                productCard.innerHTML = `
-                    ${tagHtml}
-                    <div class="product-img">
-                        <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='../logo.png'">
-                        <div class="img-overlay"></div>
-                    </div>
-                    <div class="product-content">
-                        <h4 class="product-title">🛜 ${prod.name}</h4>
-                        <div class="price-section">
-                            <div class="price-info">
-                                <p class="price-val">R$ ${parseFloat(prod.price).toFixed(2)}</p>
-                                <p class="price-label">À vista no Pix</p>
+                results.forEach(prod => {
+                    const imgUrl = prod.image || 'https://via.placeholder.com/400x533/000/fff?text=Wandeath+VIP';
+                    const tagHtml = prod.tag ? `<div class="product-tag">${prod.tag}</div>` : '';
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card rx-reveal';
+                    productCard.innerHTML = `
+                        ${tagHtml}
+                        <div class="product-img">
+                            <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='../logo.png'">
+                            <div class="img-overlay"></div>
+                        </div>
+                        <div class="product-content">
+                            <h4 class="product-title">🛜 ${prod.name}</h4>
+                            <div class="price-section">
+                                <div class="price-info">
+                                    <p class="price-val">R$ ${parseFloat(prod.price).toFixed(2)}</p>
+                                    <p class="price-label">À vista no Pix</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="product-footer" style="padding: 15px; margin-top: auto;">
-                        <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Comprar agora</button>
-                    </div>
-                `;
-                grid.appendChild(productCard);
-                
-                // Forçar animação de entrada
-                setTimeout(() => productCard.classList.add('rx-reveal--visible'), 10);
-            });
+                        <div class="product-footer" style="padding: 15px; margin-top: auto;">
+                            <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Comprar agora</button>
+                        </div>
+                    `;
+                    grid.appendChild(productCard);
+                    setTimeout(() => productCard.classList.add('rx-reveal--visible'), 10);
+                });
+            }
         });
     });
 }
