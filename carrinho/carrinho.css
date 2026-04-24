@@ -27,9 +27,25 @@ body {
     min-height: 100vh;
 }
 
-/* Background Effects */
+/* Background Effects (Home Style) */
 .mesh-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, rgba(238,0,0,0.05) 0%, transparent 50%); z-index: -1; }
 .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; }
+
+.interactive-bg-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; z-index: -1; pointer-events: none; }
+.parallax-shape { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: float 20s infinite ease-in-out alternate; will-change: transform; }
+.shape-1 { width: 400px; height: 400px; background: rgba(238, 0, 0, 0.15); top: 10%; left: 10%; }
+.shape-2 { width: 500px; height: 500px; background: rgba(200, 0, 0, 0.1); bottom: 20%; right: 10%; animation-delay: -5s; }
+.shape-3 { width: 300px; height: 300px; background: rgba(255, 50, 50, 0.1); top: 40%; left: 50%; animation-delay: -10s; }
+
+.aurora-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; overflow: hidden; pointer-events: none; background: #050505; }
+.aurora-blob { position: absolute; filter: blur(120px); border-radius: 50%; animation: aurora-move 15s infinite alternate ease-in-out; }
+.aurora-blob--1 { width: 60vw; height: 60vh; background: rgba(238, 0, 0, 0.08); top: -20vh; left: -20vw; }
+.aurora-blob--2 { width: 50vw; height: 50vh; background: rgba(150, 0, 0, 0.06); bottom: -10vh; right: -10vw; animation-delay: -3s; }
+.aurora-blob--3 { width: 40vw; height: 40vh; background: rgba(255, 0, 0, 0.05); top: 50vh; left: 50vw; animation-delay: -7s; }
+
+@keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(100px, 50px) scale(1.1); } }
+@keyframes aurora-move { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.2) translate(5vw, -5vh); } 100% { transform: scale(0.9) translate(-5vw, 5vh); } }
+
 #mouse-glow { position: fixed; width: 600px; height: 600px; background: radial-gradient(circle, rgba(238, 0, 0, 0.06), transparent 70%); pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
