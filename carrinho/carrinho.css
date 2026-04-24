@@ -1112,7 +1112,7 @@ html, body {
 /* Sidebar */
 .checkout-sidebar {
     position: sticky;
-    top: 130px;
+    top: 100px;
 }
 
 .order-summary-card {
@@ -1197,115 +1197,4 @@ html, body {
 .form-group label {
     display: block;
     font-size: 12px;
-    font-weight: 700;
-    color: var(--text-sec);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-}
-
-.form-group input {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border);
-    padding: 15px;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-    transition: 0.3s;
-}
-
-.form-group input:focus {
-    border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.order-summary-card {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border);
-    padding: 30px;
-    border-radius: 20px;
-    position: sticky;
-    top: 20px;
-}
-
-.order-summary-card h4 {
-    font-size: 18px;
-    margin-bottom: 25px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.summary-product {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 20px;
-}
-
-.summary-prod-info strong {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-
-.summary-prod-info span {
-    color: var(--primary);
-    font-weight: 800;
-}
-
-.summary-details {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.summary-line {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: var(--text-sec);
-}
-
-.summary-line.total {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 2px solid var(--border);
-    font-size: 24px;
-    font-weight: 900;
-    color: #fff;
-}
-
-.btn-checkout-pay {
-    width: 100%;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    padding: 20px;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 30px;
-    transition: 0.3s;
-}
-
-.btn-checkout-pay:hover {
-    background: #ff2222;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(238, 0, 0, 0.3);
-}
-
-.secure-text {
-    text-align: center;
-    font-size: 11px;
-    color: var(--text-sec);
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
+/* Limpeza de redundâncias finalizada */
