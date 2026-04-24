@@ -870,18 +870,13 @@ function initNeuralNetwork() {
 function initFAQ() {
     document.querySelectorAll('.faq-item').forEach(item => {
         item.addEventListener('click', () => {
-            const content = item.querySelector('.faq-content');
-            const isOpen = content.style.display === 'block';
+            const isOpen = item.classList.contains('open');
 
-            /* Close all */
-            document.querySelectorAll('.faq-content').forEach(c => c.style.display = 'none');
+            // Fecha todos
             document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
 
-            /* Toggle clicked */
-            if (!isOpen) {
-                content.style.display = 'block';
-                item.classList.add('open');
-            }
+            // Abre o clicado (se estava fechado)
+            if (!isOpen) item.classList.add('open');
         });
     });
 }
