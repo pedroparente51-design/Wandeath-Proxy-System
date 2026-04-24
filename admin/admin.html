@@ -10,6 +10,21 @@
 </head>
 
 <body>
+    <!-- Admin Login Overlay -->
+    <div id="admin-login-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a0a; z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center;">
+            <img src="../image.png" alt="Logo" style="height: 60px; margin-bottom: 30px;">
+            <h2 style="color: #fff; margin-bottom: 20px;">Acesso Restrito</h2>
+            <p style="color: var(--text-sec); margin-bottom: 30px; font-size: 14px;">Faça login com o e-mail de administrador.</p>
+            <form id="admin-login-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="email" id="admin-email" placeholder="E-mail" required style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
+                <input type="password" id="admin-pass" placeholder="Senha" required style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
+                <button type="submit" style="background: #ee0000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">Entrar no Painel</button>
+            </form>
+            <p id="admin-login-error" style="color: #ff4a4a; font-size: 13px; margin-top: 15px; display: none;">Credenciais inválidas!</p>
+        </div>
+    </div>
+
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">

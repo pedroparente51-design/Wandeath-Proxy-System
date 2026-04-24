@@ -218,8 +218,10 @@ https://wa.me/5592981794179
 
         const isFeatured = filter === 'all';
         const buttonsHtml = isFeatured ? `
-            <button class="btn-buy btn-shine" style="flex: 1; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}', this)">Comprar agora</button>
+            <button class="btn-buy btn-shine" style="width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}')">Comprar agora</button>
         ` : `
+            <input type="number" class="qty-input" value="${prod.minQty || 1}" min="${prod.minQty || 1}" max="${prod.maxQty || 100}" 
+                    style="width: 55px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; font-size: 12px;">
             <button class="btn-buy" style="padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; cursor: pointer;" onclick="addToCart('${prod.name}', this)">Carrinho</button>
             <button class="btn-buy btn-shine" style="flex: 1; padding: 10px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${prod.name}', this)">Comprar</button>
         `;
@@ -232,7 +234,6 @@ https://wa.me/5592981794179
             </div>
             <div class="product-content">
                 <h4 class="product-title">🛜 ${prod.name}</h4>
-                <p class="product-desc">${prod.description || 'Solução premium para máxima performance.'}</p>
                 <div class="stock-info" style="font-size: 11px; margin: 10px 0; display: flex; justify-content: space-between;">
                     <span style="color: ${stockCount > 0 ? '#00ff66' : '#ff4a4a'}">Estoque: ${stockCount}</span>
                     <span style="color: var(--text-sec)">Mín: ${prod.minQty || 1}</span>
@@ -246,8 +247,6 @@ https://wa.me/5592981794179
                 </div>
             </div>
             <div class="product-footer" style="display: flex; gap: 8px; align-items: center; padding: 15px;">
-                <input type="number" class="qty-input" value="${prod.minQty || 1}" min="${prod.minQty || 1}" max="${prod.maxQty || 100}" 
-                    style="width: 55px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; font-size: 12px;">
                 ${buttonsHtml}
             </div>
         `;

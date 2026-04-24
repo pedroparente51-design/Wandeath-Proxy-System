@@ -1,9 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const chatMessages = document.getElementById('admin-chat-messages');
-    const chatInput = document.getElementById('admin-chat-input');
-    const sendBtn = document.getElementById('admin-chat-send');
+    // Admin Login Logic
+    const adminOverlay = document.getElementById('admin-login-overlay');
+    const adminForm = document.getElementById('admin-login-form');
+    const adminError = document.getElementById('admin-login-error');
+    
+    // Configurações de acesso restrito
+    const ADMIN_EMAIL = 'admin@wandeath.com';
+    const ADMIN_PASS = 'admin123';
 
-    // Sidebar Navigation Logic
+    if (localStorage.getItem('wandeath_admin_logged') === 'true') {
+        adminOverlay.style.display = 'none';
+    }
+
+    if (adminForm) {
+        adminForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+                localStorage.setItem('wandeath_admin_logged', 'true');
+                adminOverlay.style.display = 'none';
+            } else {
+                adminError.style.display = 'block';
+            }
+        });
+    }
+
+    // Função para sair do admin
+    window.adminLogout = function() {
+        localStorage.removeItem('wandeath_admin_logged');
+        window.location.reload();
+    };
+
+    // Ajusta o botão de voltar à loja para deslogar também do painel admin, se quiser.
+    // Mas o mais seguro é adicionar um botão "Sair" ou apenas deixar o admin_logged persistente.
+    // Vou substituir a ação do botão "Voltar à Loja" para fazer o logout do painel.
+    const returnBtn = document.querySelector('.return-btn');
+    if (returnBtn) {
+        returnBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('wandeath_admin_logged');
+            window.location.href = '../index.html';
+        });
+    }
+
+    const chatMessages = document.getElementById('admin-chat-messages');
     const pageTitle = document.getElementById('page-title');
     const navItems = {
         'nav-dashboard': 'section-dashboard',
