@@ -1062,6 +1062,6 @@ function initSearchSuggestions() {
                 suggestionsBox.style.display = 'none';
             }
         });
-    }
+    });
 }
 
