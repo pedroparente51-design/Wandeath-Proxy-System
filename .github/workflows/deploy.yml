@@ -19,13 +19,14 @@ jobs:
             # Garante que o git não reclame de permissão
             git config --global --add safe.directory /var/www/$TARGET
             
-            # Sincroniza com o GitHub usando a chave de deploy
-            ssh-agent sh -c 'ssh-add /root/.ssh/gha_deploy; git fetch origin main && git reset --hard origin/main'
+            # Sincroniza com o GitHub via HTTPS (Garante que não falhe por falta de chave SSH interna)
+            git fetch origin main
+            git reset --hard origin/main
             
-            # Ajusta permissões para o servidor web
+            # Ajusta permissões para o usuário 'deployer'
             chown -R deployer:www-data /var/www/$TARGET
             chmod -R 775 /var/www/$TARGET
             
-            # Recarrega o Nginx para aplicar qualquer mudança (se necessário)
+            # Recarrega o Nginx
             systemctl reload nginx
             echo "🚀 Deploy concluído com sucesso em $TARGET!"
