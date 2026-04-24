@@ -58,9 +58,9 @@ function getProductsByCategory(category) {
     // Sync default products if empty
     if (products.length === 0) {
         products = [
-            { name: "Residencial Rotativa", price: "9.19", category: "rotativa", image: "../img-rotativa/1gb.png", tag: "Mais utilizado", description: "IPs residenciais com alta reputação.", delivery: "proxy-rot:1234:user:pass", minQty: 1, maxQty: 100 },
-            { name: "Rotativa Mobile Premium", price: "27.79", category: "rotativa", image: "../img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G).", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
-            { name: "Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados estáveis.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
+            { name: "Proxy Residencial Rotativa", price: "13.99", category: "rotativa", image: "../img-rotativa/1gb.png", tag: "Mais vendido", description: "IPs residenciais rotativos com alta reputação e baixa detecção.", delivery: "proxy-rot:1234:user:pass", minQty: 1, maxQty: 100 },
+            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "../img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G) para máxima autenticidade.", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
+            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados e estáveis para operações de longa duração.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
         ];
         localStorage.setItem('wandeath_products', JSON.stringify(products));
     }
@@ -106,39 +106,47 @@ function generateCardHTML(p) {
 }
 
 function renderRotativas() {
-    console.log('Rendering Rotativas...');
     const grid = document.getElementById('rotativa-grid');
     if (grid) {
         const products = getProductsByCategory('rotativa');
-        console.log('Found rotativa products:', products.length);
-        
         if (products.length === 0) {
             grid.innerHTML = '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy rotativa cadastrada.</p>';
             return;
         }
         grid.innerHTML = products.map(generateCardHTML).join('');
-        if (window.revealObserver) {
-            grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
+        if (window.revealObserver) grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
+        lucide.createIcons();
+    }
+}
+
+function renderMobile() {
+    const grid = document.getElementById('mobile-grid');
+    if (grid) {
+        const products = getProductsByCategory('mobile');
+        if (products.length === 0) {
+            grid.innerHTML = '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy mobile cadastrada.</p>';
+            return;
         }
+        grid.innerHTML = products.map(generateCardHTML).join('');
+        if (window.revealObserver) grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
         lucide.createIcons();
     }
 }
 
 function renderFixas() {
-    console.log('Rendering Fixas...');
     const grid = document.getElementById('fixa-grid');
     if (grid) {
         const products = getProductsByCategory('fixa');
-        console.log('Found fixa products:', products.length);
-
         if (products.length === 0) {
             grid.innerHTML = '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy fixa cadastrada.</p>';
             return;
         }
         grid.innerHTML = products.map(generateCardHTML).join('');
-        if (window.revealObserver) {
-            grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
-        }
+        if (window.revealObserver) grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
         lucide.createIcons();
     }
 }
+
+window.renderRotativas = renderRotativas;
+window.renderMobile = renderMobile;
+window.renderFixas = renderFixas;
