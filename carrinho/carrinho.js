@@ -45,24 +45,21 @@ function renderCart() {
         const row = document.createElement('div');
         row.className = 'cart-item';
         row.innerHTML = `
-            <div class="cart-item-info">
-                <img src="${prod.image || '../image.png'}" alt="${prod.name}">
-                <div>
-                    <h4>${prod.name}</h4>
-                    <p>R$ ${parseFloat(prod.price).toFixed(2)} / unidade</p>
+            <img src="${prod.image || '../image.png'}" alt="${prod.name}">
+            <div class="info">
+                <h5>${prod.name}</h5>
+                <div class="cart-item-qty" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                    <button onclick="updateCartQty(${index}, -1)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;">-</button>
+                    <span style="font-size: 13px; font-weight: 700;">${item.qty}</span>
+                    <button onclick="updateCartQty(${index}, 1)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;">+</button>
                 </div>
             </div>
-            <div class="cart-item-qty">
-                <button onclick="updateCartQty(${index}, -1)">-</button>
-                <span>${item.qty}</span>
-                <button onclick="updateCartQty(${index}, 1)">+</button>
-            </div>
-            <div class="cart-item-total">
+            <div class="price">
                 R$ ${totalItem.toFixed(2)}
+                <button class="cart-item-remove" onclick="removeCartItem(${index})" style="background: none; border: none; color: #ff4a4a; cursor: pointer; margin-left: 15px; vertical-align: middle;">
+                    <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                </button>
             </div>
-            <button class="cart-item-remove" onclick="removeCartItem(${index})">
-                <i data-lucide="trash-2"></i>
-            </button>
         `;
         list.appendChild(row);
 
@@ -101,11 +98,10 @@ function removeCartItem(index) {
 }
 
 function updateTotals(subtotal) {
-    const subtotalEl = document.getElementById('final-subtotal');
-    const totalEl = document.getElementById('final-total');
-    const payBtnTotal = document.getElementById('checkout-total-btn');
-    const discountLine = document.getElementById('discount-line');
-    const discountEl = document.getElementById('summary-discount');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-final-total');
+    const discountLine = document.getElementById('cart-discount-line');
+    const discountEl = document.getElementById('cart-discount-val');
 
     let total = subtotal;
     let discountVal = 0;
@@ -124,7 +120,6 @@ function updateTotals(subtotal) {
 
     if (subtotalEl) subtotalEl.innerText = `R$ ${subtotal.toFixed(2)}`;
     if (totalEl) totalEl.innerText = `R$ ${total.toFixed(2)}`;
-    if (payBtnTotal) payBtnTotal.innerText = `R$ ${total.toFixed(2)}`;
     
     window.lastSubtotal = subtotal;
     window.lastTotal = total;
