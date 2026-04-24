@@ -177,15 +177,24 @@ function initCheckoutActions() {
     const confirmBtn = document.getElementById('confirm-payment-btn');
     if (confirmBtn) {
         confirmBtn.onclick = () => {
-            const name = document.getElementById('checkout-name').value;
-            const email = document.getElementById('checkout-email').value;
+            const nameEl = document.getElementById('checkout-name');
+            const emailEl = document.getElementById('checkout-email');
+            
+            if (!nameEl || !emailEl) return console.error('Campos de checkout não encontrados');
+            
+            const name = nameEl.value.trim();
+            const email = emailEl.value.trim();
             
             if (!name || !email) {
-                return alert('Por favor, preencha todos os dados de contato.');
+                alert('Por favor, preencha seu nome e e-mail para receber os produtos.');
+                return;
             }
 
             const cart = getCart();
-            if (cart.length === 0) return alert('Seu carrinho está vazio.');
+            if (cart.length === 0) {
+                alert('Seu carrinho está vazio.');
+                return;
+            }
             
             startPaymentProcess(name, email);
         };
