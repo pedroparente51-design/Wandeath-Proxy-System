@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout - Wandeath VIP</title>
+    <link rel="stylesheet" href="./carrinho.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="rx-theme-rh7">
+    <div id="mouse-glow"></div>
+    <div class="mesh-gradient"></div>
+    <div class="grid-overlay"></div>
+    <div class="rx-scroll-progress" id="scroll-bar"></div>
+
+    <!-- Topbar -->
+    <div class="rx-topbar">
+        <a class="rx-topbar__link" href="../home/index.html#produtos">
+            🔥 WANDEATH VIP • MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO
+        </a>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-inner">
+            <a href="../home/index.html" class="logo">
+                <img src="../image.png" alt="Wandeath VIP">
+            </a>
+            <div class="header-right">
+                <a href="../home/index.html" class="header-user-btn">
+                    <i data-lucide="arrow-left"></i>
+                    <span>Voltar à Loja</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-wrap" style="padding-top: 150px; padding-bottom: 100px;">
+        <div class="container">
+            <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 40px;">Finalizar <span>Compra</span></h2>
+            
+            <div class="checkout-grid">
+                <!-- Left: Cart Items & Contact -->
+                <div class="checkout-main">
+                    <section class="checkout-section" style="margin-bottom: 40px;">
+                        <h4 style="display:flex; align-items:center; gap:12px; margin-bottom:20px;"><i data-lucide="shopping-bag" style="color:var(--primary);"></i> Seus Itens</h4>
+                        <div id="cart-items-list" class="cart-items">
+                            <!-- Items rendered via JS -->
+                        </div>
+                    </section>
+
+                    <section class="checkout-section" style="margin-bottom: 40px;">
+                        <h4 style="display:flex; align-items:center; gap:12px; margin-bottom:20px;"><i data-lucide="user" style="color:var(--primary);"></i> Suas Informações</h4>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 30px; border-radius: var(--radius); display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label style="display:block; font-size:11px; font-weight:800; color:var(--text-sec); text-transform:uppercase; margin-bottom:8px;">Nome completo</label>
+                                <input type="text" id="checkout-name" placeholder="Seu nome" style="width:100%; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:12px; border-radius:8px; color:#fff; outline:none;">
+                            </div>
+                            <div class="form-group">
+                                <label style="display:block; font-size:11px; font-weight:800; color:var(--text-sec); text-transform:uppercase; margin-bottom:8px;">Email</label>
+                                <input type="email" id="checkout-email" placeholder="seu@email.com" style="width:100%; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:12px; border-radius:8px; color:#fff; outline:none;">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-section">
+                        <h4 style="display:flex; align-items:center; gap:12px; margin-bottom:20px;"><i data-lucide="credit-card" style="color:var(--primary);"></i> Método de Pagamento</h4>
+                        <div style="background: rgba(238,0,0,0.05); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius); display: flex; align-items: center; gap: 20px;">
+                            <div style="width:60px; height:40px; background:#000; border:1px solid rgba(0,255,102,0.2); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#00ff66;">PIX</div>
+                            <div>
+                                <strong style="display:block; font-size:15px;">Pagar com Pix</strong>
+                                <span style="font-size:12px; color:var(--text-sec);">Aprovação instantânea • Entrega imediata</span>
+                            </div>
+                            <div style="margin-left:auto; width:20px; height:20px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                <i data-lucide="check" style="width:12px; color:#fff;"></i>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right: Summary -->
+                <div class="checkout-sidebar">
+                    <div class="order-summary-card">
+                        <h4 style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid var(--border);">
+                            Resumo do Pedido <i data-lucide="shield-check" style="color:#22c55e;"></i>
+                        </h4>
+                        
+                        <div id="cart-summary-items"></div>
+                        
+                        <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+
+                        <!-- Cupom -->
+                        <div class="coupon-box" style="margin-bottom: 25px;">
+                            <label style="display:block; font-size:11px; font-weight:800; color:var(--text-sec); text-transform:uppercase; margin-bottom:8px;">Cupom de Desconto</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="cart-coupon-input" placeholder="CÓDIGO" style="flex:1; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:10px; border-radius:8px; color:#fff; font-size:12px; outline:none;">
+                                <button onclick="applyCartCoupon()" style="background:var(--primary); color:#fff; border:none; padding:0 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:11px;">APLICAR</button>
+                            </div>
+                            <div id="coupon-msg" style="font-size:11px; margin-top:8px;"></div>
+                        </div>
+
+                        <div class="summary-line" style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-sec); font-size:14px;">
+                            <span>Subtotal</span>
+                            <span id="final-subtotal">R$ 0,00</span>
+                        </div>
+                        <div id="discount-line" class="summary-line" style="display:none; justify-content:space-between; margin-bottom:12px; color:#22c55e; font-size:14px;">
+                            <span>Desconto</span>
+                            <span id="summary-discount">- R$ 0,00</span>
+                        </div>
+                        <div class="summary-line" style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-sec); font-size:14px;">
+                            <span>Entrega</span>
+                            <span style="color:#22c55e;">Grátis (Auto)</span>
+                        </div>
+                        
+                        <div class="summary-total" style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700;">Total</span>
+                            <span id="final-total" style="font-size:24px; font-weight:900; color:var(--primary);">R$ 0,00</span>
+                        </div>
+
+                        <button id="confirm-payment-btn" style="width:100%; background:var(--primary); color:#fff; border:none; padding:18px; border-radius:12px; font-size:16px; font-weight:900; margin-top:25px; cursor:pointer; transition:0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(238,0,0,0.3)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                            Finalizar Compra 🚀
+                        </button>
+                    </div>
+                    
+                    <div style="text-align:center; margin-top:20px; color:var(--text-sec); font-size:12px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i data-lucide="lock" style="width:14px;"></i> Pagamento 100% Seguro via Mercado Pago
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer" style="padding: 50px 0; border-top: 1px solid var(--border); background: #050505;">
+        <div class="container" style="text-align: center;">
+            <p style="color: var(--text-sec); font-size: 13px;">&copy; 2026 Wandeath VIP. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="./carrinho.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

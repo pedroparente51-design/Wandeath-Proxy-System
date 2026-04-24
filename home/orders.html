@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meus Pedidos - Wandeath VIP</title>
+    <link rel="stylesheet" href="./home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .orders-page {
+            padding: 140px 0 80px;
+            min-height: 100vh;
+        }
+
+        .orders-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sec);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .page-header h1 span {
+            color: var(--primary);
+        }
+
+        .orders-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            transition: 0.3s;
+        }
+
+        .order-card:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .order-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .order-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .order-date {
+            font-size: 13px;
+            color: var(--text-sec);
+        }
+
+        .order-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .order-body {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .order-body label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .delivery-content {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #fff;
+            line-height: 1.6;
+            word-break: break-all;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+
+        .no-orders i {
+            width: 60px;
+            height: 60px;
+            color: var(--text-sec);
+            margin-bottom: 20px;
+        }
+
+        .no-orders h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .no-orders p {
+            color: var(--text-sec);
+            margin-bottom: 30px;
+        }
+
+        .btn-browse {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 800;
+            transition: 0.3s;
+        }
+
+        .btn-browse:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(238, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body class="rx-theme-rh7">
+    <div id="mouse-glow"></div>
+    <div class="mesh-gradient"></div>
+
+    <div class="orders-page">
+        <div class="orders-container">
+            <a href="index.html" class="back-link">
+                <i data-lucide="arrow-left"></i> Voltar para a Loja
+            </a>
+
+            <div class="page-header">
+                <h1>Meus <span>Pedidos</span></h1>
+                <div id="user-badge" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 8px 20px; border-radius: 50px; border: 1px solid var(--border);">
+                    <i data-lucide="user" style="width: 16px; color: var(--primary);"></i>
+                    <span id="display-username" style="font-size: 14px; font-weight: 700;">Cliente</span>
+                </div>
+            </div>
+
+            <div id="orders-list" class="orders-grid">
+                <!-- Orders will be rendered here -->
+                <div class="loader" style="margin: 40px auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+
+            const user = JSON.parse(localStorage.getItem('wandeath_user'));
+            if (user) {
+                document.getElementById('display-username').textContent = user.username;
+            } else {
+                window.location.href = '../login/login.html';
+            }
+
+            renderOrders();
+        });
+
+        function renderOrders() {
+            const list = document.getElementById('orders-list');
+            const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+
+            if (orders.length === 0) {
+                list.innerHTML = `
+                    <div class="no-orders">
+                        <i data-lucide="shopping-bag"></i>
+                        <h2>Nenhum pedido encontrado</h2>
+                        <p>Você ainda não realizou nenhuma compra em nossa plataforma.</p>
+                        <a href="index.html#produtos" class="btn-browse">Explorar Produtos</a>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            list.innerHTML = orders.reverse().map(order => `
+                <div class="order-card rx-reveal">
+                    <div class="order-head">
+                        <div class="order-info">
+                            <h3>${order.productName}</h3>
+                            <div class="order-date">
+                                <i data-lucide="calendar" style="width: 12px; display: inline-block; vertical-align: middle;"></i>
+                                ${new Date(order.date).toLocaleString('pt-BR')}
+                            </div>
+                        </div>
+                        <div class="order-price">R$ ${parseFloat(order.total).toFixed(2)}</div>
+                    </div>
+                    <div class="order-body">
+                        <label>Conteúdo da Entrega</label>
+                        <div class="delivery-content">
+                            ${order.delivery.split('\n').join('<br>')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+    </script>
+</body>
+
+</html>

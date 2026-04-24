@@ -1,0 +1,44 @@
+.proxy-page {
+    padding: 160px 0 80px;
+}
+
+.proxy-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.proxy-header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.proxy-header h1 span {
+    color: var(--primary);
+}
+
+.proxy-header p {
+    color: var(--text-sec);
+    font-size: 18px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-sec);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    transition: 0.3s;
+}
+
+.back-link:hover {
+    color: #fff;
+}
+
+.back-link i {
+    width: 16px;
+}

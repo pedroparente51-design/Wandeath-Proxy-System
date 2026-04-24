@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Wandeath VIP</title>
+    <link rel="stylesheet" href="./login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Specific Styles for Login Page */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            z-index: 100;
+        }
+
+        /* Reusing and refining the Tarot Card for the login box */
+        .auth-card {
+            background: var(--bg-card);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .auth-card::after {
+            content: '☠';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--gold);
+            opacity: 0.2;
+            font-size: 20px;
+        }
+
+        .auth-logo {
+            max-width: 140px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        p.subtitle {
+            color: var(--text-sec);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        /* Social Buttons */
+        .social-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .btn-google {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-google:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .btn-discord {
+            background: #5865F2;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-discord:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-sec);
+            font-size: 12px;
+            font-weight: 700;
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Email Form */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-alt);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(238, 0, 0, 0.4);
+        }
+
+        .auth-footer {
+            margin-top: 32px;
+            font-size: 14px;
+            color: var(--text-sec);
+        }
+
+        .auth-footer a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .auth-footer a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="rx-theme-rh7">
+    <!-- Reusing the background from index.html -->
+    <div class="mesh-gradient"></div>
+    <div class="grid-overlay"></div>
+    <div id="mouse-glow"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Floating Aurora Blobs -->
+    <div class="aurora-container">
+        <div class="aurora-blob aurora-blob--1"></div>
+        <div class="aurora-blob aurora-blob--2"></div>
+        <div class="aurora-blob aurora-blob--3"></div>
+        <div class="aurora-blob aurora-blob--4"></div>
+    </div>
+
+    <div class="login-container rx-reveal">
+        <div class="auth-card">
+            <a href="../home/index.html">
+                <img src="https://i.ibb.co/JRn4JGTk/Chat-GPT-Image-22-de-abr-de-2026-01-41-06.png" alt="Wandeath VIP"
+                    class="auth-logo">
+            </a>
+
+            <h2 id="auth-title">Acesse sua conta</h2>
+            <p class="subtitle" id="auth-subtitle">Seja bem-vindo de volta ao ecossistema VIP.</p>
+
+            <div class="social-group">
+                <a href="#" class="btn-social btn-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
+                        alt="Google">
+                    Entrar com Google
+                </a>
+                <a href="#" class="btn-social btn-discord">
+                    <i data-lucide="message-square"></i>
+                    Entrar com Discord
+                </a>
+            </div>
+
+            <div class="divider" id="auth-divider">OU COM E-MAIL</div>
+
+            <!-- Login Form -->
+            <form id="login-form" action="#" method="POST">
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="seu@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">ENTRAR NA CONTA</button>
+            </form>
+
+            <!-- Register Form (Hidden by default) -->
+            <form id="register-form" action="#" method="POST" style="display: none;">
+                <div class="input-group">
+                    <label>Nome Completo</label>
+                    <input type="text" placeholder="Como quer ser chamado?" required>
+                </div>
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="seu@melhor-email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" placeholder="Crie uma senha forte" required>
+                </div>
+                <button type="submit" class="btn-submit">CRIAR MINHA CONTA</button>
+            </form>
+
+            <div class="auth-footer" id="auth-footer-text">
+                Não tem uma conta? <a href="#" onclick="toggleAuth(event)">Crie agora</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="./login.js"></script>
+    <script>
+        lucide.createIcons();
+
+        function toggleAuth(e) {
+            e.preventDefault();
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const footerText = document.getElementById('auth-footer-text');
+            const divider = document.getElementById('auth-divider');
+
+            if (loginForm.style.display !== 'none') {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                title.innerText = 'Crie sua conta';
+                subtitle.innerText = 'Comece sua jornada elite no Wandeath VIP.';
+                divider.innerText = 'OU CADASTRE COM E-MAIL';
+                footerText.innerHTML = 'Já tem uma conta? <a href="#" onclick="toggleAuth(event)">Entre aqui</a>';
+            } else {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                title.innerText = 'Acesse sua conta';
+                subtitle.innerText = 'Seja bem-vindo de volta ao ecossistema VIP.';
+                divider.innerText = 'OU COM E-MAIL';
+                footerText.innerHTML = 'Não tem uma conta? <a href="#" onclick="toggleAuth(event)">Crie agora</a>';
+            }
+        }
+
+        // Mock Authentication Logic
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputs = this.querySelectorAll('input');
+            const name = inputs[0].value;
+            const email = inputs[1].value;
+            const password = inputs[2].value;
+
+            // Save to localStorage
+            const user = { name, email, password };
+            localStorage.setItem('wandeath_user', JSON.stringify(user));
+            
+            alert('Conta criada com sucesso! Redirecionando...');
+            
+            // Auto login
+            localStorage.setItem('wandeath_logged_in', 'true');
+            window.location.href = '../home/index.html';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputs = this.querySelectorAll('input');
+            const email = inputs[0].value;
+            const password = inputs[1].value;
+
+            const storedData = localStorage.getItem('wandeath_user');
+            if (storedData) {
+                const user = JSON.parse(storedData);
+                if (user.email === email && user.password === password) {
+                    localStorage.setItem('wandeath_logged_in', 'true');
+                    alert('Login realizado com sucesso! Bem-vindo de volta, ' + user.name);
+                    window.location.href = '../home/index.html';
+                    return;
+                }
+            }
+            
+            // Generic fallback if not matched or no user exists
+            if (email === 'admin@admin.com' && password === 'admin') {
+                localStorage.setItem('wandeath_logged_in', 'true');
+                alert('Login de Administrador realizado!');
+                window.location.href = '../home/index.html';
+            } else {
+                alert('E-mail ou senha incorretos! (Tente criar uma conta primeiro ou use admin@admin.com / admin)');
+            }
+        });
+
+        // Social Authentication Simulation
+        function simulateOAuth(provider, mockEmail, mockName) {
+            const width = 500;
+            const height = 600;
+            const left = (window.innerWidth / 2) - (width / 2);
+            const top = (window.innerHeight / 2) - (height / 2);
+            
+            const popup = window.open('', '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+            
+            let color = provider === 'Google' ? '#fff' : '#5865F2';
+            let bg = provider === 'Google' ? '#111' : '#36393f';
+            
+            popup.document.write(`
+                <html style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 50px; background: ${bg}; color: #fff;">
+                    <h2 style="margin-top: 40px;">Conectando com ${provider}...</h2>
+                    <p style="color: #aaa;">Aguardando autorização segura.</p>
+                    <div style="margin: 50px auto; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: ${color}; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+                </html>
+            `);
+
+            // Simulate network delay and authorization
+            setTimeout(() => {
+                popup.close();
+                const user = { name: mockName, email: mockEmail, provider: provider };
+                localStorage.setItem('wandeath_user', JSON.stringify(user));
+                localStorage.setItem('wandeath_logged_in', 'true');
+                alert('Autenticado via ' + provider + ' com sucesso!');
+                window.location.href = '../home/index.html';
+            }, 2500);
+        }
+
+        document.querySelector('.btn-google').addEventListener('click', e => {
+            e.preventDefault();
+            simulateOAuth('Google', 'google_user@gmail.com', 'Usuário Google');
+        });
+
+        document.querySelector('.btn-discord').addEventListener('click', e => {
+            e.preventDefault();
+            simulateOAuth('Discord', 'discord_user#1234', 'Usuário Discord');
+        });
+    </script>
+</body>
+
+</html>

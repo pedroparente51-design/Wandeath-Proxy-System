@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Proxy Fixa - Wandeath VIP</title>
+    <link rel="stylesheet" href="../home/home.css">
+    <link rel="stylesheet" href="./proxy.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="rx-theme-rh7">
+    <div id="mouse-glow"></div>
+    <div class="mesh-gradient"></div>
+    <div class="grid-overlay"></div>
+    <canvas id="particles-canvas"></canvas>
+    <div class="rx-scroll-progress" id="scroll-bar"></div>
+
+    <!-- Floating Aurora Blobs -->
+    <div class="aurora-container">
+        <div class="aurora-blob aurora-blob--1"></div>
+        <div class="aurora-blob aurora-blob--2"></div>
+        <div class="aurora-blob aurora-blob--3"></div>
+        <div class="aurora-blob aurora-blob--4"></div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="rx-topbar">
+        <a class="rx-topbar__link" href="../home/index.html">
+            🔥 WANDEATH VIP • MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO
+        </a>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-inner">
+            <a href="../home/index.html" class="logo">
+                <img src="../logo.png" alt="Wandeath VIP">
+            </a>
+            <div class="header-search">
+                <div class="search-pill">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Buscar produto...">
+                </div>
+            </div>
+            <nav class="header-nav-main">
+                <a href="../home/index.html">Início</a>
+            </nav>
+            <div class="header-right">
+                <a href="../carrinho/carrinho.html" class="header-icon-box" title="Carrinho" style="position:relative;">
+                    <i data-lucide="shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </a>
+                <a href="../login/login.html" class="header-user-btn">
+                    <i data-lucide="user"></i>
+                    <span>Área do Cliente</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="proxy-page">
+        <div class="container">
+            <a href="../home/index.html" class="back-link">
+                <i data-lucide="arrow-left"></i> Voltar ao início
+            </a>
+
+            <div class="proxy-header">
+                <h1 class="page-title">Proxy Residencial <span>Fixa</span></h1>
+                <p>IPs dedicados e exclusivos para maior estabilidade.</p>
+            </div>
+
+            <div class="products-grid" id="fixa-grid">
+                <!-- Injetado por JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="../logo.png" alt="Logo" class="footer-logo">
+                    <p>A maior loja de Proxys e Produtos digitais da América Latina!</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Wandeath VIP. Desenvolvido por <strong>@peeh.dev</strong>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./proxy.js"></script>
+    <script>
+        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFixas();
+        });
+    </script>
+</body>
+
+</html>

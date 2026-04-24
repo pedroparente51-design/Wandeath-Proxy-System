@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wandeath VIP - Painel Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <img src="../image.png" alt="Wandeath VIP Logo" class="admin-logo">
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" id="nav-dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="#" class="nav-item" id="nav-chat"><i data-lucide="message-square"></i> Suporte Chat</a>
+            <a href="#" class="nav-item" id="nav-products"><i data-lucide="shopping-cart"></i> Produtos</a>
+            <a href="#" class="nav-item" id="nav-coupons"><i data-lucide="tag"></i> Cupons</a>
+            <a href="#" class="nav-item" id="nav-customers"><i data-lucide="users"></i> Clientes</a>
+            <a href="#" class="nav-item" id="nav-settings"><i data-lucide="settings"></i> Configurações</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="../home/index.html" class="nav-item return-btn"><i data-lucide="log-out"></i> Voltar à Loja</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="main-header">
+            <h2 id="page-title">Dashboard Geral</h2>
+            <div class="admin-profile">
+                <div class="avatar">AD</div>
+                <span>Admin Principal</span>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Dashboard Overview (Section 0) -->
+            <div class="admin-section active" id="section-dashboard">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon"><i data-lucide="trending-up"></i></div>
+                        <div class="metric-info">
+                            <h3>R$ 1.250,00</h3>
+                            <p>Vendas Hoje</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i data-lucide="users"></i></div>
+                        <div class="metric-info">
+                            <h3>42</h3>
+                            <p>Novos Clientes</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i data-lucide="message-circle"></i></div>
+                        <div class="metric-info">
+                            <h3>12</h3>
+                            <p>Conversas Ativas</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i data-lucide="shopping-bag"></i></div>
+                        <div class="metric-info">
+                            <h3>28</h3>
+                            <p>Pedidos Pendentes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Vendas nos Últimos 7 Dias</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="dot primary"></span> Vendas</span>
+                                <span class="legend-item"><span class="dot secondary"></span> Meta</span>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <div class="chart-y-axis">
+                                <span>100</span>
+                                <span>75</span>
+                                <span>50</span>
+                                <span>25</span>
+                                <span>0</span>
+                            </div>
+                            <div class="chart-area">
+                                <div class="grid-lines">
+                                    <span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <div class="mock-chart">
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 60%;" data-value="60"></div>
+                                        <span>Seg</span>
+                                    </div>
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 40%;" data-value="40"></div>
+                                        <span>Ter</span>
+                                    </div>
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 80%;" data-value="80"></div>
+                                        <span>Qua</span>
+                                    </div>
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 95%;" data-value="95"></div>
+                                        <span>Qui</span>
+                                    </div>
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 50%;" data-value="50"></div>
+                                        <span>Sex</span>
+                                    </div>
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 70%;" data-value="70"></div>
+                                        <span>Sáb</span>
+                                    </div>
+                                    <div class="bar-group">
+                                        <div class="bar" style="height: 85%;" data-value="85"></div>
+                                        <span>Dom</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface (Section 1) -->
+            <div class="admin-section" id="section-chat" style="display: none;">
+                <div class="chat-dashboard">
+                    <div class="chat-list">
+                        <div class="chat-list-header">
+                            <h3>Conversas Ativas</h3>
+                            <span class="badge">1</span>
+                        </div>
+                        <div class="chat-session active">
+                            <div class="session-avatar"><i data-lucide="user"></i></div>
+                            <div class="session-info">
+                                <h4>Visitante #4092</h4>
+                                <p>Última mensagem agora...</p>
+                            </div>
+                            <div class="session-status online"></div>
+                        </div>
+                    </div>
+
+                    <div class="chat-window">
+                        <div class="chat-window-header">
+                            <div class="session-info-header">
+                                <h4>Visitante #4092</h4>
+                                <span class="status-indicator"></span><small>Online no site</small>
+                            </div>
+                        </div>
+
+                        <div class="chat-messages" id="admin-chat-messages"></div>
+
+                        <div class="chat-input-area">
+                            <input type="text" id="admin-chat-input" placeholder="Digite sua resposta...">
+                            <button id="admin-chat-send"><i data-lucide="send"></i> Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Management (Section 2) -->
+            <div class="admin-section" id="section-products" style="display: none;">
+                <div class="products-dashboard">
+                    <div class="add-product-form">
+                        <h3>Adicionar Novo Produto</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nome do Produto</label>
+                                <input type="text" id="prod-name" placeholder="Ex: Proxy Rotativa VIP">
+                            </div>
+                            <div class="form-group">
+                                <label>Preço (R$)</label>
+                                <input type="number" id="prod-price" placeholder="99.90">
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select id="prod-category">
+                                    <option value="rotativa">Proxy Rotativa</option>
+                                    <option value="fixa">Proxy Fixa</option>
+                                    <option value="outros">Outros Produtos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Imagem do Produto</label>
+                                <input type="file" id="prod-image" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="form-grid" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label>Mín. de Compra</label>
+                                <input type="number" id="prod-min" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Máx. de Compra</label>
+                                <input type="number" id="prod-max" value="100">
+                            </div>
+                        </div>
+                        <div class="form-grid" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label>Descrição do Produto</label>
+                                <textarea id="prod-desc" rows="3" placeholder="Benefícios do produto..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Estoque / Entrega (1 item por linha)</label>
+                                <textarea id="prod-delivery" rows="3" placeholder="Ex: ip:porta:user:pass (pule linha para o próximo item)"></textarea>
+                            </div>
+                        </div>
+                        <button id="add-product-btn" class="btn-primary-admin" style="margin-top: 20px;"><i data-lucide="plus"></i> Cadastrar Produto</button>
+                    </div>
+
+                    <div class="products-list-container">
+                        <h3>Produtos Cadastrados</h3>
+                        <div class="products-grid-admin" id="admin-products-list">
+                            <!-- Products will render here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coupons (Section - Cupons) -->
+            <div class="admin-section" id="section-coupons" style="display: none;">
+                <div class="products-dashboard">
+                    <div class="add-product-form">
+                        <h3>Criar Novo Cupom</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nome do Cupom</label>
+                                <input type="text" id="coupon-name" placeholder="Ex: PROMO10">
+                            </div>
+                            <div class="form-group">
+                                <label>Desconto (%)</label>
+                                <input type="number" id="coupon-pct" placeholder="10" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Uso</label>
+                                <select id="coupon-type">
+                                    <option value="unlimited">Ilimitado</option>
+                                    <option value="limited">Limitado (X usos)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="coupon-limit-group" style="display:none;">
+                                <label>Máx. de Usos</label>
+                                <input type="number" id="coupon-limit" placeholder="50" min="1">
+                            </div>
+                        </div>
+                        <button id="add-coupon-btn" class="btn-primary-admin" style="margin-top: 20px;"><i data-lucide="plus"></i> Criar Cupom</button>
+                    </div>
+                    <div class="products-list-container">
+                        <h3>Cupons Cadastrados</h3>
+                        <div id="coupons-list" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers (Section 3) -->
+            <div class="admin-section" id="section-customers" style="display: none;">
+                <div class="data-table-container">
+                    <h3>Clientes Registrados</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Avatar</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Total Gasto</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-list-body">
+                            <!-- Mock customers -->
+                            <tr>
+                                <td><div class="avatar-small">A</div></td>
+                                <td>Admin Teste</td>
+                                <td>admin@teste.com</td>
+                                <td>R$ 450,00</td>
+                                <td><span class="status-tag active">Ativo</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings (Section 4) -->
+            <div class="admin-section" id="section-settings" style="display: none;">
+                <div class="settings-form">
+                    <h3 style="margin-top: 30px; color: #009ee3; display: flex; align-items: center; gap: 10px;">
+                        <img src="https://www.mercadopago.com/instore/merchant/assets/icon-mp.png" style="width: 24px;"> Integração Mercado Pago
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Access Token</label>
+                            <input type="password" id="mp-access-token" placeholder="APP_USR-...">
+                        </div>
+                        <div class="form-group">
+                            <label>Public Key</label>
+                            <input type="text" id="mp-public-key" placeholder="APP_USR-...">
+                        </div>
+                    </div>
+                    <button class="btn-primary-admin" style="margin-top: 20px;">Salvar Configurações</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./admin.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

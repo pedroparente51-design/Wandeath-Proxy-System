@@ -1,0 +1,40 @@
+name: 🚀 Deploy SSH
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Atualizando VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: 89.117.79.191
+          username: deployer
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            REPO_NAME=$(basename ${{ github.repository }})
+            
+            # Descobre qual é a pasta certa baseada no nome do repositório
+            if [ "$REPO_NAME" == "wandeath" ]; then 
+              TARGET="wandeath.com"
+            else 
+              TARGET="joaoreidosbugs.com"
+            fi
+            
+            cd /var/www/$TARGET
+            
+            # Avisa o git que esta pasta é segura
+            git config --global --add safe.directory /var/www/$TARGET
+            
+            # Se a pasta estiver vazia, clona. Se já tiver o site, apenas atualiza.
+            if [ ! -d ".git" ]; then
+              git clone git@github.com:pedroparente51-design/$REPO_NAME.git .
+            else
+              git fetch origin main
+              git reset --hard origin/main
+            fi
+            
+            # Ajusta permissões e avisa o Nginx
+            sudo chown -R deployer:www-data /var/www/$TARGET
+            sudo systemctl reload nginx
