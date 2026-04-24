@@ -13,20 +13,25 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
             TARGET="wandeath.com"
-            cd /var/www/$TARGET || exit 1
+            echo "📂 Entrando na pasta /var/www/$TARGET..."
+            cd /var/www/$TARGET
             
-            # Garante que o git não reclame de permissão
+            echo "⚙️ Configurando diretório seguro..."
             git config --global --add safe.directory /var/www/$TARGET
             
-            # Sincroniza com o GitHub via SSH (Agora que a chave de deploy está configurada)
+            echo "📥 Buscando atualizações do GitHub..."
             git fetch origin main
+            
+            echo "🧹 Resetando para a versão mais recente..."
             git reset --hard origin/main
             
-            # Ajusta permissões para o usuário 'deployer'
+            echo "🔑 Ajustando permissões..."
             chown -R deployer:www-data /var/www/$TARGET
             chmod -R 775 /var/www/$TARGET
             
-            # Recarrega o Nginx
+            echo "🌐 Recarregando Nginx..."
             systemctl reload nginx
-            echo "🚀 Deploy concluído com sucesso em $TARGET!"
+            
+            echo "✅ DEPLOY FINALIZADO COM SUCESSO!"
