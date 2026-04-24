@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Checkout - Wandeath VIP</title>
+    <title>Carrinho - Wandeath VIP</title>
     <link rel="stylesheet" href="./carrinho.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -15,16 +15,8 @@
     <div id="mouse-glow"></div>
     <div class="mesh-gradient"></div>
     <div class="grid-overlay"></div>
-    <div class="rx-scroll-progress" id="scroll-bar"></div>
 
-    <!-- Topbar -->
-    <div class="rx-topbar">
-        <a class="rx-topbar__link" href="../index.html#produtos">
-            🔥 MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO
-        </a>
-    </div>
-
-    <!-- Header -->
+    <!-- Header Simples -->
     <header class="main-header">
         <div class="container header-inner">
             <a href="../index.html" class="logo">
@@ -33,105 +25,69 @@
             <div class="header-right">
                 <a href="../index.html" class="header-user-btn">
                     <i data-lucide="arrow-left"></i>
-                    <span>Voltar à Loja</span>
+                    <span>Continuar Comprando</span>
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="page-wrap checkout-page">
+    <main class="checkout-page">
         <div class="container">
-            <div class="checkout-grid">
-                <!-- Left Column -->
+            <h1 class="checkout-title">Seu <span>Carrinho</span></h1>
+            
+            <div class="checkout-grid" id="main-checkout-grid">
+                <!-- Coluna Esquerda: Itens -->
                 <div class="checkout-main">
-                    <!-- Payment Method -->
                     <section class="checkout-section">
                         <div class="section-header">
-                            <i data-lucide="credit-card"></i>
-                            <h4>Formas de pagamento</h4>
+                            <i data-lucide="shopping-bag"></i>
+                            <h4>Itens no Carrinho</h4>
                         </div>
-                        <div class="payment-method-card active">
-                            <div class="pix-badge-small">PIX</div>
-                            <div class="payment-info">
-                                <strong>Pix</strong>
-                                <p style="font-size: 12px; color: var(--text-sec); margin: 2px 0;">Mais rápido</p>
-                                <span style="font-size: 11px; color: #22c55e;">Aprovação imediata</span>
-                            </div>
-                            <div class="check-mark">
-                                <i data-lucide="check"></i>
+                        <div class="cart-items" id="cart-items-list">
+                            <!-- Injetado via JS -->
+                            <div class="loader-box">
+                                <div class="loader"></div>
                             </div>
                         </div>
                     </section>
 
-                    <!-- Contact Info -->
                     <section class="checkout-section">
                         <div class="section-header">
                             <i data-lucide="user"></i>
-                            <h4>Informações de contato</h4>
+                            <h4>Seus Dados</h4>
                         </div>
                         <div class="checkout-form-box">
-                            <div class="form-group" style="grid-column: 1 / -1;">
-                                <label>Nome completo</label>
-                                <input type="text" id="checkout-name" placeholder="Digite seu nome completo">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="checkout-name" placeholder="Digite seu nome">
                             </div>
-                            <div class="form-group" style="grid-column: 1 / -1;">
-                                <label>Email</label>
+                            <div class="form-group">
+                                <label>E-mail de Entrega</label>
                                 <input type="email" id="checkout-email" placeholder="seu@email.com">
                             </div>
-                            <div class="form-group" style="grid-column: 1 / -1;">
-                                <label>Telefone</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <div
-                                        style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 5px; font-size: 14px;">
-                                        <span>🇧🇷</span>
-                                        <span>+55</span>
-                                    </div>
-                                    <input type="tel" id="checkout-phone" placeholder="(00) 00000-0000"
-                                        style="flex: 1;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 25px; display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="terms-check" checked style="accent-color: var(--primary);">
-                            <label for="terms-check" style="font-size: 13px; color: var(--text-sec);">Eu aceito os
-                                termos e condições desta compra.</label>
                         </div>
                     </section>
-
-                    <!-- Action Button Mobile/Bottom -->
-                    <button class="btn-checkout-finalize" onclick="finalizeCartPurchase()" style="margin-top: 20px;">
-                        <div style="text-align: left;">
-                            <span style="display: block; font-size: 14px; opacity: 0.8;">Pagar</span>
-                            <span id="cart-final-total-btn" style="font-size: 20px; font-weight: 900;">R$ 0,00</span>
-                        </div>
-                        <i data-lucide="arrow-right"></i>
-                    </button>
                 </div>
 
-                <!-- Right Column (Summary) -->
+                <!-- Coluna Direita: Resumo -->
                 <div class="checkout-sidebar">
                     <div class="order-summary-card">
                         <div class="summary-header">
-                            <h4>Resumo do pedido</h4>
-                            <div class="secure-badge"
-                                style="font-size: 10px; color: #22c55e; border: 1px solid rgba(34,197,94,0.3); padding: 4px 8px; border-radius: 50px;">
-                                <i data-lucide="shield-check" style="width: 10px; height: 10px;"></i> Pagamento seguro
-                            </div>
+                            <h4>Resumo</h4>
+                            <i data-lucide="shield-check"></i>
                         </div>
 
-                        <!-- Product List in Summary -->
-                        <div id="cart-summary-items" class="summary-items-list" style="margin-bottom: 25px;">
-                            <!-- Items via JS -->
+                        <div id="cart-summary-items" class="summary-items-list">
+                            <!-- Injetado via JS -->
                         </div>
 
                         <div class="coupon-area">
-                            <label>Digite seu cupom de desconto</label>
+                            <label>Cupom de Desconto</label>
                             <div class="coupon-input-group">
                                 <input type="text" id="cart-coupon-input" placeholder="CÓDIGO">
                                 <button onclick="applyCartCoupon()">Aplicar</button>
                             </div>
-                            <div id="coupon-msg"></div>
+                            <div id="coupon-msg" style="margin-top: 10px; font-size: 12px; font-weight: 700;"></div>
                         </div>
 
                         <div class="summary-totals">
@@ -140,14 +96,23 @@
                                 <span id="cart-subtotal">R$ 0,00</span>
                             </div>
                             <div class="total-line" id="cart-discount-line" style="display:none;">
-                                <span>Descontos</span>
-                                <span id="cart-discount-val" style="color: #22c55e;">R$ 0,00</span>
+                                <span>Desconto</span>
+                                <span id="cart-discount-val" style="color: #22c55e;">- R$ 0,00</span>
                             </div>
-                            <div class="total-line main-total"
-                                style="border-top: 1px solid var(--border); margin-top: 20px; padding-top: 20px;">
+                            <div class="total-line main-total">
                                 <span>Total</span>
                                 <span id="cart-final-total">R$ 0,00</span>
                             </div>
+                        </div>
+
+                        <button class="btn-checkout-finalize" id="confirm-payment-btn">
+                            Finalizar Compra
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+
+                        <div class="secure-footer">
+                            <i data-lucide="lock"></i>
+                            Pagamento 100% Seguro via Mercado Pago
                         </div>
                     </div>
                 </div>
@@ -155,14 +120,6 @@
         </div>
     </main>
 
-    <p style="color: var(--text-sec); font-size: 13px;">&copy; 2026 Wandeath VIP. Todos os direitos reservados.</p>
-    </div>
-    </footer>
-
     <script src="./carrinho.js"></script>
-    <script>
-        lucide.createIcons();
-    </script>
 </body>
-
 </html>
