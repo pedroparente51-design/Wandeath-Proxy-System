@@ -3,15 +3,92 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCart();
     initCheckoutActions();
     
-    // Mouse Glow effect
-    document.addEventListener('mousemove', (e) => {
-        const glow = document.getElementById('mouse-glow');
-        if (glow) {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        }
-    });
+    // Neural Network & BG Effects (RH7 Standard)
+    initNeuralNetwork();
+    initInteractiveBackground();
+    initMouseGlow();
 });
+
+function initMouseGlow() {
+    const glow = document.getElementById('mouse-glow');
+    if (!glow) return;
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+    });
+}
+
+function initInteractiveBackground() {
+    const shapes = document.querySelectorAll('.parallax-shape');
+    if (!shapes.length) return;
+    window.addEventListener('mousemove', (e) => {
+        const xOffset = (window.innerWidth / 2 - e.clientX) * 0.02;
+        const yOffset = (window.innerHeight / 2 - e.clientY) * 0.02;
+        shapes.forEach((shape, i) => {
+            const speed = (i + 1) * 0.5;
+            shape.style.transform = `translate(${xOffset * speed}px, ${yOffset * speed}px)`;
+        });
+    });
+}
+
+function initNeuralNetwork() {
+    const canvas = document.getElementById('particles-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    let mouse = { x: -999, y: -999 };
+    const COUNT = 80;
+    const MAX_DIST = 150;
+
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * W;
+            this.y = Math.random() * H;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.r = 1.5;
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if (this.x < 0 || this.x > W) this.vx *= -1;
+            if (this.y < 0 || this.y > H) this.vy *= -1;
+        }
+        draw() {
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(238, 0, 0, 0.5)'; ctx.fill();
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            p.update(); p.draw();
+            particles.forEach(p2 => {
+                const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if (d < MAX_DIST) {
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = `rgba(238, 0, 0, ${0.15 * (1 - d / MAX_DIST)})`;
+                    ctx.stroke();
+                }
+            });
+            const md = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+            if (md < 200) {
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
+                ctx.strokeStyle = `rgba(238, 0, 0, ${0.4 * (1 - md / 200)})`;
+                ctx.stroke();
+            }
+        });
+        requestAnimationFrame(draw);
+    }
+    resize();
+    for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+    draw();
+}
 
 window.currentCoupon = null;
 
