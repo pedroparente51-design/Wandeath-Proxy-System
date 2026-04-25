@@ -112,9 +112,9 @@ function renderHeaderMenu() {
     let menuHTML = `
         <div style="padding: 10px 0;">
             <div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Categorias</div>
-            <a href="/proxy/proxyrotativa.html"><i data-lucide="refresh-cw" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Rotativa</a>
-            <a href="/proxy/proxymobile.html"><i data-lucide="smartphone" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Mobile Premium</a>
-            <a href="/proxy/proxyfixa.html"><i data-lucide="home" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Fixa</a>
+            <a href="/proxy/rotativa/"><i data-lucide="refresh-cw" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Rotativa</a>
+            <a href="/proxy/mobile/"><i data-lucide="smartphone" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Mobile Premium</a>
+            <a href="/proxy/fixa/"><i data-lucide="home" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Fixa</a>
             
             <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 10px 0;"></div>
     `;
