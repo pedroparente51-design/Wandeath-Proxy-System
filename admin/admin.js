@@ -514,26 +514,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Add Product ---
     const addProductBtn = document.getElementById('add-product-btn');
     if (addProductBtn) {
-        addProductBtn.addEventListener('click', () => {
+        addProductBtn.addEventListener('click', async () => {
             const name = document.getElementById('prod-name').value;
             const price = document.getElementById('prod-price').value;
             const category = document.getElementById('prod-category').value;
             const description = document.getElementById('prod-desc').value;
             const delivery = document.getElementById('prod-delivery').value;
-            const youtubeUrl = document.getElementById('prod-youtube').value;
+            const youtubeUrl = document.getElementById('prod-youtube') ? document.getElementById('prod-youtube').value : '';
+            const imageInput = document.getElementById('prod-image');
             
             if (!name || !price) return alert('Nome e preço são obrigatórios!');
 
+            // Imagem padrão por categoria
+            const defaultImages = {
+                'rotativa': '/img-rotativa/1gb.png',
+                'mobile': '/img-rotativa/3gb.png',
+                'fixa': '/img-rotativa/5gb.png'
+            };
+            const defaultTags = {
+                'rotativa': 'Mais vendido',
+                'mobile': 'Premium',
+                'fixa': 'Contingência'
+            };
+
+            let image = defaultImages[category] || '/img-rotativa/1gb.png';
+
+            // Se o usuário fez upload de imagem, converter para base64
+            if (imageInput && imageInput.files && imageInput.files[0]) {
+                try {
+                    image = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imageInput.files[0]);
+                    });
+                } catch(e) {
+                    console.error('Erro ao ler imagem:', e);
+                }
+            }
+
+            // Se está editando, manter a imagem anterior se não fez novo upload
             const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+            if (editingProductIndex !== null && (!imageInput || !imageInput.files || !imageInput.files[0])) {
+                image = products[editingProductIndex].image || image;
+            }
             
             const prodData = {
                 name,
                 price: parseFloat(price),
                 category,
+                tag: defaultTags[category] || 'Novo',
                 description: description || 'Produto de alta qualidade.',
                 delivery: delivery || '',
                 youtubeUrl: youtubeUrl || '',
-                image: '/img-rotativa/1gb.png' // Default image
+                image
             };
 
             if (editingProductIndex !== null) {
@@ -544,7 +578,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (window.lucide) lucide.createIcons();
             } else {
                 products.push(prodData);
-                addLog('Produto Adicionado', `O produto "${name}" foi cadastrado.`);
+                addLog('Produto Adicionado', `O produto "${name}" foi cadastrado na categoria ${category}.`);
             }
 
             localStorage.setItem('wandeath_products', JSON.stringify(products));
@@ -555,6 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('prod-desc').value = '';
             document.getElementById('prod-delivery').value = '';
             if (document.getElementById('prod-youtube')) document.getElementById('prod-youtube').value = '';
+            if (imageInput) imageInput.value = '';
 
             alert('Produto salvo com sucesso!');
             renderAdminProducts();
