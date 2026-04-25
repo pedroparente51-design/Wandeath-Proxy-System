@@ -136,9 +136,23 @@ function getProducts() {
 function renderCart() {
     const list = document.getElementById('cart-items-list');
     const summaryList = document.getElementById('cart-summary-items');
-    const cart = getCart();
+    
+    // Auto-corrigir carrinho corrompido
+    let cart = getCart();
+    let isCorrupted = false;
+    cart = cart.filter(item => {
+        if (!item || typeof item !== 'object' || !item.name) {
+            isCorrupted = true;
+            return false;
+        }
+        return true;
+    });
+    if (isCorrupted) {
+        localStorage.setItem('wandeath_cart', JSON.stringify(cart));
+        if (window.updateCartBadge) window.updateCartBadge();
+    }
+
     const products = getProducts();
-    console.log(`[Wandeath] Renderizando carrinho. Itens: ${cart.length}, Produtos Disponíveis: ${products.length}`);
 
     if (!list) return;
 
@@ -157,14 +171,17 @@ function renderCart() {
             </div>
         `;
         if (summaryList) summaryList.innerHTML = '<div style="font-size:12px; color:var(--text-sec); text-align:center; padding:20px;">Nenhum item adicionado</div>';
+        const countBadge = document.querySelector('.item-count');
+        if (countBadge) countBadge.textContent = '0 itens';
         updateTotals(0);
         if (window.lucide) lucide.createIcons();
         return;
     }
 
-    // Update section header count
+    // Update section header count safely
     const countBadge = document.querySelector('.item-count');
-    if (countBadge) countBadge.textContent = cart.reduce((s, i) => s + i.qty, 0) + ' itens';
+    const totalQty = cart.reduce((s, i) => s + (parseInt(i.qty) || 1), 0);
+    if (countBadge) countBadge.textContent = totalQty + ' itens';
 
     list.innerHTML = '';
     if (summaryList) summaryList.innerHTML = '';
@@ -172,15 +189,16 @@ function renderCart() {
     let subtotal = 0;
 
     cart.forEach((item, index) => {
-        const prod = products.find(p => p.name === item.name);
+        const prod = products.find(p => p && p.name === item.name);
         const name  = item.name;
-        const price = prod ? parseFloat(prod.price) : parseFloat(item.price || 0);
+        const qty = parseInt(item.qty) || 1;
+        let price = prod ? parseFloat(prod.price) : parseFloat(item.price);
+        if (isNaN(price) || price <= 0) price = 10; // Fallback extremo
+        
         const image = prod ? (prod.image || '/image.png') : (item.image || '/image.png');
         const category = prod ? (prod.category || '') : '';
 
-        if (!price) return;
-
-        const totalItem = price * item.qty;
+        const totalItem = price * qty;
         subtotal += totalItem;
 
         const row = document.createElement('div');
@@ -193,13 +211,13 @@ function renderCart() {
                 <h5>${name}</h5>
                 <div class="cart-item-qty">
                     <button onclick="updateQty(${index}, -1)">−</button>
-                    <span>${item.qty}</span>
+                    <span>${qty}</span>
                     <button onclick="updateQty(${index}, 1)">+</button>
                 </div>
             </div>
             <div class="price">
                 <div class="price-amount">R$ ${totalItem.toFixed(2)}</div>
-                <div class="price-unit">${item.qty}x R$ ${price.toFixed(2)}</div>
+                <div class="price-unit">${qty}x R$ ${price.toFixed(2)}</div>
                 <button class="cart-item-remove" onclick="removeItem(${index})" title="Remover">
                     <i data-lucide="trash-2" style="width:14px;"></i>
                 </button>
@@ -215,7 +233,7 @@ function renderCart() {
                     <span style="font-size:13px; font-weight:600; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${name}</span>
                     <span style="font-size:13px; font-weight:800;">R$ ${totalItem.toFixed(2)}</span>
                 </div>
-                <div style="font-size:11px; color:var(--text-sec);">${item.qty}x R$ ${price.toFixed(2)}</div>
+                <div style="font-size:11px; color:var(--text-sec);">${qty}x R$ ${price.toFixed(2)}</div>
             `;
             summaryList.appendChild(sItem);
         }
