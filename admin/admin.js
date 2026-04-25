@@ -336,6 +336,7 @@ function renderDashboardMetrics() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
     // Login
     const adminOverlay = document.getElementById('admin-login-overlay');
     const adminForm = document.getElementById('admin-login-form');

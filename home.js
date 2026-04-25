@@ -4,6 +4,7 @@
 */
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
     const safeRun = (name, fn) => {
         try { fn(); } catch (e) { console.error(`[Wandeath] Erro em ${name}:`, e); }
     };

@@ -167,3 +167,11 @@ window.addEventListener('storage', (e) => {
         if (document.getElementById('fixa-grid')) renderFixas();
     }
 });
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('rotativa-grid')) renderRotativas();
+    if (document.getElementById('mobile-grid')) renderMobile();
+    if (document.getElementById('fixa-grid')) renderFixas();
+    if (window.lucide) lucide.createIcons();
+});
