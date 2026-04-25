@@ -11,8 +11,7 @@ const safeRun = (name, fn) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    const hasProductsGrid = document.getElementById('products-grid') !== null;
-    const isHomePage = hasProductsGrid || window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
+    const isHomePage = document.getElementById('products-grid') !== null || document.querySelector('.faq-list') !== null;
     
     if (window.lucide) lucide.createIcons();
 

@@ -1,12 +1,26 @@
+const safeRun = (name, fn) => {
+    try { 
+        if (typeof fn === 'function') fn(); 
+    } catch (e) { 
+        console.error(`[Wandeath] Erro em ${name}:`, e); 
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.lucide) lucide.createIcons();
-    renderCart();
-    initCheckoutActions();
+    if (window.lucide) {
+        try { lucide.createIcons(); } catch(e) {}
+    }
+    
+    safeRun('renderCart', renderCart);
+    safeRun('initCheckoutActions', initCheckoutActions);
     
     // Neural Network & BG Effects (RH7 Standard)
-    initNeuralNetwork();
-    initInteractiveBackground();
-    initMouseGlow();
+    safeRun('initNeuralNetwork', initNeuralNetwork);
+    safeRun('initInteractiveBackground', initInteractiveBackground);
+    safeRun('initMouseGlow', initMouseGlow);
+    
+    // Refresh icons after render
+    setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 200);
 });
 
 function initMouseGlow() {
