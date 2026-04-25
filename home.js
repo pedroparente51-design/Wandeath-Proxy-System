@@ -1091,35 +1091,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle Chatbox
     openChatBtn.addEventListener('click', (e) => {
-        // Video Tutorial Handling
-        const videoWrapper = document.querySelector('.prod-video-wrapper');
-        if (videoWrapper) {
-            if (prod.youtubeUrl) {
-                videoWrapper.style.display = 'block';
-                videoWrapper.innerHTML = `
-                    <a href="${prod.youtubeUrl}" target="_blank" style="text-decoration:none; display:block; position:relative; width:100%; height:100%; border-radius:12px; overflow:hidden;">
-                        <img src="${prod.image || '../image.png'}" style="width:100%; height:100%; object-fit:cover; opacity:0.6;">
-                        <div class="btn-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:70px; height:70px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 0 30px rgba(238,0,0,0.6); transition:0.3s;">
-                            <i data-lucide="play" style="width:32px; height:32px; margin-left:4px;" fill="white"></i>
-                        </div>
-                        <div style="position:absolute; bottom:20px; left:0; width:100%; text-align:center; color:#fff; font-weight:800; font-size:15px; text-shadow:0 2px 10px rgba(0,0,0,0.8); letter-spacing:1px;">
-                            ASSISTIR VÍDEO TUTORIAL
-                        </div>
-                    </a>
-                `;
-            } else {
-                videoWrapper.style.display = 'none';
-            }
-        }
-        if (window.lucide) lucide.createIcons();
         e.preventDefault();
-        chatboxContainer.classList.add('show');
-        renderMessages();
-        setTimeout(() => chatboxInput.focus(), 100);
+        chatboxContainer.style.display = 'flex';
+        setTimeout(() => {
+            chatboxContainer.classList.add('show');
+            renderMessages();
+            setTimeout(() => chatboxInput.focus(), 100);
+        }, 10);
     });
 
     closeChatBtn.addEventListener('click', () => {
         chatboxContainer.classList.remove('show');
+        setTimeout(() => chatboxContainer.style.display = 'none', 400);
     });
 
     // Render Messages from LocalStorage
