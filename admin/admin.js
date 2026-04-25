@@ -154,7 +154,7 @@ function renderAdminProducts() {
         const card = document.createElement('div');
         card.className = 'admin-prod-card';
         card.innerHTML = `
-            <img src="${prod.image || '../img-rotativa/1gb.png'}" class="admin-prod-img">
+            <img src="${prod.image || '/img-rotativa/1gb.png'}" class="admin-prod-img">
             <div class="admin-prod-info">
                 <h4>${prod.name}</h4>
                 <p>R$ ${parseFloat(prod.price).toFixed(2)}</p>
@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 description: description || 'Produto de alta qualidade.',
                 delivery: delivery || '',
                 youtubeUrl: youtubeUrl || '',
-                image: '../img-rotativa/1gb.png' // Default image
+                image: '/img-rotativa/1gb.png' // Default image
             };
 
             if (editingProductIndex !== null) {

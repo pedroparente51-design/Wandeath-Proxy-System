@@ -5,21 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Proxy Rotativa - Wandeath VIP</title>
-    <link rel="stylesheet" href="/home.css">
-    <link rel="stylesheet" href="/proxy/proxy.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/x-icon" href="/logo.ico">
+    <link rel="stylesheet" href="/home.css?v=2.0.1">
+    <link rel="stylesheet" href="/proxy/proxy.css?v=2.0.1">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@0.321.0/dist/umd/lucide.min.js"></script>
 </head>
 
 <body class="rx-theme-rh7">
+    <div class="rx-scroll-progress" id="scroll-bar"></div>
     <div id="mouse-glow"></div>
     <div class="mesh-gradient"></div>
     <div class="grid-overlay"></div>
     <canvas id="particles-canvas"></canvas>
-    <div class="rx-scroll-progress" id="scroll-bar"></div>
 
-    <!-- Floating Aurora Blobs -->
+    <div class="interactive-bg-wrapper" id="parallax-bg">
+        <div class="parallax-shape shape-1"></div>
+        <div class="parallax-shape shape-2"></div>
+        <div class="parallax-shape shape-3"></div>
+    </div>
+
     <div class="aurora-container">
         <div class="aurora-blob aurora-blob--1"></div>
         <div class="aurora-blob aurora-blob--2"></div>
@@ -30,7 +35,7 @@
     <!-- Topbar -->
     <div class="rx-topbar">
         <a class="rx-topbar__link" href="/">
-            🔥MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO
+            🔥 MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO
         </a>
     </div>
 
@@ -48,17 +53,23 @@
             </div>
             <nav class="header-nav-main">
                 <a href="/">Início</a>
+                <div class="nav-dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle text-white">Produtos <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-menu" id="header-products-menu">
+                        <a href="/proxy/rotativa/">Proxy Residencial Rotativa</a>
+                        <a href="/proxy/mobile/">Proxy Mobile Premium</a>
+                        <a href="/proxy/fixa/">Proxy Residencial Fixa</a>
+                    </div>
+                </div>
+                <a href="/#diferenciais">Diferenciais</a>
+                <a href="/#faq">FAQ</a>
             </nav>
             <div class="header-right">
-                <a href="/carrinho/" class="header-icon-box" title="Carrinho" style="position:relative;">
+                <a href="/carrinho/" class="header-icon-box" title="Carrinho">
                     <i data-lucide="shopping-cart"></i>
-                    <span id="cart-count" class="cart-badge">0</span>
+                    <span id="cart-count" class="cart-badge" style="display:none;">0</span>
                 </a>
-                <a href="/" class="btn-back-home">
-                    <i data-lucide="arrow-left"></i>
-                    <span>Início</span>
-                </a>
-                <a href="/login/" class="header-user-btn">
+                <a href="/login/" class="header-user-btn" id="header-user-link">
                     <i data-lucide="user"></i>
                     <span>Área do Cliente</span>
                 </a>
@@ -68,12 +79,10 @@
 
     <main class="proxy-page">
         <div class="container">
-
             <div class="proxy-header">
                 <h1 class="page-title">Proxy Residencial <span>Rotativa</span></h1>
                 <p>IPs dinâmicos de alta reputação para operações em larga escala.</p>
             </div>
-
             <div class="products-grid" id="rotativa-grid">
                 <!-- Injetado por JS -->
             </div>
@@ -86,15 +95,7 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <img src="/image.png" alt="Wandeath VIP" class="footer-logo">
-                    <p>A maior loja de Proxys e Produtos digitais da América Latina! Qualidade e suporte 24/7.</p>
-                    <div class="footer-social-circles">
-                        <a href="https://wa.me/556296175991" target="_blank" class="social-circle" title="WhatsApp">
-                            <i data-lucide="phone"></i>
-                        </a>
-                        <a href="https://www.instagram.com/wanderson.calixto/" target="_blank" class="social-circle" title="Instagram">
-                            <i data-lucide="instagram"></i>
-                        </a>
-                    </div>
+                    <p>A maior loja de Proxys da América Latina! Qualidade e suporte 24/7.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Produtos</h4>
@@ -109,14 +110,12 @@
                     <ul class="footer-links">
                         <li><a href="/termos/">Termos de Uso</a></li>
                         <li><a href="/politica/">Privacidade</a></li>
-                        <li><a href="#">Afiliados</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Diferenciais</h4>
                     <ul class="footer-links">
                         <li><a href="javascript:void(0);"><i data-lucide="shield-check" class="footer-icon"></i> 100% Seguro</a></li>
-                        <li><a href="javascript:void(0);"><i data-lucide="globe" class="footer-icon"></i> Cobertura Global</a></li>
                         <li><a href="javascript:void(0);"><i data-lucide="zap" class="footer-icon"></i> Entrega Instantânea</a></li>
                     </ul>
                 </div>
@@ -127,10 +126,10 @@
         </div>
     </footer>
 
-    <script src="/home.js?v=2.0.0"></script>
-    <script src="/proxy/proxy.js?v=2.0.0"></script>
-
-    <!-- Chatbox Component -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/supabase-config.js?v=2.0.1"></script>
+    <script src="/home.js?v=2.0.1"></script>
+    <script src="/proxy/proxy.js?v=2.0.1"></script>
     <link rel="stylesheet" href="/chat/chatbox.css">
     <script src="/chat/chatbox.js"></script>
 </body>

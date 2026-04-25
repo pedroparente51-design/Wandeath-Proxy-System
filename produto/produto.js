@@ -26,7 +26,7 @@ function init() {
     const stockEl = document.getElementById('prod-stock');
 
     if (titleEl) titleEl.innerText = prod.name;
-    if (imgEl) imgEl.src = prod.image || '../logo.png';
+    if (imgEl) imgEl.src = prod.image || '/logo.png';
     if (priceEl) priceEl.innerText = `R$ ${parseFloat(prod.price).toFixed(2)}`;
     if (descEl) descEl.innerText = prod.description;
 
@@ -81,7 +81,7 @@ function renderSimilar(products, currentName) {
 
     grid.innerHTML = similar.map(p => `
         <a href="/produto/?name=${encodeURIComponent(p.name)}" class="similar-card">
-            <img src="${p.image || '../logo.png'}" alt="${p.name}" onerror="this.src='../image.png'">
+            <img src="${p.image || '/logo.png'}" alt="${p.name}" onerror="this.src='/image.png'">
             <h5>🛜 ${p.name.replace('Proxy Residencial Rotativa BR - ', '')}</h5>
             <div class="sim-price">R$ ${parseFloat(p.price).toFixed(2)}</div>
             <div class="sim-sub">À vista no Pix</div>
@@ -99,7 +99,7 @@ window.addToCart = function() {
     if (!prod) return;
 
     const price = parseFloat(prod.price) || 0;
-    const image = prod.image || '../image.png';
+    const image = prod.image || '/image.png';
     
     let cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
     const item = cart.find(i => i.name === name);

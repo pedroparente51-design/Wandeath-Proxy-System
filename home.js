@@ -180,7 +180,7 @@ function initSearch() {
                     productCard.innerHTML = `
                         ${tagHtml}
                         <div class="product-img">
-                            <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='../logo.png'">
+                            <img src="${imgUrl}" alt="${prod.name}" onerror="this.src='/logo.png'">
                             <div class="img-overlay"></div>
                         </div>
                         <div class="product-content">
