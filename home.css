@@ -1568,7 +1568,7 @@ footer {
     background: rgba(5, 5, 5, 0.8);
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
-    padding: 80px 0 60px;
+    padding: 50px 0 40px;
     position: relative;
     z-index: 10;
 }
@@ -1576,7 +1576,7 @@ footer {
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 60px;
+    gap: 40px;
 }
 
 .footer-logo {
@@ -1610,9 +1610,9 @@ footer {
 }
 
 .footer-bottom {
-    padding-top: 40px;
+    padding-top: 30px;
     border-top: 1px solid var(--border);
-    margin-top: 60px;
+    margin-top: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
