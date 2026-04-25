@@ -359,20 +359,16 @@ window.updateCustomerStatus = function(email, newStatus) {
 };
 
 window.promoteToAdmin = function(email) {
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
     if (admins.find(a => a.email === email)) {
         alert('Este usuário já é um administrador.');
         return;
     }
     if (confirm(`Deseja realmente tornar ${email} um administrador? Ele terá acesso total ao painel.`)) {
-        const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
-        const user = users.find(u => u.email === email);
-        const pass = user ? (user.password || '123456') : '123456';
-        
-        admins.push({ email: email, pass: pass });
+        admins.push({ email: email });
         localStorage.setItem('wandeath_admins', JSON.stringify(admins));
         addLog('Novo Admin Promovido', `O cliente ${email} foi promovido a administrador.`);
-        alert(`${email} agora é um administrador!\nSenha de acesso: ${pass}`);
+        alert(`${email} agora é um administrador!`);
         renderAdminsList();
     }
 };
@@ -390,37 +386,100 @@ function renderDashboardMetrics() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     if (window.lucide) lucide.createIcons();
     
     // Background Effects (RH7 Standard)
     if (typeof initMouseGlow === 'function') initMouseGlow();
     if (typeof initNeuralNetwork === 'function') initNeuralNetwork();
 
-    // Login
-    const adminOverlay = document.getElementById('admin-login-overlay');
-    const adminForm = document.getElementById('admin-login-form');
-    if (localStorage.getItem('wandeath_admin_logged') !== 'true') {
-        if (adminOverlay) adminOverlay.style.display = 'flex';
-    }
-    if (adminForm) {
-        adminForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value.trim();
-            const pass = document.getElementById('admin-pass').value.trim();
-            
-            const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
-            const foundAdmin = admins.find(a => a.email === email && a.pass === pass);
+    // Lista de admins padrão
+    const DEFAULT_ADMINS = [
+        { email: 'workpedro002@gmail.com' },
+        { email: 'wandersoncalixto123@gmail.com' },
+        { email: 'admin@admin.com' }
+    ];
 
-            if (foundAdmin) {
+    function getAdmins() {
+        const stored = localStorage.getItem('wandeath_admins');
+        if (stored) {
+            try { return JSON.parse(stored); } catch(e) {}
+        }
+        // Inicializar com admins padrão
+        localStorage.setItem('wandeath_admins', JSON.stringify(DEFAULT_ADMINS));
+        return DEFAULT_ADMINS;
+    }
+
+    function isEmailAdmin(email) {
+        const admins = getAdmins();
+        return admins.some(a => a.email === email);
+    }
+
+    // Auto-detecção de admin via Supabase
+    const adminOverlay = document.getElementById('admin-login-overlay');
+    const autoCheck = document.getElementById('admin-auto-check');
+    const manualLogin = document.getElementById('admin-manual-login');
+    const errMsg = document.getElementById('admin-login-error');
+
+    // Se já está autenticado como admin nesta sessão
+    if (localStorage.getItem('wandeath_admin_logged') === 'true') {
+        const user = JSON.parse(localStorage.getItem('wandeath_user') || '{}');
+        if (user.email && isEmailAdmin(user.email)) {
+            if (adminOverlay) adminOverlay.style.display = 'none';
+        } else {
+            // Sessão expirou ou e-mail não é mais admin
+            localStorage.removeItem('wandeath_admin_logged');
+        }
+    }
+
+    // Verificar sessão do Supabase
+    if (adminOverlay && adminOverlay.style.display !== 'none') {
+        if (adminOverlay) adminOverlay.style.display = 'flex';
+
+        if (window.supabaseClient) {
+            try {
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                
+                if (session && session.user) {
+                    const userEmail = session.user.email;
+                    console.log('[Admin] Sessão Supabase detectada:', userEmail);
+                    
+                    if (isEmailAdmin(userEmail)) {
+                        // É admin! Liberar acesso
+                        localStorage.setItem('wandeath_admin_logged', 'true');
+                        localStorage.setItem('wandeath_user', JSON.stringify({
+                            name: session.user.user_metadata.full_name || userEmail.split('@')[0],
+                            email: userEmail
+                        }));
+                        if (adminOverlay) adminOverlay.style.display = 'none';
+                        addLog('Login Admin', `Sessão iniciada por ${userEmail} (auto-detecção).`);
+                    } else {
+                        // Logado mas não é admin
+                        if (autoCheck) autoCheck.style.display = 'none';
+                        if (errMsg) { errMsg.style.display = 'block'; errMsg.textContent = `O e-mail ${userEmail} não tem permissão de administrador.`; }
+                        if (manualLogin) { manualLogin.style.display = 'block'; manualLogin.querySelector('p').textContent = 'Faça login com uma conta de administrador.'; }
+                    }
+                } else {
+                    // Não está logado
+                    if (autoCheck) autoCheck.style.display = 'none';
+                    if (manualLogin) manualLogin.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('[Admin] Erro ao verificar sessão:', err);
+                if (autoCheck) autoCheck.style.display = 'none';
+                if (manualLogin) manualLogin.style.display = 'block';
+            }
+        } else {
+            // Supabase não disponível — fallback: checar localStorage
+            const user = JSON.parse(localStorage.getItem('wandeath_user') || '{}');
+            if (user.email && isEmailAdmin(user.email)) {
                 localStorage.setItem('wandeath_admin_logged', 'true');
                 if (adminOverlay) adminOverlay.style.display = 'none';
-                addLog('Login Admin', `Sessão iniciada por ${email}.`);
             } else {
-                const err = document.getElementById('admin-login-error');
-                if (err) err.style.display = 'block';
+                if (autoCheck) autoCheck.style.display = 'none';
+                if (manualLogin) manualLogin.style.display = 'block';
             }
-        });
+        }
     }
 
     // Sidebar Navigation Listener
@@ -434,17 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Login Buttons
-    const btnGoogle = document.getElementById('btn-login-google');
-    const btnDiscord = document.getElementById('btn-login-discord');
-    const btnBypass = document.getElementById('btn-bypass-dev');
-    if (btnGoogle) btnGoogle.addEventListener('click', () => window.simulateAdminOAuth('Google'));
-    if (btnDiscord) btnDiscord.addEventListener('click', () => window.simulateAdminOAuth('Discord'));
-    if (btnBypass) btnBypass.addEventListener('click', () => {
-        localStorage.setItem('wandeath_admin_logged', 'true');
-        location.reload();
-    });
 
     // Chat Send
     const sendBtn = document.getElementById('admin-chat-send');
@@ -609,7 +657,7 @@ window.clearLogs = function() {
 function renderAdminsList() {
     const list = document.getElementById('admins-list');
     if (!list) return;
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
     
     list.innerHTML = admins.map((admin, index) => `
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:12px 18px; border-radius:10px; display:flex; align-items:center; justify-content:space-between;">
@@ -632,18 +680,16 @@ function renderAdminsList() {
 
 window.addNewAdmin = function() {
     const email = document.getElementById('new-admin-email').value.trim();
-    const pass = document.getElementById('new-admin-pass').value.trim();
 
-    if (!email || !pass) return alert('Preencha e-mail e senha!');
+    if (!email) return alert('Preencha o e-mail!');
 
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
     if (admins.find(a => a.email === email)) return alert('Este e-mail já é administrador!');
 
-    admins.push({ email, pass });
+    admins.push({ email });
     localStorage.setItem('wandeath_admins', JSON.stringify(admins));
     
     document.getElementById('new-admin-email').value = '';
-    document.getElementById('new-admin-pass').value = '';
 
     addLog('Novo Admin Adicionado', `O e-mail ${email} foi promovido a administrador.`);
     renderAdminsList();
@@ -651,7 +697,7 @@ window.addNewAdmin = function() {
 };
 
 window.removeAdmin = function(index) {
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
     const removedEmail = admins[index].email;
     
     if (confirm(`Remover as permissões de admin de ${removedEmail}?`)) {

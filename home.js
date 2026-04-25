@@ -891,8 +891,14 @@ async function checkLoginState() {
                          window.location.pathname.includes('/pedidos/') || 
                          window.location.pathname.includes('/carrinho/') || 
                          window.location.pathname.includes('/proxy/');
-        const admins = JSON.parse(localStorage.getItem('wandeath_admins') || 
-            '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
+        const DEFAULT_ADMINS = [
+            { email: 'workpedro002@gmail.com' },
+            { email: 'wandersoncalixto123@gmail.com' },
+            { email: 'admin@admin.com' }
+        ];
+        const storedAdmins = localStorage.getItem('wandeath_admins');
+        if (!storedAdmins) localStorage.setItem('wandeath_admins', JSON.stringify(DEFAULT_ADMINS));
+        const admins = storedAdmins ? JSON.parse(storedAdmins) : DEFAULT_ADMINS;
         const userObj = userDataStr ? JSON.parse(userDataStr) : null;
         const isAdmin = userObj && admins.find(a => a.email === userObj.email);
 

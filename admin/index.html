@@ -28,35 +28,16 @@
         <div class="admin-login-box">
             <img src="/image.png" alt="Logo">
             <h2>Acesso Restrito</h2>
-            <p>Faça login com o e-mail de administrador.</p>
-            <form id="admin-login-form">
-                <input type="email" id="admin-email" placeholder="E-mail" required>
-                <input type="password" id="admin-pass" placeholder="Senha" required>
-                <button type="submit" class="btn-admin-login">Entrar no Painel</button>
-            </form>
-            <p id="admin-login-error" class="admin-login-error" style="display: none;">Credenciais inválidas!</p>
-
-            <div class="admin-login-sep">
-                <div class="sep-line"></div>
-                <span class="sep-text">OU</span>
-                <div class="sep-line"></div>
+            <p>Apenas administradores autorizados podem acessar este painel.</p>
+            <div id="admin-auto-check" style="text-align:center; padding: 20px 0;">
+                <div class="loader" style="width:30px;height:30px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+                <p style="font-size:13px; color:var(--text-sec);">Verificando sua sessão...</p>
             </div>
-
-            <div class="oauth-grid-admin">
-                <button id="btn-login-google" class="btn-oauth btn-google">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
-                        alt="Google">
-                    Logar com Google
-                </button>
-                <button id="btn-login-discord" class="btn-oauth btn-discord">
-                    <img width="18" height="18" src="https://img.icons8.com/color/18/discord--v2.png"
-                        alt="discord--v2" />
-                    Logar com Discord
-                </button>
-                <button id="btn-bypass-dev" class="btn-bypass-dev">
-                    🔓 Acesso Rápido (Dev)
-                </button>
+            <div id="admin-manual-login" style="display:none;">
+                <p style="font-size:13px; color:var(--text-sec); margin-bottom:16px;">Você não está logado ou não tem permissão de admin.</p>
+                <a href="/login/" class="btn-admin-login" style="display:block; text-align:center; text-decoration:none; padding:14px; background:var(--primary); color:#fff; border-radius:10px; font-weight:800;">Fazer Login</a>
             </div>
+            <p id="admin-login-error" class="admin-login-error" style="display: none;">Você não é um administrador autorizado.</p>
         </div>
     </div>
 
