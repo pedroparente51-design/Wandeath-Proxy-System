@@ -119,9 +119,9 @@ function getProducts() {
 
     if (!Array.isArray(products) || products.length === 0) {
         products = [
-            { name: "Proxy Residencial Rotativa", price: "13.99", category: "rotativa", image: "../img-rotativa/1gb.png" },
-            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "../img-rotativa/3gb.png" },
-            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png" }
+            { name: "Proxy Residencial Rotativa", price: "13.99", category: "rotativa", image: "/img-rotativa/1gb.png" },
+            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "/img-rotativa/3gb.png" },
+            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "/img-rotativa/5gb.png" }
         ];
         localStorage.setItem('wandeath_products', JSON.stringify(products));
     }
@@ -143,7 +143,7 @@ function renderCart() {
                 <i data-lucide="shopping-cart" style="width:60px; height:60px; color:var(--text-sec); margin-bottom:20px; opacity:0.3;"></i>
                 <h3 style="margin-bottom:10px;">Seu carrinho está vazio</h3>
                 <p style="color:var(--text-sec); margin-bottom:30px;">Explore nossos produtos e adicione proxies de alta qualidade.</p>
-                <a href="../index.html#produtos" class="btn-buy btn-shine" style="padding: 14px 30px; width: auto; margin: 0 auto; text-decoration: none; background: var(--primary); color: #fff;">Ir para a Loja</a>
+                <a href="/#produtos" class="btn-buy btn-shine" style="padding: 14px 30px; width: auto; margin: 0 auto; text-decoration: none; background: var(--primary); color: #fff;">Ir para a Loja</a>
             </div>
         `;
         if (summaryList) summaryList.innerHTML = '<div style="font-size:12px; color:var(--text-sec); text-align:center;">Vazio</div>';

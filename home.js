@@ -105,26 +105,16 @@ function renderHeaderMenu() {
 
     const products = getStoredProducts();
     
-    // Detectar se estamos em um subdiretório (pedidos, carrinho, login, proxy, produto, etc.)
-    const path = window.location.pathname;
-    const isSubDir = path.includes('/produto/') || 
-                     path.includes('/login/') || 
-                     path.includes('/pedidos/') || 
-                     path.includes('/carrinho/') ||
-                     path.includes('/proxy/') ||
-                     path.includes('/termos/') ||
-                     path.includes('/politica/') ||
-                     path.includes('/checker/');
-                     
-    const prefix = isSubDir ? '../' : './';
+    // Usar caminhos absolutos a partir da raiz (/) para evitar problemas de profundidade de pasta
+    const prefix = '/';
 
     // 1. Links das Categorias Fixas
     let menuHTML = `
         <div style="padding: 10px 0;">
             <div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Categorias</div>
-            <a href="${prefix}proxy/proxyrotativa.html"><i data-lucide="refresh-cw" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Rotativa</a>
-            <a href="${prefix}proxy/proxymobile.html"><i data-lucide="smartphone" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Mobile Premium</a>
-            <a href="${prefix}proxy/proxyfixa.html"><i data-lucide="home" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Fixa</a>
+            <a href="/proxy/proxyrotativa.html"><i data-lucide="refresh-cw" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Rotativa</a>
+            <a href="/proxy/proxymobile.html"><i data-lucide="smartphone" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Mobile Premium</a>
+            <a href="/proxy/proxyfixa.html"><i data-lucide="home" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Fixa</a>
             
             <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 10px 0;"></div>
     `;
@@ -134,7 +124,7 @@ function renderHeaderMenu() {
         // Mostrar os 5 primeiros produtos como destaques no menu
         const mainProducts = products.slice(0, 5);
         menuHTML += mainProducts.map(p => `
-            <a href="${prefix}produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">
+            <a href="/produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">
                 <i data-lucide="zap" style="width:14px; margin-right:8px; color:var(--primary);"></i> ${p.name}
             </a>
         `).join('');
@@ -461,7 +451,7 @@ function renderStoreProducts(filter = 'all') {
                 </div>
             </div>
             <div class="product-footer">
-                <a href="./produto/produto.html?name=${encodeURIComponent(prod.name)}"
+                <a href="/produto/produto.html?name=${encodeURIComponent(prod.name)}"
                    class="btn-buy btn-shine">
                     Ver Produto
                 </a>
@@ -479,7 +469,7 @@ function renderStoreProducts(filter = 'all') {
 }
 
 function processPurchase(name) {
-    window.location.href = `./produto/produto.html?name=${encodeURIComponent(name)}`;
+    window.location.href = `/produto/produto.html?name=${encodeURIComponent(name)}`;
 }
 
 window.processPurchase = processPurchase;

@@ -7,12 +7,13 @@
     <title>Produto - RH7 PROXYS</title>
 
     <!-- Link para o CSS Global da Loja (Para não quebrar header, fontes e resets) -->
-    <link rel="stylesheet" href="../home.css">
+    <link rel="icon" type="image/x-icon" href="/logo.ico">
+    <link rel="stylesheet" href="/home.css?v=1.2.3">
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="./produto.css">
+    <link rel="stylesheet" href="/produto/produto.css">
 </head>
 
 <body class="rx-theme-rh7">
@@ -46,12 +47,12 @@
     <!-- Header (do home.css para não quebrar a navbar) -->
     <header class="main-header" style="position: fixed; width: 100%; top: 40px; z-index: 2000;">
         <div class="container header-inner">
-            <a href="../index.html" class="logo">
-                <img src="../image.png" alt="RH7 PROXYS">
+            <a href="/" class="logo">
+                <img src="/image.png" alt="RH7 PROXYS">
             </a>
 
             <nav class="header-nav-main">
-                <a href="../index.html">Início</a>
+                <a href="/">Início</a>
                 <div class="nav-dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle" style="color: #fff;">Produtos <i
                             data-lucide="chevron-down"></i></a>
@@ -69,7 +70,7 @@
                     <i data-lucide="shopping-cart"></i>
                     <span id="cart-count" class="cart-badge" style="display:none;">0</span>
                 </a>
-                <a href="../login/login.html" class="header-user-btn">
+                <a href="/login/" class="header-user-btn">
                     <i data-lucide="user"></i>
                     <span>Área do Cliente</span>
                 </a>
@@ -204,9 +205,9 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../supabase-config.js"></script>
-    <script src="../home.js"></script>
-    <script src="./produto.js"></script>
+    <script src="/supabase-config.js"></script>
+    <script src="/home.js"></script>
+    <script src="/produto/produto.js"></script>
 
 </body>
 </html>
