@@ -90,22 +90,52 @@
             };
         }
 
-        function renderMessages() {
-            if (!chatboxMessages) return;
-            const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-            chatboxMessages.innerHTML = '';
+    window.wandeathRenderChat = function() {
+        const chatboxMessages = document.getElementById('chatbox-messages');
+        if (!chatboxMessages) return;
+        
+        const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
+        chatboxMessages.innerHTML = '';
 
-            if (history.length === 0) {
-                chatboxMessages.innerHTML = `<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Inicie uma conversa conosco!</div>`;
-            } else {
-                history.forEach(msg => {
-                    const msgEl = document.createElement('div');
-                    msgEl.className = `chat-msg ${msg.sender}`;
-                    msgEl.textContent = msg.text;
-                    chatboxMessages.appendChild(msgEl);
-                });
-            }
-            chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+        if (history.length === 0) {
+            chatboxMessages.innerHTML = `<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Inicie uma conversa conosco!</div>`;
+        } else {
+            history.forEach(msg => {
+                const msgEl = document.createElement('div');
+                msgEl.className = `chat-msg ${msg.sender}`;
+                msgEl.textContent = msg.text;
+                chatboxMessages.appendChild(msgEl);
+            });
+        }
+        chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+    };
+
+    // 2. Initialize Logic
+    function initChatboxLogic() {
+        const openChatBtn = document.getElementById('open-chat-btn');
+        const closeChatBtn = document.getElementById('close-chat-btn');
+        const chatboxContainer = document.getElementById('chatbox-container');
+        const chatboxInput = document.getElementById('chatbox-input-field');
+        const chatboxSendBtn = document.getElementById('chatbox-send-btn');
+
+        if (!openChatBtn || !chatboxContainer) return;
+
+        // Toggle Chatbox
+        openChatBtn.onclick = (e) => {
+            e.preventDefault();
+            chatboxContainer.style.display = 'flex';
+            setTimeout(() => {
+                chatboxContainer.classList.add('show');
+                window.wandeathRenderChat();
+                if (chatboxInput) chatboxInput.focus();
+            }, 10);
+        };
+
+        if (closeChatBtn) {
+            closeChatBtn.onclick = () => {
+                chatboxContainer.classList.remove('show');
+                setTimeout(() => chatboxContainer.style.display = 'none', 400);
+            };
         }
 
         function sendMessage() {
@@ -118,15 +148,11 @@
             localStorage.setItem('wandeath_chat_history', JSON.stringify(history));
 
             chatboxInput.value = '';
-            renderMessages();
+            window.wandeathRenderChat();
 
-            // Simulate admin reply
-            setTimeout(() => {
-                const adminHistory = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-                adminHistory.push({ sender: 'admin', text: 'Olá! Um consultor entrará em contato em breve.', timestamp: Date.now() });
-                localStorage.setItem('wandeath_chat_history', JSON.stringify(adminHistory));
-                renderMessages();
-            }, 1000);
+            // Simulate admin reply (only if not real admin)
+            // setTimeout(() => { ... }); 
+            // Note: I'll remove the simulation to allow real admin testing between tabs
         }
 
         if (chatboxSendBtn) chatboxSendBtn.onclick = sendMessage;
@@ -147,5 +173,14 @@
         injectChatbox();
         initChatboxLogic();
     }
+
+    // Listen for changes from other tabs (like Admin Panel)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'wandeath_chat_history') {
+            if (window.wandeathRenderChat) {
+                window.wandeathRenderChat();
+            }
+        }
+    });
 
 })();
