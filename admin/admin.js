@@ -68,75 +68,128 @@ window.simulateAdminOAuth = function(provider) {
 
 // Logic functions (must be global or reachable by showSection)
 let activeChatId = null;
+let adminChatSubscription = null;
 
-function renderAdminMessages() {
+async function renderAdminMessages() {
     const chatMessages = document.getElementById('admin-chat-messages');
     if (!chatMessages) return;
     
     // Update active chats list in sidebar
-    renderActiveChatsList();
+    await renderActiveChatsList();
 
     if (!activeChatId) {
         chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Selecione uma conversa ao lado para responder.</div>';
         return;
     }
 
-    const chatKey = `wandeath_chat_${activeChatId}`;
-    const historyStr = localStorage.getItem(chatKey);
-    const history = historyStr ? JSON.parse(historyStr) : [];
-    
-    chatMessages.innerHTML = '';
-    if (history.length === 0) {
-        chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Aguardando mensagens do cliente...</div>';
+    if (!window.supabaseClient) {
+        chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Erro ao conectar.</div>';
         return;
     }
-    history.forEach(msg => {
-        const msgEl = document.createElement('div');
-        msgEl.className = `chat-msg ${msg.sender}`;
-        msgEl.textContent = msg.text;
-        chatMessages.appendChild(msgEl);
-    });
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Carregando mensagens...</div>';
+
+    try {
+        const { data: history, error } = await window.supabaseClient
+            .from('chat_messages')
+            .select('*')
+            .eq('session_id', activeChatId)
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+        
+        chatMessages.innerHTML = '';
+        if (!history || history.length === 0) {
+            chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Aguardando mensagens...</div>';
+            return;
+        }
+        history.forEach(msg => {
+            const msgEl = document.createElement('div');
+            msgEl.className = `chat-msg ${msg.sender}`;
+            msgEl.textContent = msg.text;
+            chatMessages.appendChild(msgEl);
+        });
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Setup realtime if not done
+        if (!adminChatSubscription) {
+            adminChatSubscription = window.supabaseClient.channel('admin_chat')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, (payload) => {
+                    if (payload.new.session_id === activeChatId && payload.new.sender !== 'admin') {
+                        if (chatMessages.innerHTML.includes('Aguardando')) chatMessages.innerHTML = '';
+                        const msgEl = document.createElement('div');
+                        msgEl.className = `chat-msg ${payload.new.sender}`;
+                        msgEl.textContent = payload.new.text;
+                        chatMessages.appendChild(msgEl);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                    renderActiveChatsList(); // Refresh list to show latest
+                })
+                .subscribe();
+        }
+
+    } catch(e) {
+        console.error('[Wandeath] Erro carregar admin chat:', e);
+    }
 }
 
-function renderActiveChatsList() {
+async function renderActiveChatsList() {
     const list = document.querySelector('.chat-list');
-    if (!list) return;
+    if (!list || !window.supabaseClient) return;
     
-    const activeChats = JSON.parse(localStorage.getItem('wandeath_active_chats') || '[]');
-    
-    let html = `
-        <div class="chat-list-header">
-            <h3>Conversas Ativas</h3>
-            <span class="badge">${activeChats.length}</span>
-        </div>
-    `;
+    try {
+        const { data: msgs, error } = await window.supabaseClient
+            .from('chat_messages')
+            .select('session_id, created_at')
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
 
-    if (activeChats.length === 0) {
-        html += '<p style="font-size:12px; color:var(--text-sec); padding:20px; text-align:center;">Nenhum chat ativo.</p>';
-    } else {
-        activeChats.forEach(id => {
-            const isActive = activeChatId === id ? 'active' : '';
-            html += `
-                <div class="chat-session ${isActive}" onclick="selectChat('${id}')">
-                    <div class="session-avatar"><i data-lucide="user"></i></div>
-                    <div class="session-info">
-                        <h4>${id.split('@')[0]}</h4>
-                        <p>${id.includes('@') ? 'Cliente' : 'Visitante'}</p>
-                    </div>
-                </div>
-            `;
+        // Extract unique session_ids keeping the most recent order
+        const uniqueSessions = [];
+        const seen = new Set();
+        msgs.forEach(m => {
+            if (!seen.has(m.session_id)) {
+                seen.add(m.session_id);
+                uniqueSessions.push(m.session_id);
+            }
         });
+
+        let html = `
+            <div class="chat-list-header">
+                <h3>Conversas Ativas</h3>
+                <span class="badge">${uniqueSessions.length}</span>
+            </div>
+        `;
+
+        if (uniqueSessions.length === 0) {
+            html += '<p style="font-size:12px; color:var(--text-sec); padding:20px; text-align:center;">Nenhum chat ativo.</p>';
+        } else {
+            uniqueSessions.forEach(id => {
+                const isActive = activeChatId === id ? 'active' : '';
+                html += `
+                    <div class="chat-session ${isActive}" onclick="selectChat('${id}')">
+                        <div class="session-avatar"><i data-lucide="user"></i></div>
+                        <div class="session-info">
+                            <h4>Cliente ${id.replace('session_', '').substring(0, 5)}</h4>
+                            <p>Sessão Ativa</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        list.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+    } catch(e) {
+        console.error('[Wandeath] Erro carregar active chats:', e);
     }
-    
-    list.innerHTML = html;
-    if (window.lucide) lucide.createIcons();
 }
 
 window.selectChat = function(id) {
     activeChatId = id;
     const headerInfo = document.querySelector('.session-info-header h4');
-    if (headerInfo) headerInfo.textContent = id;
+    if (headerInfo) headerInfo.textContent = `Cliente ${id.replace('session_', '').substring(0, 5)}`;
     renderAdminMessages();
 };
 
@@ -511,16 +564,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Chat Send
     const sendBtn = document.getElementById('admin-chat-send');
     const chatInput = document.getElementById('admin-chat-input');
-    const sendMsg = () => {
+    const sendMsg = async () => {
         if (!activeChatId) return alert('Selecione uma conversa primeiro!');
+        if (!window.supabaseClient) return alert('Erro de conexão!');
         const text = chatInput.value.trim();
         if (!text) return;
-        const chatKey = `wandeath_chat_${activeChatId}`;
-        const history = JSON.parse(localStorage.getItem(chatKey) || '[]');
-        history.push({ sender: 'admin', text, timestamp: Date.now() });
-        localStorage.setItem(chatKey, JSON.stringify(history));
+        
         chatInput.value = '';
-        renderAdminMessages();
+
+        // Optimistic UI
+        const chatMessages = document.getElementById('admin-chat-messages');
+        if (chatMessages) {
+            if (chatMessages.innerHTML.includes('Aguardando')) chatMessages.innerHTML = '';
+            const msgEl = document.createElement('div');
+            msgEl.className = 'chat-msg admin';
+            msgEl.textContent = text;
+            chatMessages.appendChild(msgEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        try {
+            await window.supabaseClient.from('chat_messages').insert([{
+                session_id: activeChatId,
+                sender: 'admin',
+                text: text
+            }]);
+        } catch(e) {
+            console.error('[Wandeath] Erro enviar msg:', e);
+        }
     };
     if (sendBtn) sendBtn.addEventListener('click', sendMsg);
     if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });

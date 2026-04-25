@@ -121,7 +121,11 @@ window.buyNow = function() {
 };
 
 function updateCartBadge() {
-    const cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+    let cart = [];
+    try {
+        cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+    } catch(e) {}
     const count = cart.reduce((s, i) => s + i.qty, 0);
     const badge = document.getElementById('cart-count');
     if (badge) {

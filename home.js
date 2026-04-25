@@ -486,25 +486,23 @@ function processPurchase(name) {
 
 window.processPurchase = processPurchase;
 
-function getCart() {
-    return JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
-}
-
 function updateCartBadge() {
+    let cart = [];
+    try {
+        cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+    } catch(e) {}
+    const count = cart.reduce((s, i) => s + i.qty, 0);
     const badge = document.getElementById('cart-count');
-    if (!badge) return;
-
-    const cart = getCart();
-    const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    
-    badge.textContent = count;
-    // Sempre mostrar se houver itens, ou opcionalmente mostrar 0 se preferir
-    if (count > 0) {
-        badge.style.display = 'flex';
-        badge.style.background = 'var(--primary)';
-        badge.style.opacity = '1';
-    } else {
-        badge.style.display = 'none'; // Ou 'flex' se quiser a bolinha com 0
+    if (badge) {
+        badge.innerText = count;
+        if (count > 0) {
+            badge.style.display = 'flex';
+            badge.style.background = 'var(--primary)';
+            badge.style.opacity = '1';
+        } else {
+            badge.style.display = 'none';
+        }
     }
 }
 

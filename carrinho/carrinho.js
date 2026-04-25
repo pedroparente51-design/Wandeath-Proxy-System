@@ -107,7 +107,12 @@ function initNeuralNetwork() {
 window.currentCoupon = null;
 
 function getCart() {
-    return JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+    try {
+        const cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+        return Array.isArray(cart) ? cart : [];
+    } catch(e) {
+        return [];
+    }
 }
 
 function getProducts() {

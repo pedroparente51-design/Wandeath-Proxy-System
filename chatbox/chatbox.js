@@ -75,6 +75,14 @@
 
         if (!openChatBtn || !chatboxContainer) return;
 
+        let sessionId = localStorage.getItem('wandeath_chat_session_id');
+        if (!sessionId) {
+            sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('wandeath_chat_session_id', sessionId);
+        }
+
+        let chatSubscription = null;
+
         openChatBtn.onclick = (e) => {
             e.preventDefault();
             chatboxContainer.style.display = 'flex';
@@ -82,6 +90,7 @@
                 chatboxContainer.classList.add('show');
                 renderMessages();
                 if (chatboxInput) chatboxInput.focus();
+                setupRealtime();
             }, 10);
         };
 
@@ -92,43 +101,82 @@
             };
         }
 
-        function renderMessages() {
+        async function renderMessages() {
             if (!chatboxMessages) return;
-            const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-            chatboxMessages.innerHTML = '';
+            chatboxMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Carregando mensagens...</div>';
 
-            if (history.length === 0) {
-                chatboxMessages.innerHTML = `<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Inicie uma conversa conosco!</div>`;
-            } else {
-                history.forEach(msg => {
-                    const msgEl = document.createElement('div');
-                    msgEl.className = `chat-msg ${msg.sender}`;
-                    msgEl.textContent = msg.text;
-                    chatboxMessages.appendChild(msgEl);
-                });
+            if (!window.supabaseClient) {
+                chatboxMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Erro ao conectar.</div>';
+                return;
             }
-            chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+
+            try {
+                const { data: history, error } = await window.supabaseClient
+                    .from('chat_messages')
+                    .select('*')
+                    .eq('session_id', sessionId)
+                    .order('created_at', { ascending: true });
+
+                if (error) throw error;
+
+                chatboxMessages.innerHTML = '';
+                if (!history || history.length === 0) {
+                    chatboxMessages.innerHTML = `<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Inicie uma conversa conosco!</div>`;
+                } else {
+                    history.forEach(msg => {
+                        const msgEl = document.createElement('div');
+                        msgEl.className = `chat-msg ${msg.sender}`;
+                        msgEl.textContent = msg.text;
+                        chatboxMessages.appendChild(msgEl);
+                    });
+                }
+                chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+            } catch(e) {
+                console.error('[Wandeath] Chat load error:', e);
+            }
         }
 
-        function sendMessage() {
-            if (!chatboxInput) return;
+        async function sendMessage() {
+            if (!chatboxInput || !window.supabaseClient) return;
             const text = chatboxInput.value.trim();
             if (!text) return;
 
-            const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-            history.push({ sender: 'user', text: text, timestamp: Date.now() });
-            localStorage.setItem('wandeath_chat_history', JSON.stringify(history));
-
             chatboxInput.value = '';
-            renderMessages();
 
-            // Re-adding simulation
-            setTimeout(() => {
-                const adminHistory = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-                adminHistory.push({ sender: 'admin', text: 'Olá! Um consultor entrará em contato em breve. Ou se preferir, nos chame no WhatsApp pelo ícone acima!', timestamp: Date.now() });
-                localStorage.setItem('wandeath_chat_history', JSON.stringify(adminHistory));
-                renderMessages();
-            }, 1500);
+            // Optimistic UI update
+            const msgEl = document.createElement('div');
+            msgEl.className = 'chat-msg user';
+            msgEl.textContent = text;
+            if (chatboxMessages.innerHTML.includes('Inicie uma conversa')) chatboxMessages.innerHTML = '';
+            chatboxMessages.appendChild(msgEl);
+            chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+
+            try {
+                await window.supabaseClient.from('chat_messages').insert([{
+                    session_id: sessionId,
+                    sender: 'user',
+                    text: text
+                }]);
+            } catch(e) {
+                console.error('[Wandeath] Erro ao enviar mensagem:', e);
+            }
+        }
+
+        function setupRealtime() {
+            if (!window.supabaseClient || chatSubscription) return;
+            
+            chatSubscription = window.supabaseClient.channel(`chat_${sessionId}`)
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, (payload) => {
+                    if (payload.new.sender !== 'user') {
+                        if (chatboxMessages.innerHTML.includes('Inicie uma conversa')) chatboxMessages.innerHTML = '';
+                        const msgEl = document.createElement('div');
+                        msgEl.className = `chat-msg ${payload.new.sender}`;
+                        msgEl.textContent = payload.new.text;
+                        chatboxMessages.appendChild(msgEl);
+                        chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
+                    }
+                })
+                .subscribe();
         }
 
         if (chatboxSendBtn) chatboxSendBtn.onclick = sendMessage;
