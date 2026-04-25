@@ -891,7 +891,8 @@ async function checkLoginState() {
                          window.location.pathname.includes('/pedidos/') || 
                          window.location.pathname.includes('/carrinho/') || 
                          window.location.pathname.includes('/proxy/');
-        const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+        const admins = JSON.parse(localStorage.getItem('wandeath_admins') || 
+            '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"wandersoncalixto123@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
         const userObj = userDataStr ? JSON.parse(userDataStr) : null;
         const isAdmin = userObj && admins.find(a => a.email === userObj.email);
 
