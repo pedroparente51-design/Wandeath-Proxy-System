@@ -410,7 +410,7 @@ function renderStoreProducts(filter = 'all') {
     }
 
     if (filter === 'all') {
-        filteredProducts = products;
+        filteredProducts = products.slice(0, 3);
         grid.classList.add('featured-layout');
     } else {
         filteredProducts = products.filter(p => p && p.category === filter);
