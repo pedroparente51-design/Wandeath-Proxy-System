@@ -337,6 +337,11 @@ function renderDashboardMetrics() {
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
+    
+    // Background Effects (RH7 Standard)
+    if (typeof initMouseGlow === 'function') initMouseGlow();
+    if (typeof initNeuralNetwork === 'function') initNeuralNetwork();
+
     // Login
     const adminOverlay = document.getElementById('admin-login-overlay');
     const adminForm = document.getElementById('admin-login-form');
@@ -601,4 +606,40 @@ window.removeAdmin = function(index) {
         renderAdminsList();
     }
 };
+
+/* ─── Efeitos Visuais (RH7 Standard) ─── */
+function initMouseGlow() {
+    const glow = document.getElementById('mouse-glow');
+    if (!glow) return;
+    let mouseX = 0, mouseY = 0, ballX = 0, ballY = 0;
+    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+    function animate() {
+        ballX += (mouseX - ballX) * 0.1;
+        ballY += (mouseY - ballY) * 0.1;
+        glow.style.transform = `translate(${ballX}px, ${ballY}px)`;
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function initNeuralNetwork() {
+    const canvas = document.getElementById('particles-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    const COUNT = 60;
+    const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
+    window.addEventListener('resize', resize);
+    
+    class Particle {
+        constructor() { this.reset(); }
+        reset() { this.x = Math.random() * W; this.y = Math.random() * H; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.r = Math.random()*2; }
+        update() { this.x += this.vx; this.y += this.vy; if(this.x<0||this.x>W)this.vx*=-1; if(this.y<0||this.y>H)this.vy*=-1; }
+        draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(238,0,0,0.3)'; ctx.fill(); }
+    }
+    
+    const spawn = () => { resize(); for(let i=0;i<COUNT;i++) particles.push(new Particle()); };
+    const loop = () => { ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); };
+    spawn(); loop();
+}
 
