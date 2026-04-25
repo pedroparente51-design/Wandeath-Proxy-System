@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Minhas Compras - Wandeath VIP</title>
+    <title>Carrinho - Wandeath VIP</title>
+    <link rel="stylesheet" href="../home.css?v=1.2.2">
+    <link rel="stylesheet" href="./carrinho.css?v=1.2.2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/home.css?v=1.2.2">
-    <link rel="stylesheet" href="/pedidos/pedidos.css?v=1.2.2">
     <script src="https://unpkg.com/lucide@0.321.0/dist/umd/lucide.min.js"></script>
 </head>
 
@@ -33,10 +33,15 @@
         <div class="aurora-blob aurora-blob--3"></div>
         <div class="aurora-blob aurora-blob--4"></div>
     </div>
+
+    <!-- Topbar Notification (Slim) -->
     <div class="rx-topbar">
-        <a class="rx-topbar__link" href="../">🔥MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO</a>
+        <a class="rx-topbar__link" href="../#produtos">
+            🔥 • MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO
+        </a>
     </div>
 
+    <!-- Header (RH7 Style) -->
     <header class="main-header">
         <div class="container header-inner">
             <a href="../" class="logo">
@@ -62,7 +67,7 @@
             </nav>
 
             <div class="header-right">
-                <a href="../carrinho/" class="header-icon-box" title="Carrinho" style="position:relative;">
+                <a href="./" class="header-icon-box" title="Carrinho" style="position:relative;">
                     <i data-lucide="shopping-cart"></i>
                     <span id="cart-count" class="cart-badge">0</span>
                 </a>
@@ -78,36 +83,95 @@
         </div>
     </header>
 
-    <main class="page-wrap">
+    <main class="checkout-page">
         <div class="container">
-            <div class="page-header">
-                <h1>Minhas <span>Compras</span></h1>
-                <p>Todas suas compras efetuadas com entrega automática.</p>
-            </div>
+            <h1 class="checkout-title">Seu <span>Carrinho</span></h1>
 
-            <div id="orders-container" class="orders-list">
-                <!-- Orders render here -->
+            <div class="checkout-grid" id="main-checkout-grid">
+                <!-- Coluna Esquerda: Itens -->
+                <div class="checkout-main">
+                    <section class="checkout-section">
+                        <div class="section-header">
+                            <i data-lucide="shopping-bag"></i>
+                            <h4>Itens no Carrinho</h4>
+                        </div>
+                        <div class="cart-items" id="cart-items-list">
+                            <!-- Injetado via JS -->
+                            <div class="loader-box">
+                                <div class="loader"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-section">
+                        <div class="section-header">
+                            <i data-lucide="user"></i>
+                            <h4>Seus Dados</h4>
+                        </div>
+                        <div class="checkout-form-box">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="checkout-name" placeholder="Digite seu nome">
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail de Entrega</label>
+                                <input type="email" id="checkout-email" placeholder="seu@email.com">
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Coluna Direita: Resumo -->
+                <div class="checkout-sidebar">
+                    <div class="order-summary-card">
+                        <div class="summary-header">
+                            <h4>Resumo</h4>
+                            <i data-lucide="shield-check"></i>
+                        </div>
+
+                        <div id="cart-summary-items" class="summary-items-list">
+                            <!-- Injetado via JS -->
+                        </div>
+
+                        <div class="coupon-area">
+                            <label>Cupom de Desconto</label>
+                            <div class="coupon-input-group">
+                                <input type="text" id="cart-coupon-input" placeholder="CÓDIGO">
+                                <button onclick="applyCartCoupon()">Aplicar</button>
+                            </div>
+                            <div id="coupon-msg" style="margin-top: 10px; font-size: 12px; font-weight: 700;">
+                            </div>
+                        </div>
+
+                        <div class="summary-totals">
+                            <div class="total-line">
+                                <span>Subtotal</span>
+                                <span id="cart-subtotal">R$ 0,00</span>
+                            </div>
+                            <div class="total-line" id="cart-discount-line" style="display:none;">
+                                <span>Desconto</span>
+                                <span id="cart-discount-val" style="color: #22c55e;">- R$ 0,00</span>
+                            </div>
+                            <div class="total-line main-total">
+                                <span>Total</span>
+                                <span id="cart-final-total">R$ 0,00</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-checkout-finalize" id="confirm-payment-btn">
+                            Finalizar Compra
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+
+                        <div class="secure-footer">
+                            <i data-lucide="lock"></i>
+                            Pagamento 100% Seguro via Mercado Pago
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
-
-    <!-- Details Modal -->
-    <div id="details-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Produtos Recebidos</h2>
-                <button class="btn-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div id="delivery-box" class="delivery-box">
-                <!-- Items list -->
-            </div>
-            <div class="modal-footer">
-                <button id="btn-copy-all" class="btn-copy-all">
-                    <i data-lucide="copy"></i> Copiar Tudo
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Floating WA -->
     <a href="javascript:void(0);" class="wa-floating" id="open-chat-btn">
@@ -152,10 +216,11 @@
                     </div>
                 </div>
                 <div class="footer-col">
-                    <h4>Navegação</h4>
+                    <h4>Produtos</h4>
                     <ul class="footer-links">
-                        <li><a href="../">Início</a></li>
-                        <li><a href="../index.html#produtos">Produtos</a></li>
+                        <li><a href="../proxy/proxyrotativa.html">Proxies Rotativas</a></li>
+                        <li><a href="../proxy/proxymobile.html">Proxies Móveis</a></li>
+                        <li><a href="../proxy/proxyfixa.html">Proxies Fixas</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -183,13 +248,12 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/supabase-config.js?v=1.2.2"></script>
-    <script src="/home.js?v=1.2.2"></script>
-    <script src="/pedidos/pedidos.js?v=1.2.2"></script>
+    <script src="../supabase-config.js?v=1.2.2"></script>
+    <script src="../home.js?v=1.2.2"></script>
+    <script src="./carrinho.js?v=1.2.2"></script>
 
     <!-- Chatbox Component -->
-    <link rel="stylesheet" href="/chat/chatbox.css?v=1.2.2">
-    <script src="/chat/chatbox.js?v=1.2.2"></script>
+    <link rel="stylesheet" href="../chat/chatbox.css?v=1.2.2">
+    <script src="../chat/chatbox.js?v=1.2.2"></script>
 </body>
-
 </html>
