@@ -46,26 +46,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (googleBtn) {
         googleBtn.addEventListener('click', async e => {
             e.preventDefault();
-            console.log('[Wandeath Login] Tentando login via Google...');
+            console.log('[Wandeath Login] Botão Google clicado.');
             
             if (!window.supabaseClient) {
-                console.warn('Supabase não disponível. Usando simulação.');
-                return simulateOAuth('Google', 'user@gmail.com', 'Usuário Google');
+                alert('Erro: Supabase não inicializado. Verifique sua conexão ou configuração.');
+                return;
             }
             
-            const redirectUrl = window.location.href.split('/login/')[0] + '/index.html';
-            console.log('[Wandeath Login] URL de retorno:', redirectUrl);
+            const origin = window.location.origin;
+            const path = window.location.pathname.replace('login/login.html', 'index.html').replace('login/', 'index.html');
+            const redirectUrl = origin + (path.startsWith('/') ? '' : '/') + path;
+            
+            console.log('[Wandeath Login] Iniciando fluxo Google Auth...');
+            console.log('[Wandeath Login] URL de Redirecionamento:', redirectUrl);
 
             try {
                 const { error } = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
-                    options: { redirectTo: redirectUrl }
+                    options: { 
+                        redirectTo: redirectUrl,
+                        skipBrowserRedirect: false
+                    }
                 });
                 if (error) throw error;
             } catch (err) {
-                console.error('OAuth Error:', err.message);
-                alert('Erro na conexão com Supabase. Iniciando modo de segurança (Simulação).');
-                simulateOAuth('Google', 'user@gmail.com', 'Usuário Google');
+                console.error('[Wandeath Login] Erro OAuth:', err.message);
+                alert('Falha ao conectar com o Google: ' + err.message);
             }
         });
     }
@@ -73,24 +79,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (discordBtn) {
         discordBtn.addEventListener('click', async e => {
             e.preventDefault();
-            console.log('[Wandeath Login] Tentando login via Discord...');
+            console.log('[Wandeath Login] Botão Discord clicado.');
             
             if (!window.supabaseClient) {
-                console.warn('Supabase não disponível.');
-                return simulateOAuth('Discord', 'user@discord.com', 'Usuário Discord');
+                alert('Erro: Supabase não inicializado.');
+                return;
             }
 
-            const redirectUrl = window.location.href.split('/login/')[0] + '/index.html';
+            const origin = window.location.origin;
+            const path = window.location.pathname.replace('login/login.html', 'index.html').replace('login/', 'index.html');
+            const redirectUrl = origin + (path.startsWith('/') ? '' : '/') + path;
 
             try {
                 const { error } = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'discord',
-                    options: { redirectTo: redirectUrl }
+                    options: { 
+                        redirectTo: redirectUrl,
+                        skipBrowserRedirect: false
+                    }
                 });
                 if (error) throw error;
             } catch (err) {
-                console.error('OAuth Error:', err.message);
-                simulateOAuth('Discord', 'user@discord.com', 'Usuário Discord');
+                console.error('[Wandeath Login] Erro OAuth:', err.message);
+                alert('Falha ao conectar com o Discord: ' + err.message);
             }
         });
     }
