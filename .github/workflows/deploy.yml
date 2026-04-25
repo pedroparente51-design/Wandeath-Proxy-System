@@ -1,3 +1,4 @@
+# Version: 1.2.1 - Triggering fresh deploy
 name: 🚀 Deploy SSH
 on:
   push:
