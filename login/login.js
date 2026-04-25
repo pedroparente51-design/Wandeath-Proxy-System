@@ -179,7 +179,7 @@ async function handleRegister(e) {
                 email: email
             }));
             alert('Conta criada com sucesso! Bem-vindo ao Wandeath VIP.');
-            window.location.href = '../index.html';
+            window.location.href = '/';
         } else {
             // Auto-confirm desativado — precisa confirmar e-mail
             alert('Conta criada! Verifique seu e-mail (' + email + ') para confirmar sua conta. Depois, faça login.');
@@ -221,7 +221,7 @@ async function handleLogin(e) {
         }));
 
         alert(`Bem-vindo de volta!`);
-        window.location.href = '../index.html';
+        window.location.href = '/';
     } catch (err) {
         console.error('[Wandeath Login] Erro no login:', err.message);
         
@@ -229,7 +229,7 @@ async function handleLogin(e) {
         if (email === 'admin@admin.com' && password === 'admin') {
             localStorage.setItem('wandeath_logged_in', 'true');
             alert('Login de Administrador (Bypass) realizado!');
-            window.location.href = '../index.html';
+            window.location.href = '/';
             return;
         }
 

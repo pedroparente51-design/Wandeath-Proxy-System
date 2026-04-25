@@ -104,7 +104,7 @@ function generateCardHTML(p) {
                 </div>
             </div>
             <div class="product-footer">
-                <a href="../produto/produto.html?name=${encodeURIComponent(p.name)}"
+                <a href="/produto/?name=${encodeURIComponent(p.name)}"
                    class="btn-buy btn-shine">
                     Ver Produto
                 </a>

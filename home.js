@@ -124,7 +124,7 @@ function renderHeaderMenu() {
         // Mostrar os 5 primeiros produtos como destaques no menu
         const mainProducts = products.slice(0, 5);
         menuHTML += mainProducts.map(p => `
-            <a href="/produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">
+            <a href="/produto/?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">
                 <i data-lucide="zap" style="width:14px; margin-right:8px; color:var(--primary);"></i> ${p.name}
             </a>
         `).join('');
@@ -451,7 +451,7 @@ function renderStoreProducts(filter = 'all') {
                 </div>
             </div>
             <div class="product-footer">
-                <a href="/produto/produto.html?name=${encodeURIComponent(prod.name)}"
+                <a href="/produto/?name=${encodeURIComponent(prod.name)}"
                    class="btn-buy btn-shine">
                     Ver Produto
                 </a>
@@ -469,7 +469,7 @@ function renderStoreProducts(filter = 'all') {
 }
 
 function processPurchase(name) {
-    window.location.href = `/produto/produto.html?name=${encodeURIComponent(name)}`;
+    window.location.href = `/produto/?name=${encodeURIComponent(name)}`;
 }
 
 window.processPurchase = processPurchase;

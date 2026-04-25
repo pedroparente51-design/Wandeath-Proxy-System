@@ -15,7 +15,7 @@ function init() {
     const prod = products.find(p => p.name === name);
 
     if (!prod) {
-        window.location.href = '../index.html';
+        window.location.href = '/';
         return;
     }
 
@@ -80,7 +80,7 @@ function renderSimilar(products, currentName) {
     const similar = products.filter(p => p.name !== currentName).slice(0, 5);
 
     grid.innerHTML = similar.map(p => `
-        <a href="produto.html?name=${encodeURIComponent(p.name)}" class="similar-card">
+        <a href="/produto/?name=${encodeURIComponent(p.name)}" class="similar-card">
             <img src="${p.image || '../logo.png'}" alt="${p.name}" onerror="this.src='../image.png'">
             <h5>🛜 ${p.name.replace('Proxy Residencial Rotativa BR - ', '')}</h5>
             <div class="sim-price">R$ ${parseFloat(p.price).toFixed(2)}</div>
@@ -117,7 +117,7 @@ window.addToCart = function() {
 
 window.buyNow = function() {
     window.addToCart();
-    window.location.href = '../carrinho/carrinho.html';
+    window.location.href = '/carrinho/';
 };
 
 function updateCartBadge() {
