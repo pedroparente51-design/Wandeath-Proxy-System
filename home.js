@@ -54,6 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     console.log(`[Wandeath] Sistema inicializado na página: ${window.location.pathname}`);
+
+    // Segurança: Forçar revelação se o observer falhar
+    setTimeout(() => {
+        if (window.lucide) lucide.createIcons();
+        document.querySelectorAll('.rx-reveal:not(.rx-reveal--visible)').forEach(el => {
+            el.classList.add('rx-reveal--visible');
+        });
+    }, 1500);
 });
 
 /**
@@ -960,7 +968,7 @@ function initScrollReveal() {
                 entry.target.classList.add('rx-reveal--visible');
             }
         });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.01, rootMargin: '0px 0px -20px 0px' });
 
     document.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
 }
