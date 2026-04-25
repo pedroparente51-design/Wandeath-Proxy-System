@@ -171,20 +171,15 @@ async function handleRegister(e) {
 
         console.log('[Wandeath Login] Registro concluído para:', email, data);
 
-        // Se o Supabase retornou sessão, o auto-confirm está ativo
-        if (data.session) {
-            localStorage.setItem('wandeath_logged_in', 'true');
-            localStorage.setItem('wandeath_user', JSON.stringify({
-                name: name,
-                email: email
-            }));
-            alert('Conta criada com sucesso! Bem-vindo ao Wandeath VIP.');
-            window.location.href = '/';
-        } else {
-            // Auto-confirm desativado — precisa confirmar e-mail
-            alert('Conta criada! Verifique seu e-mail (' + email + ') para confirmar sua conta. Depois, faça login.');
-            toggleAuth();
-        }
+        // Salvar no localStorage e logar automaticamente
+        // (usuário já foi criado no Supabase + trigger profiles)
+        localStorage.setItem('wandeath_logged_in', 'true');
+        localStorage.setItem('wandeath_user', JSON.stringify({
+            name: name,
+            email: email
+        }));
+        alert('Conta criada com sucesso! Bem-vindo ao Wandeath VIP.');
+        window.location.href = '/';
     } catch (err) {
         console.error('[Wandeath Login] Erro no registro:', err.message);
         alert('Falha ao criar conta: ' + err.message);
