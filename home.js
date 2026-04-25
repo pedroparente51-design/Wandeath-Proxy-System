@@ -486,9 +486,6 @@ function processPurchase(name) {
 
 window.processPurchase = processPurchase;
 
-window.addToCart = addToCart;
-window.processPurchase = processPurchase;
-
 function getCart() {
     return JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
 }
