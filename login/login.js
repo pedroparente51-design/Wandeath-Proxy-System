@@ -53,9 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            const origin = window.location.origin;
-            const path = window.location.pathname.replace('login/login.html', 'index.html').replace('login/', 'index.html');
-            const redirectUrl = origin + (path.startsWith('/') ? '' : '/') + path;
+            const redirectUrl = `${window.location.origin}/`;
             
             console.log('[Wandeath Login] Iniciando fluxo Google Auth...');
             console.log('[Wandeath Login] URL de Redirecionamento:', redirectUrl);
@@ -86,9 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const origin = window.location.origin;
-            const path = window.location.pathname.replace('login/login.html', 'index.html').replace('login/', 'index.html');
-            const redirectUrl = origin + (path.startsWith('/') ? '' : '/') + path;
+            const redirectUrl = `${window.location.origin}/`;
 
             try {
                 const { error } = await window.supabaseClient.auth.signInWithOAuth({

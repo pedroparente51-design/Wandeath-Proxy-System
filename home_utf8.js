@@ -831,6 +831,26 @@ async function checkLoginState() {
     // 1. Sync with Supabase Session
     if (window.supabaseClient) {
         try {
+            // Ouvir mudanças de autenticação (captura o login do OAuth)
+            window.supabaseClient.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+                    if (session && session.user) {
+                        localStorage.setItem('wandeath_logged_in', 'true');
+                        localStorage.setItem('wandeath_user', JSON.stringify({
+                            name: session.user.user_metadata.full_name || session.user.email.split('@')[0],
+                            email: session.user.email,
+                            avatar: session.user.user_metadata.avatar_url
+                        }));
+                        renderHeaderMenu();
+                    }
+                }
+                if (event === 'SIGNED_OUT') {
+                    localStorage.removeItem('wandeath_logged_in');
+                    localStorage.removeItem('wandeath_user');
+                    window.location.reload();
+                }
+            });
+
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             if (session && session.user) {
                 localStorage.setItem('wandeath_logged_in', 'true');
@@ -871,6 +891,9 @@ async function checkLoginState() {
                          window.location.pathname.includes('/carrinho/') || 
                          window.location.pathname.includes('/proxy/');
         const prefix = isSubDir ? '../' : './';
+        const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+        const userObj = userDataStr ? JSON.parse(userDataStr) : null;
+        const isAdmin = userObj && admins.find(a => a.email === userObj.email);
 
         // Substituir o botão de login pelo menu de perfil premium
         const profileDiv = document.createElement('div');
@@ -886,6 +909,12 @@ async function checkLoginState() {
                 </div>
             </a>
             <div class="dropdown-menu">
+                ${isAdmin ? `
+                <a href="/admin/" style="color: var(--primary); font-weight: 800;">
+                    <i data-lucide="shield-check"></i> Painel Admin
+                </a>
+                <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 5px 0;"></div>
+                ` : ''}
                 <a href="${prefix}pedidos/pedidos.html">
                     <i data-lucide="package"></i> Meus Pedidos
                 </a>
