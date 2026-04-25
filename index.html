@@ -381,29 +381,8 @@
 
     <!-- MODAIS E COMPONENTES FLUTUANTES (Escondidos por padrão) -->
 
-    <!-- Floating WA -->
-    <a href="javascript:void(0);" class="wa-floating" id="open-chat-btn">
-        <i data-lucide="message-circle"></i>
-    </a>
-
-    <!-- Real-time Chatbox -->
-    <div class="chatbox-container" id="chatbox-container">
-        <div class="chatbox-header">
-            <div class="chatbox-header-info">
-                <i data-lucide="headset"></i>
-                <div>
-                    <h4>Suporte Ao Vivo</h4>
-                    <span class="status-indicator"></span><small>Online agora</small>
-                </div>
-            </div>
-            <button class="chatbox-close" id="close-chat-btn"><i data-lucide="x"></i></button>
-        </div>
-        <div class="chatbox-messages" id="chatbox-messages"></div>
-        <div class="chatbox-input">
-            <input type="text" id="chatbox-input-field" placeholder="Digite sua mensagem...">
-            <button id="chatbox-send-btn"><i data-lucide="send"></i></button>
-        </div>
-    </div>
+    <!-- Chatbox Component -->
+    <script src="./chatbox/chatbox.js"></script>
 
     <!-- Checkout Modal -->
     <div class="modal display-none" id="checkout-modal">

@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     safeRun('initSearch', initSearch);
     safeRun('initSearchSuggestions', initSearchSuggestions);
     safeRun('updateCartBadge', updateCartBadge);
-    safeRun('initChatbox', initChatbox);
     safeRun('initModals', initModals);
     safeRun('initCheckerTabs', initCheckerTabs);
     safeRun('renderHeaderMenu', renderHeaderMenu);
@@ -1079,82 +1078,6 @@ function initInteractiveBackground() {
     });
 }
 
-function initChatbox() {
-    const openChatBtn = document.getElementById('open-chat-btn');
-    const closeChatBtn = document.getElementById('close-chat-btn');
-    const chatboxContainer = document.getElementById('chatbox-container');
-    const chatboxMessages = document.getElementById('chatbox-messages');
-    const chatboxInput = document.getElementById('chatbox-input-field');
-    const chatboxSendBtn = document.getElementById('chatbox-send-btn');
-
-    if (!openChatBtn || !chatboxContainer) return;
-
-    // Toggle Chatbox
-    openChatBtn.onclick = (e) => {
-        e.preventDefault();
-        chatboxContainer.style.display = 'flex';
-        setTimeout(() => {
-            chatboxContainer.classList.add('show');
-            renderMessages();
-            if (chatboxInput) chatboxInput.focus();
-        }, 10);
-    };
-
-    if (closeChatBtn) {
-        closeChatBtn.onclick = () => {
-            chatboxContainer.classList.remove('show');
-            setTimeout(() => chatboxContainer.style.display = 'none', 400);
-        };
-    }
-
-    // Render Messages
-    function renderMessages() {
-        if (!chatboxMessages) return;
-        const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-        chatboxMessages.innerHTML = '';
-
-        if (history.length === 0) {
-            chatboxMessages.innerHTML = `<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Inicie uma conversa conosco!</div>`;
-        } else {
-            history.forEach(msg => {
-                const msgEl = document.createElement('div');
-                msgEl.className = `chat-msg ${msg.sender}`;
-                msgEl.textContent = msg.text;
-                chatboxMessages.appendChild(msgEl);
-            });
-        }
-        chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
-    }
-
-    // Send Message
-    function sendMessage() {
-        if (!chatboxInput) return;
-        const text = chatboxInput.value.trim();
-        if (!text) return;
-
-        const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-        history.push({ sender: 'user', text: text, timestamp: Date.now() });
-        localStorage.setItem('wandeath_chat_history', JSON.stringify(history));
-
-        chatboxInput.value = '';
-        renderMessages();
-
-        // Simulate admin reply
-        setTimeout(() => {
-            const adminHistory = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
-            adminHistory.push({ sender: 'admin', text: 'Olá! Um consultor entrará em contato em breve.', timestamp: Date.now() });
-            localStorage.setItem('wandeath_chat_history', JSON.stringify(adminHistory));
-            renderMessages();
-        }, 1000);
-    }
-
-    if (chatboxSendBtn) chatboxSendBtn.onclick = sendMessage;
-    if (chatboxInput) {
-        chatboxInput.onkeypress = (e) => {
-            if (e.key === 'Enter') sendMessage();
-        };
-    }
-}
 
 function initModals() {
     // Modal Close Buttons
