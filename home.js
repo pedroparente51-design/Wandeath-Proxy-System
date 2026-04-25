@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         safeRun('initProductTabs', initProductTabs);
         safeRun('initOrdersModal', initOrdersModal);
         safeRun('initCheckout', initCheckout);
-        safeRun('initSearchSuggestions', initSearchSuggestions);
         safeRun('initCheckerTabs', initCheckerTabs);
     }
     

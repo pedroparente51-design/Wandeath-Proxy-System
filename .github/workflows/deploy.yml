@@ -21,11 +21,17 @@ jobs:
             echo "⚙️ Configurando diretório seguro..."
             git config --global --add safe.directory /var/www/$TARGET
             
-            echo "📥 Buscando atualizações do GitHub..."
-            git fetch origin main
+            echo "📥 Sincronizando com o repositório Wandeath..."
+            git remote set-url origin https://github.com/pedroparente51-design/wandeath.git || git remote add origin https://github.com/pedroparente51-design/wandeath.git
             
-            echo "🧹 Resetando para a versão mais recente..."
+            echo "📥 Buscando atualizações..."
+            git fetch --all
+            
+            echo "🧹 Resetando para a versão mais recente do Wandeath..."
             git reset --hard origin/main
+            
+            echo "✨ Limpando arquivos não rastreados..."
+            git clean -fd
             
             echo "🔑 Ajustando permissões..."
             # Usando sudo para garantir que as permissões sejam aplicadas
