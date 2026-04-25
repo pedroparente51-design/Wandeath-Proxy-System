@@ -23,22 +23,4 @@
     font-size: 18px;
 }
 
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-sec);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 40px;
-    transition: 0.3s;
-}
-
-.back-link:hover {
-    color: #fff;
-}
-
-.back-link i {
-    width: 16px;
-}
+/* Estilos de retorno movidos para btn-back-home no home.css */

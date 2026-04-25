@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     safeRun('initSearch', initSearch);
     safeRun('initSearchSuggestions', initSearchSuggestions);
     safeRun('updateCartBadge', updateCartBadge);
+    // safeRun('initChatbox', initChatbox); // Movido para chat/chatbox.js
     safeRun('initModals', initModals);
     safeRun('initCheckerTabs', initCheckerTabs);
     safeRun('renderHeaderMenu', renderHeaderMenu);
@@ -30,18 +31,58 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {
         lucide.createIcons();
     }
+    
+    // Refresh cart badge after Lucide just in case
+    updateCartBadge();
 
-    // Listen for changes from Admin Panel in other tabs
+    // Listen for changes from other tabs
     window.addEventListener('storage', (e) => {
         if (e.key === 'wandeath_products') {
             safeRun('renderStoreProducts', renderStoreProducts);
             renderHeaderMenu();
         }
+        if (e.key === 'wandeath_cart') {
+            updateCartBadge();
+        }
     });
 
     renderHeaderMenu();
+    updateCartBadge();
     console.log('[Wandeath] Todas as funções foram executadas.');
 });
+
+/**
+ * Recupera os produtos do localStorage ou inicializa com os padrões se estiver vazio.
+ */
+function getStoredProducts() {
+    let products = [];
+    try {
+        let productsStr = localStorage.getItem('wandeath_products');
+        products = productsStr ? JSON.parse(productsStr) : [];
+    } catch (e) {
+        console.error('[Wandeath] Erro ao carregar produtos:', e);
+    }
+
+    if (!Array.isArray(products) || products.length === 0) {
+        products = [
+            {
+                name: "Proxy Residencial Rotativa",
+                price: "13.99",
+                category: "rotativa",
+                image: "img-rotativa/1gb.png",
+                tag: "MAIS VENDIDO",
+                description: "IPs residenciais rotativos com alta reputação e baixa detecção. Ideal para operações em massa.",
+                delivery: "187.12.44.1:8080:wandeath_user:pass123\n187.12.44.2:8080:wandeath_user:pass123",
+                minQty: 1,
+                maxQty: 100
+            },
+            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G) para máxima autenticidade e alta taxa de sucesso.", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
+            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados e estáveis para operações de longa duração e alta confiabilidade.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
+        ];
+        localStorage.setItem('wandeath_products', JSON.stringify(products));
+    }
+    return products;
+}
 
 /**
  * Renderiza dinamicamente o menu de produtos no Header
@@ -50,15 +91,22 @@ function renderHeaderMenu() {
     const menu = document.getElementById('header-products-menu');
     if (!menu) return;
 
-    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+    const products = getStoredProducts();
     
-    const isSubDir = window.location.pathname.includes('/produto/') || 
-                     window.location.pathname.includes('/login/') || 
-                     window.location.pathname.includes('/pedidos/') || 
-                     window.location.pathname.includes('/carrinho/') ||
-                     window.location.pathname.includes('/proxy/');
+    // Detectar se estamos em um subdiretório (pedidos, carrinho, login, proxy, produto, etc.)
+    const path = window.location.pathname;
+    const isSubDir = path.includes('/produto/') || 
+                     path.includes('/login/') || 
+                     path.includes('/pedidos/') || 
+                     path.includes('/carrinho/') ||
+                     path.includes('/proxy/') ||
+                     path.includes('/termos/') ||
+                     path.includes('/politica/') ||
+                     path.includes('/checker/');
+                     
     const prefix = isSubDir ? '../' : './';
 
+    // 1. Links das Categorias Fixas
     let menuHTML = `
         <div style="padding: 10px 0;">
             <div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Categorias</div>
@@ -70,8 +118,9 @@ function renderHeaderMenu() {
     `;
 
     if (products.length > 0) {
-        menuHTML += `<div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Destaques</div>`;
-        const mainProducts = products.slice(0, 6);
+        menuHTML += `<div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px;">Destaques</div>`;
+        // Mostrar os 5 primeiros produtos como destaques no menu
+        const mainProducts = products.slice(0, 5);
         menuHTML += mainProducts.map(p => `
             <a href="${prefix}produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">
                 <i data-lucide="zap" style="width:14px; margin-right:8px; color:var(--primary);"></i> ${p.name}
@@ -89,8 +138,8 @@ function renderHeaderMenu() {
 
     menu.innerHTML = menuHTML;
     
-    // Refresh icons
-    if (window.lucide) {
+    // Forçar Lucide a processar os novos ícones se necessário
+    if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
     }
 }
@@ -335,34 +384,9 @@ function renderStoreProducts(filter = 'all') {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
 
-    let products = [];
-    try {
-        let productsStr = localStorage.getItem('wandeath_products');
-        products = productsStr ? JSON.parse(productsStr) : [];
-    } catch (e) {
-        console.error('[Wandeath] Erro ao carregar produtos:', e);
-        products = [];
-    }
+    const products = getStoredProducts();
 
-    // Default products if none exist
-    if (!Array.isArray(products) || products.length === 0) {
-        products = [
-            {
-                name: "Proxy Residencial Rotativa",
-                price: "13.99",
-                category: "rotativa",
-                image: "img-rotativa/1gb.png",
-                tag: "MAIS VENDIDO",
-                description: "IPs residenciais rotativos com alta reputação e baixa detecção. Ideal para operações em massa.",
-                delivery: "187.12.44.1:8080:wandeath_user:pass123\n187.12.44.2:8080:wandeath_user:pass123",
-                minQty: 1,
-                maxQty: 100
-            },
-            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "img-rotativa/3gb.png", tag: "Premium", description: "IPs móveis reais (4G/5G) para máxima autenticidade e alta taxa de sucesso.", delivery: "proxy-mob:5678:user:pass", minQty: 1, maxQty: 50 },
-            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "img-rotativa/5gb.png", tag: "Contingência", description: "IPs dedicados e estáveis para operações de longa duração e alta confiabilidade.", delivery: "proxy-fixa:9999:user:pass", minQty: 1, maxQty: 20 }
-        ];
-        localStorage.setItem('wandeath_products', JSON.stringify(products));
-    }
+    // Filter logic
 
     // Filter logic
     let filteredProducts = [];
@@ -461,9 +485,13 @@ function getCart() {
 
 function updateCartBadge() {
     const badge = document.getElementById('cart-count');
-    if (!badge) return;
+    if (!badge) {
+        console.warn('[Wandeath] Elemento cart-count não encontrado.');
+        return;
+    }
     const cart = getCart();
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    console.log('[Wandeath] Atualizando badge do carrinho:', count);
     badge.textContent = count;
     badge.style.display = count > 0 ? 'flex' : 'none';
 }
@@ -815,42 +843,57 @@ async function checkLoginState() {
         }
     }
 
+    // Se já estiver renderizado o menu de perfil, não faz nada para evitar duplicação
+    if (document.querySelector('.profile-dropdown')) return;
+
     const isLoggedIn = localStorage.getItem('wandeath_logged_in');
     const userDataStr = localStorage.getItem('wandeath_user');
     const userBtn = document.querySelector('.header-user-btn');
 
     if (isLoggedIn === 'true' && userBtn) {
-        let name = "Admin";
+        let name = "Usuário";
+        let avatarText = "U";
         if (userDataStr) {
             try {
                 const user = JSON.parse(userDataStr);
                 if (user && user.name) {
-                    name = user.name.split(' ')[0]; // First name only
+                    name = user.name.split(' ')[0]; // Nome curto
+                    avatarText = name.charAt(0).toUpperCase();
                 }
             } catch (e) { }
         }
 
-        const isSubDir = window.location.pathname.includes('/produto/') || window.location.pathname.includes('/login/') || window.location.pathname.includes('/pedidos/') || window.location.pathname.includes('/carrinho/') || window.location.pathname.includes('/proxy/');
+        const isSubDir = window.location.pathname.includes('/produto/') || 
+                         window.location.pathname.includes('/login/') || 
+                         window.location.pathname.includes('/pedidos/') || 
+                         window.location.pathname.includes('/carrinho/') || 
+                         window.location.pathname.includes('/proxy/');
         const prefix = isSubDir ? '../' : './';
 
-        userBtn.outerHTML = `
-            <div class="nav-dropdown profile-dropdown">
-                <a href="javascript:void(0);" class="header-user-btn dropdown-toggle" style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 28px; height: 28px; flex-shrink: 0; background: rgba(255,215,0,0.15); border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: var(--gold);">
-                        ${name.charAt(0).toUpperCase()}
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-                        Olá, ${name} 
-                        <i data-lucide="chevron-down" style="width: 14px;"></i>
-                    </div>
-                </a>
-                <div class="dropdown-menu">
-                    <a href="${prefix}pedidos/pedidos.html"><i data-lucide="package" style="width: 16px;"></i> Meus Pedidos</a>
-                    <div style="height: 1px; background: var(--border); margin: 5px 0;"></div>
-                    <a href="#" onclick="window.wandeathLogout(event)" style="color: #ff4a4a;"><i data-lucide="log-out" style="width: 16px;"></i> Sair da conta</a>
+        // Substituir o botão de login pelo menu de perfil premium
+        const profileDiv = document.createElement('div');
+        profileDiv.className = 'nav-dropdown profile-dropdown';
+        profileDiv.innerHTML = `
+            <a href="javascript:void(0);" class="dropdown-toggle" style="display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none;">
+                <div class="user-avatar-circle">
+                    ${avatarText}
                 </div>
+                <div style="display: flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 14px; font-weight: 600;">
+                    Olá, ${name} 
+                    <i data-lucide="chevron-down" style="width: 14px; color: var(--text-sec);"></i>
+                </div>
+            </a>
+            <div class="dropdown-menu">
+                <a href="${prefix}pedidos/pedidos.html">
+                    <i data-lucide="package"></i> Meus Pedidos
+                </a>
+                <a href="#" onclick="window.wandeathLogout(event)" style="color: #ff4a4a;">
+                    <i data-lucide="log-out"></i> Sair da conta
+                </a>
             </div>
         `;
+
+        userBtn.parentNode.replaceChild(profileDiv, userBtn);
 
         if (typeof lucide !== 'undefined') lucide.createIcons();
 

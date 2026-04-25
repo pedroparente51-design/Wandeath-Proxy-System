@@ -83,11 +83,20 @@ function handleRegister(e) {
     const email = inputs[1].value;
     const password = inputs[2].value;
 
-    const user = { name, email, password };
+    const user = { name, email, password, createdAt: new Date().toISOString() };
+    
+    // Save current session
     localStorage.setItem('wandeath_user', JSON.stringify(user));
+    localStorage.setItem('wandeath_logged_in', 'true');
+
+    // Add to global user list for Admin Panel
+    const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
+    if (!users.find(u => u.email === email)) {
+        users.push(user);
+        localStorage.setItem('wandeath_users', JSON.stringify(users));
+    }
 
     alert('Conta criada com sucesso! Redirecionando...');
-    localStorage.setItem('wandeath_logged_in', 'true');
     window.location.href = '../index.html';
 }
 

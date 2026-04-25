@@ -67,14 +67,27 @@ window.simulateAdminOAuth = function(provider) {
 };
 
 // Logic functions (must be global or reachable by showSection)
+let activeChatId = null;
+
 function renderAdminMessages() {
     const chatMessages = document.getElementById('admin-chat-messages');
     if (!chatMessages) return;
-    const historyStr = localStorage.getItem('wandeath_chat_history');
+    
+    // Update active chats list in sidebar
+    renderActiveChatsList();
+
+    if (!activeChatId) {
+        chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Selecione uma conversa ao lado para responder.</div>';
+        return;
+    }
+
+    const chatKey = `wandeath_chat_${activeChatId}`;
+    const historyStr = localStorage.getItem(chatKey);
     const history = historyStr ? JSON.parse(historyStr) : [];
+    
     chatMessages.innerHTML = '';
     if (history.length === 0) {
-        chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Nenhuma mensagem recebida ainda.</div>';
+        chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Aguardando mensagens do cliente...</div>';
         return;
     }
     history.forEach(msg => {
@@ -85,6 +98,47 @@ function renderAdminMessages() {
     });
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
+function renderActiveChatsList() {
+    const list = document.querySelector('.chat-list');
+    if (!list) return;
+    
+    const activeChats = JSON.parse(localStorage.getItem('wandeath_active_chats') || '[]');
+    
+    let html = `
+        <div class="chat-list-header">
+            <h3>Conversas Ativas</h3>
+            <span class="badge">${activeChats.length}</span>
+        </div>
+    `;
+
+    if (activeChats.length === 0) {
+        html += '<p style="font-size:12px; color:var(--text-sec); padding:20px; text-align:center;">Nenhum chat ativo.</p>';
+    } else {
+        activeChats.forEach(id => {
+            const isActive = activeChatId === id ? 'active' : '';
+            html += `
+                <div class="chat-session ${isActive}" onclick="selectChat('${id}')">
+                    <div class="session-avatar"><i data-lucide="user"></i></div>
+                    <div class="session-info">
+                        <h4>${id.split('@')[0]}</h4>
+                        <p>${id.includes('@') ? 'Cliente' : 'Visitante'}</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    list.innerHTML = html;
+    if (window.lucide) lucide.createIcons();
+}
+
+window.selectChat = function(id) {
+    activeChatId = id;
+    const headerInfo = document.querySelector('.session-info-header h4');
+    if (headerInfo) headerInfo.textContent = id;
+    renderAdminMessages();
+};
 
 function renderAdminProducts() {
     const adminProductsList = document.getElementById('admin-products-list');
@@ -198,17 +252,27 @@ function renderAdminCustomers() {
     const listBody = document.getElementById('customers-list-body');
     if (!listBody) return;
     const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+    const registeredUsers = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
+    
     const customerMap = {};
+
+    // First, add all registered users
+    registeredUsers.forEach(u => {
+        customerMap[u.email] = { name: u.name, totalSpent: 0, orderCount: 0, registered: true };
+    });
+
+    // Then, add/update with orders data
     orders.forEach(o => {
         if (!customerMap[o.customerEmail]) {
-            customerMap[o.customerEmail] = { name: o.customerName || 'Cliente', totalSpent: 0, orderCount: 0 };
+            customerMap[o.customerEmail] = { name: o.customerName || 'Cliente', totalSpent: 0, orderCount: 0, registered: false };
         }
         customerMap[o.customerEmail].totalSpent += o.total || 0;
         customerMap[o.customerEmail].orderCount += 1;
     });
+
     const emails = Object.keys(customerMap);
     if (emails.length === 0) {
-        listBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-sec);">Nenhum cliente ainda.</td></tr>';
+        listBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-sec);">Nenhum cliente ainda.</td></tr>';
         return;
     }
     listBody.innerHTML = emails.map(email => {
@@ -223,7 +287,7 @@ function renderAdminCustomers() {
         return `
             <tr>
                 <td><div class="avatar-small">${c.name.charAt(0).toUpperCase()}</div></td>
-                <td>${c.name}</td>
+                <td>${c.name} ${c.registered ? '<span style="font-size:8px; color:var(--primary); border:1px solid var(--primary); padding:1px 4px; border-radius:4px; margin-left:5px;">REG</span>' : ''}</td>
                 <td>${email}</td>
                 <td>R$ ${c.totalSpent.toFixed(2)}</td>
                 <td><span class="status-tag ${statusClass}">${currentStatus}</span></td>
@@ -325,11 +389,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('admin-chat-send');
     const chatInput = document.getElementById('admin-chat-input');
     const sendMsg = () => {
+        if (!activeChatId) return alert('Selecione uma conversa primeiro!');
         const text = chatInput.value.trim();
         if (!text) return;
-        const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
+        const chatKey = `wandeath_chat_${activeChatId}`;
+        const history = JSON.parse(localStorage.getItem(chatKey) || '[]');
         history.push({ sender: 'admin', text, timestamp: Date.now() });
-        localStorage.setItem('wandeath_chat_history', JSON.stringify(history));
+        localStorage.setItem(chatKey, JSON.stringify(history));
         chatInput.value = '';
         renderAdminMessages();
     };
