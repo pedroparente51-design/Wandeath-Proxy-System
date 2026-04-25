@@ -32,11 +32,13 @@
 
             <div class="oauth-grid-admin">
                 <button id="btn-login-google" class="btn-oauth btn-google">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
+                        alt="Google">
                     Logar com Google
                 </button>
                 <button id="btn-login-discord" class="btn-oauth btn-discord">
-                    <i data-lucide="message-square" style="width: 18px;"></i>
+                    <img width="18" height="18" src="https://img.icons8.com/color/18/discord--v2.png"
+                        alt="discord--v2" />
                     Logar com Discord
                 </button>
                 <button id="btn-bypass-dev" class="btn-bypass-dev">
@@ -52,13 +54,18 @@
             <img src="../image.png" alt="Wandeath VIP Logo" class="admin-logo">
         </div>
         <nav class="sidebar-nav">
-            <a href="javascript:void(0)" class="nav-item active" id="nav-dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-chat"><i data-lucide="message-square"></i> Suporte Chat</a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-products"><i data-lucide="shopping-cart"></i> Produtos</a>
+            <a href="javascript:void(0)" class="nav-item active" id="nav-dashboard"><i
+                    data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-chat"><i data-lucide="message-square"></i> Suporte
+                Chat</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-products"><i data-lucide="shopping-cart"></i>
+                Produtos</a>
             <a href="javascript:void(0)" class="nav-item" id="nav-coupons"><i data-lucide="tag"></i> Cupons</a>
             <a href="javascript:void(0)" class="nav-item" id="nav-customers"><i data-lucide="users"></i> Clientes</a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-logs"><i data-lucide="file-text"></i> Log de Atividades</a>
-            <a href="javascript:void(0)" class="nav-item" id="nav-settings"><i data-lucide="settings"></i> Configurações</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-logs"><i data-lucide="file-text"></i> Log de
+                Atividades</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-settings"><i data-lucide="settings"></i>
+                Configurações</a>
         </nav>
         <div class="sidebar-footer">
             <a href="../index.html" class="nav-item return-btn"><i data-lucide="log-out"></i> Voltar à Loja</a>
@@ -342,7 +349,9 @@
                 <div class="data-table-container">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                         <h3>Histórico de Atividades</h3>
-                        <button onclick="clearLogs()" style="background:rgba(238,0,0,0.1); color:var(--primary); border:1px solid rgba(238,0,0,0.2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:12px;">Limpar Logs</button>
+                        <button onclick="clearLogs()"
+                            style="background:rgba(238,0,0,0.1); color:var(--primary); border:1px solid rgba(238,0,0,0.2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:12px;">Limpar
+                            Logs</button>
                     </div>
                     <div id="admin-logs-list" class="logs-container">
                         <!-- Logs will render here -->
@@ -366,7 +375,8 @@
                                 <input type="password" id="new-admin-pass" placeholder="••••••••">
                             </div>
                         </div>
-                        <button onclick="addNewAdmin()" class="btn-primary-admin" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); width:100%;">
+                        <button onclick="addNewAdmin()" class="btn-primary-admin"
+                            style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); width:100%;">
                             <i data-lucide="user-plus"></i> Adicionar Administrador
                         </button>
 

@@ -39,10 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return simulateOAuth('Google', 'user@gmail.com', 'Usuário Google');
             }
             
+            const redirectUrl = window.location.href.split('/login/')[0] + '/index.html';
+            console.log('[Wandeath] Redirecting to:', redirectUrl);
+
             try {
                 const { error } = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
-                    options: { redirectTo: window.location.origin + '/index.html' }
+                    options: { redirectTo: redirectUrl }
                 });
                 if (error) throw error;
             } catch (err) {
@@ -57,9 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             if (!window.supabaseClient) return alert('Erro: Supabase não inicializado.');
 
+            const redirectUrl = window.location.href.split('/login/')[0] + '/index.html';
+
             const { error } = await window.supabaseClient.auth.signInWithOAuth({
                 provider: 'discord',
-                options: { redirectTo: window.location.origin + '/index.html' }
+                options: { redirectTo: redirectUrl }
             });
             if (error) alert('Erro ao logar com Discord: ' + error.message);
         });

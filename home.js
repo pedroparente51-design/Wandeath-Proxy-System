@@ -11,7 +11,8 @@ const safeRun = (name, fn) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    const isHomePage = window.location.pathname === '/' || window.location.pathname.endsWith('index.html') || window.location.pathname === '';
+    const hasProductsGrid = document.getElementById('products-grid') !== null;
+    const isHomePage = hasProductsGrid || window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
     
     if (window.lucide) lucide.createIcons();
 
@@ -395,12 +396,16 @@ function renderStoreProducts(filter = 'all') {
 
     // Filter logic
     let filteredProducts = [];
+    if (!Array.isArray(products)) {
+        console.error('[Wandeath] Products is not an array:', products);
+        return;
+    }
+
     if (filter === 'all') {
-        // Mostrar TODOS os produtos na home, mas em um grid bonito
         filteredProducts = products;
         grid.classList.add('featured-layout');
     } else {
-        filteredProducts = products.filter(p => p.category === filter);
+        filteredProducts = products.filter(p => p && p.category === filter);
         grid.classList.remove('featured-layout');
     }
     
@@ -457,6 +462,9 @@ function renderStoreProducts(filter = 'all') {
             </div>
         `;
         grid.appendChild(productCard);
+        
+        // Forçar visibilidade se o observer falhar ou para feedback imediato
+        setTimeout(() => productCard.classList.add('rx-reveal--visible'), 100);
 
         if (window.revealObserver) window.revealObserver.observe(productCard);
     });
