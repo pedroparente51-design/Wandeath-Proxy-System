@@ -206,11 +206,25 @@ window.editProduct = function(index) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-window.deleteProduct = function(index) {
+window.deleteProduct = async function(index) {
+    if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+    
     const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-    products.splice(index, 1);
-    localStorage.setItem('wandeath_products', JSON.stringify(products));
-    renderAdminProducts();
+    const prod = products[index];
+    
+    if (window.supabaseClient && prod.id) {
+        try {
+            await window.supabaseClient.from('products').delete().eq('id', prod.id);
+            if (window.syncProductsFromSupabase) await window.syncProductsFromSupabase();
+        } catch (e) {
+            console.error('Erro ao deletar:', e);
+            alert('Erro ao excluir do banco de dados');
+        }
+    } else {
+        products.splice(index, 1);
+        localStorage.setItem('wandeath_products', JSON.stringify(products));
+        renderAdminProducts();
+    }
 };
 
 function renderAdminCoupons() {
@@ -570,29 +584,50 @@ document.addEventListener('DOMContentLoaded', async () => {
                 image
             };
 
-            if (editingProductIndex !== null) {
-                products[editingProductIndex] = prodData;
-                addLog('Produto Editado', `O produto "${name}" foi atualizado.`);
-                editingProductIndex = null;
-                addProductBtn.innerHTML = '<i data-lucide="plus"></i> Cadastrar Produto';
-                if (window.lucide) lucide.createIcons();
-            } else {
-                products.push(prodData);
-                addLog('Produto Adicionado', `O produto "${name}" foi cadastrado na categoria ${category}.`);
+            try {
+                if (window.supabaseClient) {
+                    if (editingProductIndex !== null && products[editingProductIndex].id) {
+                        // Update in Supabase
+                        await window.supabaseClient.from('products').update(prodData).eq('id', products[editingProductIndex].id);
+                    } else {
+                        // Insert in Supabase
+                        await window.supabaseClient.from('products').insert([prodData]);
+                    }
+                    // Sincroniza do supabase de volta
+                    if (window.syncProductsFromSupabase) await window.syncProductsFromSupabase();
+                } else {
+                    // Fallback to local storage
+                    if (editingProductIndex !== null) {
+                        products[editingProductIndex] = prodData;
+                    } else {
+                        products.push(prodData);
+                    }
+                    localStorage.setItem('wandeath_products', JSON.stringify(products));
+                }
+                
+                if (editingProductIndex !== null) {
+                    addLog('Produto Editado', `O produto "${name}" foi atualizado.`);
+                    editingProductIndex = null;
+                    addProductBtn.innerHTML = '<i data-lucide="plus"></i> Cadastrar Produto';
+                    if (window.lucide) lucide.createIcons();
+                } else {
+                    addLog('Produto Adicionado', `O produto "${name}" foi cadastrado na categoria ${category}.`);
+                }
+                
+                // Clear form
+                document.getElementById('prod-name').value = '';
+                document.getElementById('prod-price').value = '';
+                document.getElementById('prod-desc').value = '';
+                document.getElementById('prod-delivery').value = '';
+                if (document.getElementById('prod-youtube')) document.getElementById('prod-youtube').value = '';
+                if (imageInput) imageInput.value = '';
+
+                alert('Produto salvo com sucesso!');
+                renderAdminProducts();
+            } catch (err) {
+                console.error('[Wandeath] Erro ao salvar produto:', err);
+                alert('Erro ao salvar no banco de dados!');
             }
-
-            localStorage.setItem('wandeath_products', JSON.stringify(products));
-            
-            // Clear form
-            document.getElementById('prod-name').value = '';
-            document.getElementById('prod-price').value = '';
-            document.getElementById('prod-desc').value = '';
-            document.getElementById('prod-delivery').value = '';
-            if (document.getElementById('prod-youtube')) document.getElementById('prod-youtube').value = '';
-            if (imageInput) imageInput.value = '';
-
-            alert('Produto salvo com sucesso!');
-            renderAdminProducts();
         });
     }
 

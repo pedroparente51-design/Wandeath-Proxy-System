@@ -52,6 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Supabase DB Sync
+    window.addEventListener('wandeath_products_updated', () => {
+        if (isHomePage) {
+            safeRun('renderStoreProducts', renderStoreProducts);
+            renderHeaderMenu();
+        }
+        if (window.renderRotativas) safeRun('renderRotativas', window.renderRotativas);
+        if (window.renderMobile) safeRun('renderMobile', window.renderMobile);
+        if (window.renderFixas) safeRun('renderFixas', window.renderFixas);
+        if (window.renderAdminProducts) safeRun('renderAdminProducts', window.renderAdminProducts);
+    });
+
     console.log(`[Wandeath] Sistema inicializado na página: ${window.location.pathname}`);
 
     // Segurança: Forçar revelação se o observer falhar
