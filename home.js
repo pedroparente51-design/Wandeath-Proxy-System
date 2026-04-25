@@ -1,44 +1,50 @@
-/* 
-   CALIXTO VIP - ELITE ENGINE
-   Neural network particles + Mouse glow + Scroll effects
-*/
+const safeRun = (name, fn) => {
+    try { 
+        if (typeof fn === 'function') {
+            fn(); 
+        } else {
+            // Silencioso se for opcional
+        }
+    } catch (e) { 
+        console.error(`[Wandeath] Erro em ${name}:`, e); 
+    }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.lucide) lucide.createIcons();
-    const safeRun = (name, fn) => {
-        try { fn(); } catch (e) { console.error(`[Wandeath] Erro em ${name}:`, e); }
-    };
-
-    safeRun('initMouseGlow', initMouseGlow);
-    safeRun('initScrollReveal', initScrollReveal);
-    safeRun('initScrollProgress', initScrollProgress);
-    safeRun('initNeuralNetwork', initNeuralNetwork);
-    safeRun('initInteractiveBackground', initInteractiveBackground);
-    safeRun('initFAQ', initFAQ);
-    safeRun('checkLoginState', checkLoginState);
-    safeRun('renderStoreProducts', renderStoreProducts);
-    safeRun('initProductTabs', initProductTabs);
-    safeRun('initOrdersModal', initOrdersModal);
-    safeRun('initCheckout', initCheckout);
-    safeRun('initSearch', initSearch);
-    safeRun('initSearchSuggestions', initSearchSuggestions);
-    safeRun('updateCartBadge', updateCartBadge);
-    // safeRun('initChatbox', initChatbox); // Movido para chat/chatbox.js
-    safeRun('initModals', initModals);
-    safeRun('initCheckerTabs', initCheckerTabs);
-    safeRun('renderHeaderMenu', renderHeaderMenu);
+    const isHomePage = window.location.pathname === '/' || window.location.pathname.endsWith('index.html') || window.location.pathname === '';
     
-    // Create icons after everything is loaded
-    if (window.lucide) {
-        lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
+
+    // Funções comuns a todas as páginas
+    safeRun('checkLoginState', checkLoginState);
+    safeRun('renderHeaderMenu', renderHeaderMenu);
+    safeRun('updateCartBadge', updateCartBadge);
+    safeRun('initSearch', initSearch);
+    safeRun('initModals', initModals);
+
+    // Funções específicas da Home
+    if (isHomePage) {
+        safeRun('initMouseGlow', initMouseGlow);
+        safeRun('initScrollReveal', initScrollReveal);
+        safeRun('initScrollProgress', initScrollProgress);
+        safeRun('initNeuralNetwork', initNeuralNetwork);
+        safeRun('initInteractiveBackground', initInteractiveBackground);
+        safeRun('initFAQ', initFAQ);
+        safeRun('renderStoreProducts', renderStoreProducts);
+        safeRun('initProductTabs', initProductTabs);
+        safeRun('initOrdersModal', initOrdersModal);
+        safeRun('initCheckout', initCheckout);
+        safeRun('initSearchSuggestions', initSearchSuggestions);
+        safeRun('initCheckerTabs', initCheckerTabs);
     }
     
-    // Refresh cart badge after Lucide just in case
+    // Refresh icons
+    if (window.lucide) lucide.createIcons();
+    
     updateCartBadge();
 
-    // Listen for changes from other tabs
     window.addEventListener('storage', (e) => {
-        if (e.key === 'wandeath_products') {
+        if (e.key === 'wandeath_products' && isHomePage) {
             safeRun('renderStoreProducts', renderStoreProducts);
             renderHeaderMenu();
         }
@@ -47,9 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    renderHeaderMenu();
-    updateCartBadge();
-    console.log('[Wandeath] Todas as funções foram executadas.');
+    console.log(`[Wandeath] Sistema inicializado na página: ${window.location.pathname}`);
 });
 
 /**
@@ -392,19 +396,8 @@ function renderStoreProducts(filter = 'all') {
     // Filter logic
     let filteredProducts = [];
     if (filter === 'all') {
-        // Prioritize specific tags for highlights, or just the first 3
-        const highlights = products.filter(p => 
-            p.tag && (
-                p.tag.includes('DESTACADO') || 
-                p.tag.includes('MAIS VENDIDO') || 
-                p.tag.includes('Premium') || 
-                p.tag.includes('Destaque') || 
-                p.tag.includes('Contingência')
-            )
-        );
-        filteredProducts = highlights.length > 0 ? highlights : products.slice(0, 4);
-        
-        // Add featured layout for the highlights section
+        // Mostrar TODOS os produtos na home, mas em um grid bonito
+        filteredProducts = products;
         grid.classList.add('featured-layout');
     } else {
         filteredProducts = products.filter(p => p.category === filter);
@@ -486,15 +479,20 @@ function getCart() {
 
 function updateCartBadge() {
     const badge = document.getElementById('cart-count');
-    if (!badge) {
-        console.warn('[Wandeath] Elemento cart-count não encontrado.');
-        return;
-    }
+    if (!badge) return;
+
     const cart = getCart();
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    console.log('[Wandeath] Atualizando badge do carrinho:', count);
+    
     badge.textContent = count;
-    badge.style.display = count > 0 ? 'flex' : 'none';
+    // Sempre mostrar se houver itens, ou opcionalmente mostrar 0 se preferir
+    if (count > 0) {
+        badge.style.display = 'flex';
+        badge.style.background = 'var(--primary)';
+        badge.style.opacity = '1';
+    } else {
+        badge.style.display = 'none'; // Ou 'flex' se quiser a bolinha com 0
+    }
 }
 
 window.updateCartBadge = updateCartBadge;
@@ -685,7 +683,7 @@ async function finalizePurchase() {
                 <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
                 <h3 style="color: #ff4a4a; margin-bottom: 10px;">Erro ao gerar PIX</h3>
                 <p style="color: var(--text-sec); font-size: 13px; margin-bottom: 20px;">${error.message}</p>
-                <button onclick="document.getElementById('checkout-modal').classList.remove('show')"
+                <button onclick="closeCheckoutModal()"
                     style="padding: 12px 30px; background: var(--primary); border: none; border-radius: 10px; color: #fff; font-weight: 800; cursor: pointer;">
                     Fechar
                 </button>
@@ -724,7 +722,7 @@ function showPaymentSuccess(product, qty, total, deliveredItems = []) {
             </div>
 
             <div style="margin-top: 30px; display:flex; gap:15px; justify-content:center;">
-                <button onclick="document.getElementById('checkout-modal').classList.remove('show'); window.location.reload();" 
+                <button onclick="closeCheckoutModal(true)" 
                     style="padding: 14px 30px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: #fff; font-weight: 800; cursor: pointer;">
                     Fechar
                 </button>
@@ -1175,3 +1173,14 @@ function initCheckerTabs() {
 }
 
 
+
+function closeCheckoutModal(reload = false) {
+    const modal = document.getElementById('checkout-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    if (reload) window.location.reload();
+}
+window.closeCheckoutModal = closeCheckoutModal;
