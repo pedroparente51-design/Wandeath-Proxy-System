@@ -111,7 +111,21 @@ function getCart() {
 }
 
 function getProducts() {
-    return JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+    let products = [];
+    try {
+        let productsStr = localStorage.getItem('wandeath_products');
+        products = productsStr ? JSON.parse(productsStr) : [];
+    } catch (e) { console.error('[Wandeath] Erro ao carregar produtos:', e); }
+
+    if (!Array.isArray(products) || products.length === 0) {
+        products = [
+            { name: "Proxy Residencial Rotativa", price: "13.99", category: "rotativa", image: "../img-rotativa/1gb.png" },
+            { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "../img-rotativa/3gb.png" },
+            { name: "Proxy Residencial Fixa", price: "46.19", category: "fixa", image: "../img-rotativa/5gb.png" }
+        ];
+        localStorage.setItem('wandeath_products', JSON.stringify(products));
+    }
+    return products;
 }
 
 function renderCart() {
