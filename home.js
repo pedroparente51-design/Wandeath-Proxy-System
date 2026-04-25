@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     safeRun('initSearchSuggestions', initSearchSuggestions);
     safeRun('updateCartBadge', updateCartBadge);
     safeRun('initChatbox', initChatbox);
+    safeRun('initModals', initModals);
     safeRun('initCheckerTabs', initCheckerTabs);
     safeRun('renderHeaderMenu', renderHeaderMenu);
     
@@ -1078,8 +1079,7 @@ function initInteractiveBackground() {
     });
 }
 
-// ─── Chatbox Logic ───
-document.addEventListener('DOMContentLoaded', () => {
+function initChatbox() {
     const openChatBtn = document.getElementById('open-chat-btn');
     const closeChatBtn = document.getElementById('close-chat-btn');
     const chatboxContainer = document.getElementById('chatbox-container');
@@ -1090,181 +1090,73 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!openChatBtn || !chatboxContainer) return;
 
     // Toggle Chatbox
-    openChatBtn.addEventListener('click', (e) => {
+    openChatBtn.onclick = (e) => {
         e.preventDefault();
         chatboxContainer.style.display = 'flex';
         setTimeout(() => {
             chatboxContainer.classList.add('show');
             renderMessages();
-            setTimeout(() => chatboxInput.focus(), 100);
+            if (chatboxInput) chatboxInput.focus();
         }, 10);
-    });
+    };
 
-    closeChatBtn.addEventListener('click', () => {
-        chatboxContainer.classList.remove('show');
-        setTimeout(() => chatboxContainer.style.display = 'none', 400);
-    });
+    if (closeChatBtn) {
+        closeChatBtn.onclick = () => {
+            chatboxContainer.classList.remove('show');
+            setTimeout(() => chatboxContainer.style.display = 'none', 400);
+        };
+    }
 
-    // Render Messages from LocalStorage
+    // Render Messages
     function renderMessages() {
-        const historyStr = localStorage.getItem('wandeath_chat_history');
-        const history = historyStr ? JSON.parse(historyStr) : [];
-
+        if (!chatboxMessages) return;
+        const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
         chatboxMessages.innerHTML = '';
 
         if (history.length === 0) {
-            chatboxMessages.innerHTML = `
-                <div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">
-                    Inicie uma conversa conosco!
-                </div>
-            `;
-            return;
+            chatboxMessages.innerHTML = `<div style="text-align: center; color: var(--text-sec); font-size: 12px; margin-top: 20px;">Inicie uma conversa conosco!</div>`;
+        } else {
+            history.forEach(msg => {
+                const msgEl = document.createElement('div');
+                msgEl.className = `chat-msg ${msg.sender}`;
+                msgEl.textContent = msg.text;
+                chatboxMessages.appendChild(msgEl);
+            });
         }
-
-        history.forEach(msg => {
-            const msgEl = document.createElement('div');
-            msgEl.className = `chat-msg ${msg.sender}`;
-            msgEl.textContent = msg.text;
-            chatboxMessages.appendChild(msgEl);
-        });
-
-        // Scroll to bottom
         chatboxMessages.scrollTop = chatboxMessages.scrollHeight;
     }
 
     // Send Message
     function sendMessage() {
+        if (!chatboxInput) return;
         const text = chatboxInput.value.trim();
         if (!text) return;
 
-        const historyStr = localStorage.getItem('wandeath_chat_history');
-        const history = historyStr ? JSON.parse(historyStr) : [];
-
-        history.push({
-            sender: 'user',
-            text: text,
-            timestamp: Date.now()
-        });
-
+        const history = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
+        history.push({ sender: 'user', text: text, timestamp: Date.now() });
         localStorage.setItem('wandeath_chat_history', JSON.stringify(history));
 
         chatboxInput.value = '';
         renderMessages();
+
+        // Simulate admin reply
+        setTimeout(() => {
+            const adminHistory = JSON.parse(localStorage.getItem('wandeath_chat_history') || '[]');
+            adminHistory.push({ sender: 'admin', text: 'Olá! Um consultor entrará em contato em breve.', timestamp: Date.now() });
+            localStorage.setItem('wandeath_chat_history', JSON.stringify(adminHistory));
+            renderMessages();
+        }, 1000);
     }
 
-    chatboxSendBtn.addEventListener('click', sendMessage);
-    chatboxInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    // Listen for storage changes (Real-time updates from Admin Panel)
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'wandeath_chat_history' && chatboxContainer.classList.contains('show')) {
-            renderMessages();
-        }
-    });
-});
-function initSearchSuggestions() {
-    const searchInputs = document.querySelectorAll('.search-pill input');
-
-    searchInputs.forEach(input => {
-        // Criar container de sugestões se não existir
-        let suggestionsBox = input.parentElement.querySelector('.search-suggestions');
-        if (!suggestionsBox) {
-            suggestionsBox = document.createElement('div');
-            suggestionsBox.className = 'search-suggestions';
-            suggestionsBox.style.cssText = `
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: rgba(10, 10, 10, 0.95);
-                border: 1px solid var(--border);
-                border-top: none;
-                border-radius: 0 0 12px 12px;
-                z-index: 9999;
-                display: none;
-                backdrop-filter: blur(20px);
-                max-height: 400px;
-                overflow-y: auto;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            `;
-            input.parentElement.style.position = 'relative';
-            input.parentElement.appendChild(suggestionsBox);
-        }
-
-        input.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase().trim();
-            const allProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-
-            if (term.length < 1) {
-                suggestionsBox.style.display = 'none';
-                return;
-            }
-
-            const matches = allProducts.filter(p =>
-                p.name.toLowerCase().includes(term) ||
-                p.category.toLowerCase().includes(term)
-            ).slice(0, 6);
-
-            const isSubDirLocal = window.location.pathname.includes('/produto/') || window.location.pathname.includes('/login/') || window.location.pathname.includes('/pedidos/') || window.location.pathname.includes('/carrinho/');
-            const prefixLocal = isSubDirLocal ? '../' : './';
-
-            if (matches.length > 0) {
-                suggestionsBox.innerHTML = matches.map(p => `
-                    <div class="suggestion-item" onclick="window.location.href='${prefixLocal}produto/produto.html?name=${encodeURIComponent(p.name)}'" style="
-                        padding: 12px 20px;
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        cursor: pointer;
-                        border-bottom: 1px solid rgba(255,255,255,0.05);
-                        transition: 0.2s;
-                    ">
-                        <img src="${p.image.startsWith('http') ? p.image : prefixLocal + p.image}" style="width: 35px; height: 35px; border-radius: 4px; object-fit: cover;">
-                        <div style="flex: 1;">
-                            <div style="font-size: 13px; font-weight: 700; color: #fff;">${p.name}</div>
-                            <div style="font-size: 11px; color: var(--primary);">R$ ${parseFloat(p.price).toFixed(2)}</div>
-                        </div>
-                        <i data-lucide="arrow-up-right" style="width: 14px; opacity: 0.5;"></i>
-                    </div>
-                `).join('');
-                suggestionsBox.style.display = 'block';
-                if (window.lucide) lucide.createIcons();
-
-                // Add hover effect
-                suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
-                    item.onmouseenter = () => item.style.background = 'rgba(238, 0, 0, 0.1)';
-                    item.onmouseleave = () => item.style.background = 'transparent';
-                });
-            } else {
-                suggestionsBox.style.display = 'none';
-            }
-        });
-
-    });
+    if (chatboxSendBtn) chatboxSendBtn.onclick = sendMessage;
+    if (chatboxInput) {
+        chatboxInput.onkeypress = (e) => {
+            if (e.key === 'Enter') sendMessage();
+        };
+    }
 }
 
-// ─── Chat-box Controls ────────────────────────────────
-function initChatbox() {
-    const openChatBtn = document.getElementById('open-chat-btn');
-    const closeChatBtn = document.getElementById('close-chat-btn');
-    const chatboxContainer = document.getElementById('chatbox-container');
-
-    if (openChatBtn && chatboxContainer) {
-        openChatBtn.onclick = () => {
-            chatboxContainer.style.display = 'flex';
-            setTimeout(() => chatboxContainer.classList.add('show'), 10);
-        };
-    }
-
-    if (closeChatBtn && chatboxContainer) {
-        closeChatBtn.onclick = () => {
-            chatboxContainer.classList.remove('show');
-            setTimeout(() => chatboxContainer.style.display = 'none', 300);
-        };
-    }
-
+function initModals() {
     // Modal Close Buttons
     const closeCheckoutBtn = document.getElementById('close-checkout-btn');
     if (closeCheckoutBtn) {
