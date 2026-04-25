@@ -139,18 +139,27 @@ function renderCart() {
 
     if (cart.length === 0) {
         list.innerHTML = `
-            <div style="text-align:center; padding:80px 20px;">
-                <i data-lucide="shopping-cart" style="width:60px; height:60px; color:var(--text-sec); margin-bottom:20px; opacity:0.3;"></i>
-                <h3 style="margin-bottom:10px;">Seu carrinho está vazio</h3>
-                <p style="color:var(--text-sec); margin-bottom:30px;">Explore nossos produtos e adicione proxies de alta qualidade.</p>
-                <a href="/#produtos" class="btn-buy btn-shine" style="padding: 14px 30px; width: auto; margin: 0 auto; text-decoration: none; background: var(--primary); color: #fff;">Ir para a Loja</a>
+            <div class="empty-cart">
+                <div class="empty-cart-icon">
+                    <i data-lucide="shopping-cart" style="width:36px; height:36px;"></i>
+                </div>
+                <h3>Seu carrinho está vazio</h3>
+                <p>Explore nossos produtos e adicione proxies de alta qualidade.</p>
+                <a href="/#produtos" class="btn-go-shop">
+                    <i data-lucide="arrow-left" style="width:16px;"></i>
+                    Ir para a Loja
+                </a>
             </div>
         `;
-        if (summaryList) summaryList.innerHTML = '<div style="font-size:12px; color:var(--text-sec); text-align:center;">Vazio</div>';
+        if (summaryList) summaryList.innerHTML = '<div style="font-size:12px; color:var(--text-sec); text-align:center; padding:20px;">Nenhum item adicionado</div>';
         updateTotals(0);
         if (window.lucide) lucide.createIcons();
         return;
     }
+
+    // Update section header count
+    const countBadge = document.querySelector('.item-count');
+    if (countBadge) countBadge.textContent = cart.reduce((s, i) => s + i.qty, 0) + ' itens';
 
     list.innerHTML = '';
     if (summaryList) summaryList.innerHTML = '';
@@ -158,47 +167,48 @@ function renderCart() {
     let subtotal = 0;
 
     cart.forEach((item, index) => {
-        // Usa dados do produto no localStorage, ou fallback nos dados do próprio item do carrinho
         const prod = products.find(p => p.name === item.name);
         const name  = item.name;
         const price = prod ? parseFloat(prod.price) : parseFloat(item.price || 0);
-        const image = prod ? (prod.image || '../image.png') : (item.image || '../image.png');
+        const image = prod ? (prod.image || '/image.png') : (item.image || '/image.png');
+        const category = prod ? (prod.category || '') : '';
 
-        if (!price) return; // se não tem preço nenhum, pula
+        if (!price) return;
 
         const totalItem = price * item.qty;
         subtotal += totalItem;
 
-        // Render main list item
         const row = document.createElement('div');
         row.className = 'cart-item';
+        row.style.animationDelay = `${index * 0.05}s`;
         row.innerHTML = `
-            <img src="${image}" alt="${name}">
+            <img src="${image}" alt="${name}" onerror="this.src='/image.png'">
             <div class="info">
+                ${category ? `<span class="cart-item-category">${category}</span>` : ''}
                 <h5>${name}</h5>
                 <div class="cart-item-qty">
-                    <button onclick="updateQty(${index}, -1)">-</button>
+                    <button onclick="updateQty(${index}, -1)">−</button>
                     <span>${item.qty}</span>
                     <button onclick="updateQty(${index}, 1)">+</button>
                 </div>
             </div>
             <div class="price">
-                <div style="margin-bottom:10px;">R$ ${totalItem.toFixed(2)}</div>
+                <div class="price-amount">R$ ${totalItem.toFixed(2)}</div>
+                <div class="price-unit">${item.qty}x R$ ${price.toFixed(2)}</div>
                 <button class="cart-item-remove" onclick="removeItem(${index})" title="Remover">
-                    <i data-lucide="trash-2" style="width:18px;"></i>
+                    <i data-lucide="trash-2" style="width:14px;"></i>
                 </button>
             </div>
         `;
         list.appendChild(row);
 
-        // Render summary item
         if (summaryList) {
             const sItem = document.createElement('div');
             sItem.className = 'summary-product-item';
             sItem.innerHTML = `
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span style="font-size:13px; font-weight:600;">${name}</span>
-                    <span style="font-size:13px; font-weight:700;">R$ ${totalItem.toFixed(2)}</span>
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span style="font-size:13px; font-weight:600; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${name}</span>
+                    <span style="font-size:13px; font-weight:800;">R$ ${totalItem.toFixed(2)}</span>
                 </div>
                 <div style="font-size:11px; color:var(--text-sec);">${item.qty}x R$ ${price.toFixed(2)}</div>
             `;
@@ -433,7 +443,7 @@ function processOrderCompletion() {
     localStorage.setItem('wandeath_orders', JSON.stringify(orders));
     localStorage.removeItem('wandeath_cart');
 
-    window.location.href = '../pedidos/pedidos.html';
+    window.location.href = '/pedidos/';
 }
 
 window.updateQty = updateQty;

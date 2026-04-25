@@ -1,6 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
-    renderOrders();
+    
+    // Esperar o checkLoginState (do home.js) carregar os dados do usuário
+    // antes de tentar renderizar os pedidos
+    const tryRender = (attempts = 0) => {
+        const userDataStr = localStorage.getItem('wandeath_user');
+        if (userDataStr || attempts >= 10) {
+            renderOrders();
+        } else {
+            setTimeout(() => tryRender(attempts + 1), 300);
+        }
+    };
+    
+    // Dar tempo pro home.js carregar
+    setTimeout(() => tryRender(), 500);
 });
 
 function renderOrders() {
@@ -13,7 +26,7 @@ function renderOrders() {
             <div class="empty-state">
                 <h3>Acesso Restrito</h3>
                 <p>Por favor, realize login para visualizar seus pedidos.</p>
-                <a href="../login/login.html" class="btn-primary">Fazer Login</a>
+                <a href="/login/" class="btn-primary">Fazer Login</a>
             </div>
         `;
         return;
@@ -29,7 +42,7 @@ function renderOrders() {
             <div class="empty-state">
                 <h3>Nenhum pedido encontrado</h3>
                 <p>Você ainda não realizou nenhuma compra em nossa plataforma com o e-mail <strong>${currentUser.email}</strong>.</p>
-                <a href="../index.html#produtos" class="btn-primary">Ver Produtos</a>
+                <a href="/#produtos" class="btn-primary">Ver Produtos</a>
             </div>
         `;
         return;
