@@ -145,8 +145,13 @@ async function handleRegister(e) {
         return;
     }
 
+    if (password.length < 6) {
+        alert('A senha deve ter pelo menos 6 caracteres.');
+        return;
+    }
+
     if (!window.supabaseClient) {
-        alert('Erro: Supabase não inicializado.');
+        alert('Erro: Supabase não inicializado. Recarregue a página.');
         return;
     }
 
@@ -157,17 +162,29 @@ async function handleRegister(e) {
             options: {
                 data: {
                     full_name: name
-                }
+                },
+                emailRedirectTo: window.location.origin + '/'
             }
         });
 
         if (error) throw error;
 
-        console.log('[Wandeath Login] Registro concluído para:', email);
-        alert('Conta criada com sucesso! Verifique seu e-mail para confirmar (se necessário) e faça login.');
-        
-        // Opcional: Auto-login ou redirecionar para login
-        toggleAuth();
+        console.log('[Wandeath Login] Registro concluído para:', email, data);
+
+        // Se o Supabase retornou sessão, o auto-confirm está ativo
+        if (data.session) {
+            localStorage.setItem('wandeath_logged_in', 'true');
+            localStorage.setItem('wandeath_user', JSON.stringify({
+                name: name,
+                email: email
+            }));
+            alert('Conta criada com sucesso! Bem-vindo ao Wandeath VIP.');
+            window.location.href = '../index.html';
+        } else {
+            // Auto-confirm desativado — precisa confirmar e-mail
+            alert('Conta criada! Verifique seu e-mail (' + email + ') para confirmar sua conta. Depois, faça login.');
+            toggleAuth();
+        }
     } catch (err) {
         console.error('[Wandeath Login] Erro no registro:', err.message);
         alert('Falha ao criar conta: ' + err.message);
