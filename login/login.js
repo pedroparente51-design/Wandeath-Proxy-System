@@ -19,20 +19,32 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', handleRegister);
     }
 
-    // Social Buttons
+    // Social Buttons - Real Supabase Integration
     const googleBtn = document.querySelector('.btn-google');
     const discordBtn = document.querySelector('.btn-discord');
 
     if (googleBtn) {
-        googleBtn.addEventListener('click', e => {
+        googleBtn.addEventListener('click', async e => {
             e.preventDefault();
-            simulateOAuth('Google', 'google_user@gmail.com', 'Usuário Google');
+            if (!window.supabaseClient) return alert('Erro: Supabase não inicializado.');
+            
+            const { error } = await window.supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin + '/index.html' }
+            });
+            if (error) alert('Erro ao logar com Google: ' + error.message);
         });
     }
     if (discordBtn) {
-        discordBtn.addEventListener('click', e => {
+        discordBtn.addEventListener('click', async e => {
             e.preventDefault();
-            simulateOAuth('Discord', 'discord_user#1234', 'Usuário Discord');
+            if (!window.supabaseClient) return alert('Erro: Supabase não inicializado.');
+
+            const { error } = await window.supabaseClient.auth.signInWithOAuth({
+                provider: 'discord',
+                options: { redirectTo: window.location.origin + '/index.html' }
+            });
+            if (error) alert('Erro ao logar com Discord: ' + error.message);
         });
     }
 });

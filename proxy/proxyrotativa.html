@@ -38,7 +38,7 @@
     <header class="main-header">
         <div class="container header-inner">
             <a href="../index.html" class="logo">
-                <img src="../logo.png" alt="Wandeath VIP">
+                <img src="../image.png" alt="Wandeath VIP">
             </a>
             <div class="header-search">
                 <div class="search-pill">
@@ -84,7 +84,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <img src="../logo.png" alt="Logo" class="footer-logo">
+                    <img src="../image.png" alt="Logo" class="footer-logo">
                     <p>A maior loja de Proxys e Produtos digitais da América Latina!</p>
                 </div>
             </div>
@@ -94,11 +94,12 @@
         </div>
     </footer>
 
+    <script src="../home.js"></script>
     <script src="./proxy.js"></script>
     <script>
         lucide.createIcons();
         document.addEventListener('DOMContentLoaded', () => {
-            renderRotativas();
+            if(window.renderRotativas) window.renderRotativas();
         });
     </script>
 </body>

@@ -33,6 +33,42 @@ function init() {
     const stock = prod.delivery ? prod.delivery.trim().split('\n').filter(Boolean).length : 0;
     if (stockEl) stockEl.innerText = `${stock} EM ESTOQUE`;
 
+    // Video Tutorial Handling
+    const videoWrapper = document.querySelector('.prod-video-wrapper');
+    if (videoWrapper) {
+        if (prod.youtubeUrl) {
+            // Convert watch URL to embed URL
+            let videoId = '';
+            if (prod.youtubeUrl.includes('v=')) {
+                videoId = prod.youtubeUrl.split('v=')[1].split('&')[0];
+            } else if (prod.youtubeUrl.includes('youtu.be/')) {
+                videoId = prod.youtubeUrl.split('youtu.be/')[1].split('?')[0];
+            }
+
+            if (videoId) {
+                videoWrapper.style.display = 'block';
+                videoWrapper.style.background = '#000';
+                videoWrapper.innerHTML = `
+                    <iframe 
+                        width="100%" 
+                        height="100%" 
+                        src="https://www.youtube.com/embed/${videoId}" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen
+                        style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    </iframe>
+                `;
+            } else {
+                videoWrapper.style.display = 'none';
+            }
+        } else {
+            videoWrapper.style.display = 'none';
+        }
+    }
+    if (window.lucide) lucide.createIcons();
+
     renderSimilar(products, prod.name);
     updateCartBadge();
 }

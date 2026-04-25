@@ -650,6 +650,7 @@ footer {
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 1fr; /* Força todas as linhas a terem a mesma altura */
     gap: 32px;
 }
 
@@ -666,6 +667,10 @@ footer {
     backdrop-filter: blur(20px);
     position: relative;
     animation: borderGlow 4s ease-in-out infinite;
+    height: 100%;
+    min-height: 440px; /* Reduzido para ficar mais elegante */
+    max-width: 320px;
+    margin: 0 auto;
 }
 
 /* Inner gold border for Tarot feel */
@@ -752,8 +757,7 @@ footer {
 .product-img {
     position: relative;
     width: 100%;
-    aspect-ratio: 3/4;
-    /* Tarot card proportion */
+    height: 220px; /* Tamanho padronizado e elegante */
     background: #000;
     overflow: hidden;
     border-radius: 6px;
@@ -863,6 +867,7 @@ footer {
 
 .product-footer {
     padding: 0 24px 24px 24px;
+    margin-top: auto; /* Força o alinhamento na base */
     position: relative;
     z-index: 2;
 }
@@ -1339,17 +1344,12 @@ footer {
     transform: translate(-50%, -50%);
 }
 
-/* Smaller cards for Featured section */
 .featured-layout .product-card {
-    max-width: 320px;
-    margin: 0 auto;
     height: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 .featured-layout .product-img {
-    height: 180px;
+    height: 220px;
     flex-shrink: 0;
 }
 
@@ -1587,8 +1587,15 @@ footer {
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .chat-msg.user {
@@ -1650,4 +1657,158 @@ footer {
 .chatbox-input button:hover {
     background: #cc0000;
     transform: scale(1.05);
+}
+
+/* Footer Styles */
+.main-footer {
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 80px 0 60px;
+    position: relative;
+    z-index: 10;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+}
+
+.footer-logo {
+    height: 40px;
+    margin-bottom: 20px;
+}
+
+.footer-col h4 {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.footer-links a {
+    color: var(--text-sec);
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 992px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-bottom {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+
+
+/* Utility Classes */
+.text-white {
+    color: #fff !important;
+}
+
+.pos-relative {
+    position: relative !important;
+}
+
+.footer-icon {
+    width: 14px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    width: 100%;
+}
+
+.mt-20 {
+    margin-top: 20px !important;
+}
+
+.flex-gap-10 {
+    display: flex;
+    gap: 10px;
+}
+
+.flex-1 {
+    flex: 1 !important;
+}
+
+.btn-coupon {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    padding: 0 20px;
+    font-size: 12px;
+    border-radius: 10px;
+}
+
+.coupon-msg-style {
+    font-size: 11px;
+    margin-top: 8px;
+    font-weight: 700;
+}
+
+.display-none {
+    display: none !important;
+}
+
+@media (max-width: 992px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-msg.user {
+    align-self: flex-end;
+    background: var(--primary);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 5px 15px rgba(238, 0, 0, 0.2);
 }

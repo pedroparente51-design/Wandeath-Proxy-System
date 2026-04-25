@@ -114,7 +114,7 @@ function renderCart() {
                 <i data-lucide="shopping-cart" style="width:60px; height:60px; color:var(--text-sec); margin-bottom:20px; opacity:0.3;"></i>
                 <h3 style="margin-bottom:10px;">Seu carrinho está vazio</h3>
                 <p style="color:var(--text-sec); margin-bottom:30px;">Explore nossos produtos e adicione proxies de alta qualidade.</p>
-                <a href="../index.html#produtos" style="background:var(--primary); color:#fff; padding:12px 30px; border-radius:10px; text-decoration:none; font-weight:800; transition:0.3s;" class="btn-shine">Ir para a Loja</a>
+                <a href="../index.html#produtos" class="btn-buy btn-shine" style="padding: 14px 30px; width: auto; margin: 0 auto; text-decoration: none; background: var(--primary); color: #fff;">Ir para a Loja</a>
             </div>
         `;
         if (summaryList) summaryList.innerHTML = '<div style="font-size:12px; color:var(--text-sec); text-align:center;">Vazio</div>';

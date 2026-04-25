@@ -1,145 +1,10 @@
-/* ===================================================
-   WANDEATH VIP — CARRINHO / CHECKOUT
-   CSS limpo, sem duplicações
-   =================================================== */
-
-:root {
-    --primary:    #ee0000;
-    --primary-alt:#cc0000;
-    --border:     rgba(255,255,255,0.07);
-    --text-main:  #ffffff;
-    --text-sec:   #8c8c8c;
-    --font-main:  'Plus Jakarta Sans', sans-serif;
-    --header-h:   72px;
-    --topbar-h:   40px;
-    --radius:     14px;
-    --card-bg:    rgba(15,15,15,0.95);
+/* ─── Page Layout ─── */
+main.checkout-page {
+    position: relative; z-index: 10;
+    padding-top: calc(var(--topbar-h) + var(--header-h) + 48px);
+    padding-bottom: 100px;
+    min-height: 100vh;
 }
-
-/* ─── Reset ─── */
-*, *::before, *::after {
-    margin: 0; padding: 0;
-    box-sizing: border-box;
-    font-family: var(--font-main);
-}
-
-html, body {
-    width: 100%; height: 100%;
-    overflow-x: hidden;
-    background: #080808;
-    color: var(--text-main);
-}
-
-/* ─── Background animado ─── */
-.aurora-container {
-    position: fixed; inset: 0;
-    z-index: 0;
-    background: #050505;
-    pointer-events: none;
-    overflow: hidden;
-}
-.aurora-blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    animation: aurora-move 15s infinite alternate ease-in-out;
-}
-.aurora-blob--1 { width:60vw; height:60vh; background:rgba(238,0,0,.08); top:-20vh; left:-20vw; }
-.aurora-blob--2 { width:50vw; height:50vh; background:rgba(150,0,0,.06); bottom:-10vh; right:-10vw; animation-delay:-3s; }
-.aurora-blob--3 { width:40vw; height:40vh; background:rgba(255,0,0,.05); top:50vh; left:50vw; animation-delay:-7s; }
-.aurora-blob--4 { width:35vw; height:35vh; background:rgba(200,0,0,.04); top:20vh; right:20vw; animation-delay:-11s; }
-
-@keyframes aurora-move {
-    0%   { transform: scale(1)   translate(0,0); }
-    50%  { transform: scale(1.2) translate(5vw,-5vh); }
-    100% { transform: scale(.9)  translate(-5vw,5vh); }
-}
-
-.interactive-bg-wrapper {
-    position: fixed; inset: 0;
-    z-index: 1;
-    pointer-events: none; overflow: hidden;
-}
-.parallax-shape {
-    position: absolute; border-radius: 50%;
-    filter: blur(80px); opacity: .5;
-    animation: float 20s infinite ease-in-out alternate;
-}
-.shape-1 { width:400px; height:400px; background:rgba(238,0,0,.15); top:10%; left:10%; }
-.shape-2 { width:500px; height:500px; background:rgba(200,0,0,.10); bottom:20%; right:10%; animation-delay:-5s; }
-.shape-3 { width:300px; height:300px; background:rgba(255,50,50,.10); top:40%; left:50%; animation-delay:-10s; }
-@keyframes float { 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(80px,40px) scale(1.1); } }
-
-.mesh-gradient {
-    position: fixed; inset: 0; z-index: 2;
-    background: radial-gradient(circle at 50% 30%, rgba(238,0,0,.05) 0%, transparent 55%);
-    pointer-events: none;
-}
-
-#particles-canvas {
-    position: fixed; inset: 0;
-    z-index: 3; pointer-events: none;
-    width: 100%; height: 100%;
-}
-
-#mouse-glow {
-    position: fixed;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(238,0,0,.06), transparent 70%);
-    pointer-events: none; z-index: 9999;
-    transform: translate(-50%,-50%);
-}
-
-/* ─── Topbar ─── */
-.rx-topbar {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: var(--topbar-h);
-    background: var(--primary);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 2001;
-}
-.rx-topbar__link {
-    color: #fff; text-decoration: none;
-    font-size: 10px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px;
-}
-
-/* ─── Header ─── */
-.main-header {
-    position: fixed;
-    top: var(--topbar-h); left: 0; right: 0;
-    height: var(--header-h);
-    background: rgba(8,8,8,.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    z-index: 2000;
-}
-.header-inner {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    height: 100%;
-}
-.container {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 28px;
-    width: 100%;
-}
-.logo img {
-    height: 48px; width: auto;
-    filter: drop-shadow(0 0 12px rgba(238,68,68,.3));
-}
-.header-right { display: flex; align-items: center; gap: 12px; }
-.header-user-btn {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid var(--border);
-    color: #fff; text-decoration: none;
-    padding: 10px 20px; border-radius: 8px;
-    font-size: 13px; font-weight: 700;
-    transition: .25s;
-}
-.header-user-btn:hover { background: #fff; color: #000; }
 
 /* ─── Page Layout ─── */
 main.checkout-page {
@@ -179,11 +44,12 @@ main.checkout-page {
 
 /* ─── Cart Items ─── */
 .cart-items {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius);
     padding: 8px 20px;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .cart-item {
@@ -235,14 +101,15 @@ main.checkout-page {
 
 /* ─── Form ─── */
 .checkout-form-box {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--radius);
     padding: 28px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .form-group label {
@@ -271,11 +138,12 @@ main.checkout-page {
 .checkout-sidebar { position: sticky; top: calc(var(--topbar-h) + var(--header-h) + 24px); }
 
 .order-summary-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius);
     padding: 28px;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
 .summary-header {

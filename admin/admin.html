@@ -12,43 +12,35 @@
 
 <body>
     <!-- Admin Login Overlay -->
-    <div id="admin-login-overlay"
-        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a0a; z-index: 9999; display: flex; align-items: center; justify-content: center;">
-        <div
-            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center;">
-            <img src="../image.png" alt="Logo" style="height: 60px; margin-bottom: 30px;">
-            <h2 style="color: #fff; margin-bottom: 20px;">Acesso Restrito</h2>
-            <p style="color: var(--text-sec); margin-bottom: 30px; font-size: 14px;">Faça login com o e-mail de
-                administrador.</p>
-            <form id="admin-login-form" style="display: flex; flex-direction: column; gap: 15px;">
-                <input type="email" id="admin-email" placeholder="E-mail" required
-                    style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
-                <input type="password" id="admin-pass" placeholder="Senha" required
-                    style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none;">
-                <button type="submit"
-                    style="background: #ee0000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">Entrar
-                    no Painel</button>
+    <div id="admin-login-overlay">
+        <div class="admin-login-box">
+            <img src="../image.png" alt="Logo">
+            <h2>Acesso Restrito</h2>
+            <p>Faça login com o e-mail de administrador.</p>
+            <form id="admin-login-form">
+                <input type="email" id="admin-email" placeholder="E-mail" required>
+                <input type="password" id="admin-pass" placeholder="Senha" required>
+                <button type="submit" class="btn-admin-login">Entrar no Painel</button>
             </form>
-            <p id="admin-login-error" style="color: #ff4a4a; font-size: 13px; margin-top: 15px; display: none;">
-                Credenciais inválidas!</p>
+            <p id="admin-login-error" class="admin-login-error" style="display: none;">Credenciais inválidas!</p>
 
-            <div style="display: flex; align-items: center; gap: 15px; margin: 25px 0;">
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
-                <span style="color: var(--text-sec); font-size: 12px; font-weight: 700;">OU</span>
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+            <div class="admin-login-sep">
+                <div class="sep-line"></div>
+                <span class="sep-text">OU</span>
+                <div class="sep-line"></div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="simulateAdminOAuth('Google')"
-                    style="background: #fff; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
-                        alt="Google">
+            <div class="oauth-grid-admin">
+                <button id="btn-login-google" class="btn-oauth btn-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
                     Logar com Google
                 </button>
-                <button onclick="simulateAdminOAuth('Discord')"
-                    style="background: #5865F2; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <button id="btn-login-discord" class="btn-oauth btn-discord">
                     <i data-lucide="message-square" style="width: 18px;"></i>
                     Logar com Discord
+                </button>
+                <button id="btn-bypass-dev" class="btn-bypass-dev">
+                    🔓 Acesso Rápido (Dev)
                 </button>
             </div>
         </div>
@@ -60,12 +52,13 @@
             <img src="../image.png" alt="Wandeath VIP Logo" class="admin-logo">
         </div>
         <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" id="nav-dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-            <a href="#" class="nav-item" id="nav-chat"><i data-lucide="message-square"></i> Suporte Chat</a>
-            <a href="#" class="nav-item" id="nav-products"><i data-lucide="shopping-cart"></i> Produtos</a>
-            <a href="#" class="nav-item" id="nav-coupons"><i data-lucide="tag"></i> Cupons</a>
-            <a href="#" class="nav-item" id="nav-customers"><i data-lucide="users"></i> Clientes</a>
-            <a href="#" class="nav-item" id="nav-settings"><i data-lucide="settings"></i> Configurações</a>
+            <a href="javascript:void(0)" class="nav-item active" id="nav-dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-chat"><i data-lucide="message-square"></i> Suporte Chat</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-products"><i data-lucide="shopping-cart"></i> Produtos</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-coupons"><i data-lucide="tag"></i> Cupons</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-customers"><i data-lucide="users"></i> Clientes</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-logs"><i data-lucide="file-text"></i> Log de Atividades</a>
+            <a href="javascript:void(0)" class="nav-item" id="nav-settings"><i data-lucide="settings"></i> Configurações</a>
         </nav>
         <div class="sidebar-footer">
             <a href="../index.html" class="nav-item return-btn"><i data-lucide="log-out"></i> Voltar à Loja</a>
@@ -257,6 +250,12 @@
                                     placeholder="Ex: ip:porta:user:pass (pule linha para o próximo item)"></textarea>
                             </div>
                         </div>
+                        <div class="form-grid" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label>Link do YouTube (Tutorial)</label>
+                                <input type="text" id="prod-youtube" placeholder="https://youtube.com/watch?v=...">
+                            </div>
+                        </div>
                         <button id="add-product-btn" class="btn-primary-admin" style="margin-top: 20px;"><i
                                 data-lucide="plus"></i> Cadastrar Produto</button>
                     </div>
@@ -319,6 +318,7 @@
                                 <th>Email</th>
                                 <th>Total Gasto</th>
                                 <th>Status</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="customers-list-body">
@@ -337,24 +337,43 @@
                 </div>
             </div>
 
+            <!-- Logs (Section - Logs) -->
+            <div class="admin-section" id="section-logs" style="display: none;">
+                <div class="data-table-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h3>Histórico de Atividades</h3>
+                        <button onclick="clearLogs()" style="background:rgba(238,0,0,0.1); color:var(--primary); border:1px solid rgba(238,0,0,0.2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:12px;">Limpar Logs</button>
+                    </div>
+                    <div id="admin-logs-list" class="logs-container">
+                        <!-- Logs will render here -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings (Section 4) -->
             <div class="admin-section" id="section-settings" style="display: none;">
-                <div class="settings-form">
-                    <h3 style="margin-top: 30px; color: #009ee3; display: flex; align-items: center; gap: 10px;">
-                        <img src="https://www.mercadopago.com/instore/merchant/assets/icon-mp.png" style="width: 24px;">
-                        Integração Mercado Pago
-                    </h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Access Token</label>
-                            <input type="password" id="mp-access-token" placeholder="APP_USR-...">
+                <div class="settings-dashboard">
+                    <!-- Admin Management -->
+                    <div class="settings-card">
+                        <h3><i data-lucide="shield"></i> Gestão de Administradores</h3>
+                        <div class="form-grid" style="margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label>Novo E-mail Admin</label>
+                                <input type="email" id="new-admin-email" placeholder="exemplo@admin.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Senha de Acesso</label>
+                                <input type="password" id="new-admin-pass" placeholder="••••••••">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Public Key</label>
-                            <input type="text" id="mp-public-key" placeholder="APP_USR-...">
+                        <button onclick="addNewAdmin()" class="btn-primary-admin" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); width:100%;">
+                            <i data-lucide="user-plus"></i> Adicionar Administrador
+                        </button>
+
+                        <div id="admins-list" style="margin-top:25px; display:flex; flex-direction:column; gap:10px;">
+                            <!-- Admins will be listed here -->
                         </div>
                     </div>
-                    <button class="btn-primary-admin" style="margin-top: 20px;">Salvar Configurações</button>
                 </div>
             </div>
         </div>

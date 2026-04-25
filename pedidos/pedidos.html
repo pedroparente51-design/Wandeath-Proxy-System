@@ -8,11 +8,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../home.css">
     <link rel="stylesheet" href="./pedidos.css">
 </head>
 
-<body>
+<body class="rx-theme-rh7">
+    <div class="rx-scroll-progress" id="scroll-bar"></div>
+    <div id="mouse-glow"></div>
+    <div class="mesh-gradient"></div>
     <div class="grid-overlay"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Interactive BG Wrapper for Parallax Shapes -->
+    <div class="interactive-bg-wrapper" id="parallax-bg">
+        <div class="parallax-shape shape-1"></div>
+        <div class="parallax-shape shape-2"></div>
+        <div class="parallax-shape shape-3"></div>
+    </div>
+
+    <!-- Floating Aurora Blobs -->
+    <div class="aurora-container">
+        <div class="aurora-blob aurora-blob--1"></div>
+        <div class="aurora-blob aurora-blob--2"></div>
+        <div class="aurora-blob aurora-blob--3"></div>
+        <div class="aurora-blob aurora-blob--4"></div>
+    </div>
     <div class="rx-topbar">
         <a class="rx-topbar__link" href="../index.html">🔥MELHORES PROXYS • SUPORTE RÁPIDO • 100% AUTOMÁTICO</a>
     </div>
@@ -22,10 +42,30 @@
             <a href="../index.html" class="logo">
                 <img src="../image.png" alt="Wandeath VIP">
             </a>
+
+            <nav class="header-nav-main">
+                <a href="../index.html">Início</a>
+                <div class="nav-dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" style="color: #fff;">Produtos <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-menu" id="header-products-menu">
+                        <!-- Links dinâmicos injetados via JS (home.js) -->
+                    </div>
+                </div>
+                <a href="../index.html#diferenciais">Diferenciais</a>
+            </nav>
+
             <div class="header-right">
-                <a href="../index.html" class="header-user-btn">
+                <a href="../carrinho/carrinho.html" class="header-icon-box" title="Carrinho" style="position:relative;">
+                    <i data-lucide="shopping-cart"></i>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </a>
+                <a href="../index.html" class="header-back-btn">
                     <i data-lucide="arrow-left"></i>
-                    <span>Voltar à Loja</span>
+                    <span>Voltar ao Início</span>
+                </a>
+                <a href="../login/login.html" class="header-user-btn" id="header-user-link">
+                    <i data-lucide="user"></i>
+                    <span>Área do Cliente</span>
                 </a>
             </div>
         </div>
@@ -88,8 +128,50 @@
         </div>
     </div>
 
+    <!-- Footer Premium -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="../image.png" alt="Wandeath VIP" class="footer-logo">
+                    <p>A maior loja de Proxys da América Latina! Qualidade e suporte 24/7.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navegação</h4>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">Início</a></li>
+                        <li><a href="../index.html#produtos">Produtos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Úteis</h4>
+                    <ul class="footer-links">
+                        <li><a href="../termos/index.html">Termos de Uso</a></li>
+                        <li><a href="../politica/index.html">Privacidade</a></li>
+                        <li><a href="#">Afiliados</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Diferenciais</h4>
+                    <ul class="footer-links">
+                        <li><a href="javascript:void(0);"><i data-lucide="shield-check" style="width:14px;"></i> 100% Seguro</a></li>
+                        <li><a href="javascript:void(0);"><i data-lucide="zap" style="width:14px;"></i> Automático</a></li>
+                        <li><a href="javascript:void(0);"><i data-lucide="globe" style="width:14px;"></i> Global</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 <strong>Wandeath VIP</strong>. Todos os direitos reservados.</p>
+                <p>Desenvolvido por <strong>@peeh.dev</strong></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
     <script src="../home.js"></script>
     <script src="./pedidos.js"></script>
+    <script>if (window.lucide) lucide.createIcons();</script>
 </body>
 
 </html>

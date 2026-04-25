@@ -70,23 +70,31 @@ function getProductsByCategory(category) {
 
 function generateCardHTML(p) {
     const imgUrl = p.image || '../img-rotativa/1gb.png';
-    const stockLines = p.delivery ? p.delivery.trim().split('\n') : [];
-    const stockCount = stockLines.length;
+
+    // Mapeamento de ícones por categoria
+    const iconMap = {
+        'rotativa': '🔄',
+        'mobile': '📱',
+        'fixa': '🏠',
+        'datacenter': '🛜'
+    };
+    const icon = iconMap[p.category] || '📦';
+
+    // Descrição curta para manter o alinhamento
+    const shortDesc = p.description
+        ? (p.description.length > 90 ? p.description.substring(0, 90) + '…' : p.description)
+        : 'Solução premium para máxima performance.';
 
     return `
         <div class="product-card rx-reveal">
-            <div class="product-tag">Destaque</div>
+            <div class="product-tag">${p.tag || 'Novo'}</div>
             <div class="product-img">
                 <img src="${imgUrl}" alt="${p.name}" onerror="this.src='../image.png'">
                 <div class="img-overlay"></div>
             </div>
             <div class="product-content">
-                <h4 class="product-title">🛜 ${p.name}</h4>
-                <p class="product-desc">${p.description || 'Solução premium para máxima performance.'}</p>
-                <div class="stock-info" style="font-size: 11px; margin: 10px 0; display: flex; justify-content: space-between;">
-                    <span style="color: ${stockCount > 0 ? '#00ff66' : '#ff4a4a'}">Estoque: ${stockCount}</span>
-                    <span style="color: var(--text-sec)">Mín: ${p.minQty || 1}</span>
-                </div>
+                <h4 class="product-title">${icon} ${p.name}</h4>
+                <p class="product-desc">${shortDesc}</p>
                 <div class="price-section">
                     <div class="price-info">
                         <p class="price-val">R$ ${parseFloat(p.price).toFixed(2)}</p>
@@ -95,11 +103,11 @@ function generateCardHTML(p) {
                     <div class="pix-badge"><span>☠</span></div>
                 </div>
             </div>
-            <div class="product-footer" style="display: flex; gap: 8px; align-items: center; padding: 15px;">
-                <input type="number" class="qty-input" value="${p.minQty || 1}" min="${p.minQty || 1}" max="${p.maxQty || 100}" 
-                    style="width: 55px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; font-size: 12px;">
-                <button class="btn-buy" style="padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; cursor: pointer;" onclick="addToCart('${p.name}', this)">Carrinho</button>
-                <button class="btn-buy btn-shine" style="flex: 1; padding: 10px; background: var(--primary); border: none; border-radius: 8px; color: #fff; font-weight: 800; cursor: pointer;" onclick="processPurchase('${p.name}', this)">Comprar</button>
+            <div class="product-footer">
+                <a href="../produto/produto.html?name=${encodeURIComponent(p.name)}"
+                   class="btn-buy btn-shine">
+                    Ver Produto
+                </a>
             </div>
         </div>
     `;
@@ -150,3 +158,12 @@ function renderFixas() {
 window.renderRotativas = renderRotativas;
 window.renderMobile = renderMobile;
 window.renderFixas = renderFixas;
+
+// --- Admin Sync Logic ---
+window.addEventListener('storage', (e) => {
+    if (e.key === 'wandeath_products') {
+        if (document.getElementById('rotativa-grid')) renderRotativas();
+        if (document.getElementById('mobile-grid')) renderMobile();
+        if (document.getElementById('fixa-grid')) renderFixas();
+    }
+});

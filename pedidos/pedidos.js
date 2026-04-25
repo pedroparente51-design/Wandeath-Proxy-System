@@ -5,20 +5,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderOrders() {
     const container = document.getElementById('orders-container');
-    const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+    
+    // 1. Get current logged-in user
+    const userDataStr = localStorage.getItem('wandeath_user');
+    if (!userDataStr) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>Acesso Restrito</h3>
+                <p>Por favor, realize login para visualizar seus pedidos.</p>
+                <a href="../login/login.html" class="btn-primary">Fazer Login</a>
+            </div>
+        `;
+        return;
+    }
+    const currentUser = JSON.parse(userDataStr);
 
-    if (orders.length === 0) {
+    // 2. Load and Filter
+    const allOrders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+    window.userFilteredOrders = allOrders.filter(order => order.customerEmail === currentUser.email);
+
+    if (window.userFilteredOrders.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <h3>Nenhum pedido encontrado</h3>
-                <p>Você ainda não realizou nenhuma compra em nossa plataforma.</p>
+                <p>Você ainda não realizou nenhuma compra em nossa plataforma com o e-mail <strong>${currentUser.email}</strong>.</p>
                 <a href="../index.html#produtos" class="btn-primary">Ver Produtos</a>
             </div>
         `;
         return;
     }
 
-    container.innerHTML = orders.slice().reverse().map((order, index) => {
+    container.innerHTML = window.userFilteredOrders.slice().reverse().map((order, index) => {
         const date = new Date(order.date);
         const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
@@ -37,7 +54,7 @@ function renderOrders() {
                     <div class="order-qty">${order.qty || 1} unidade${(order.qty || 1) > 1 ? 's' : ''}</div>
                     <div style="display:flex; align-items:center; gap:20px;">
                         <div class="order-total">R$ ${parseFloat(order.total || 0).toFixed(2)}</div>
-                        <button class="btn-view" onclick="viewOrder(${orders.length - 1 - index})">
+                        <button class="btn-view" onclick="viewOrder(${window.userFilteredOrders.length - 1 - index})">
                             <i data-lucide="eye"></i> Ver produto
                         </button>
                     </div>
@@ -50,8 +67,7 @@ function renderOrders() {
 }
 
 window.viewOrder = function (idx) {
-    const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
-    const order = orders[idx];
+    const order = window.userFilteredOrders ? window.userFilteredOrders[idx] : null;
     if (!order) return;
 
     const modal = document.getElementById('details-modal');

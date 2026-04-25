@@ -18,14 +18,72 @@ document.addEventListener('DOMContentLoaded', () => {
     safeRun('renderStoreProducts', renderStoreProducts);
     safeRun('initProductTabs', initProductTabs);
     safeRun('initOrdersModal', initOrdersModal);
-    safeRun('initProxyChecker', initProxyChecker);
     safeRun('initCheckout', initCheckout);
     safeRun('initSearch', initSearch);
     safeRun('initSearchSuggestions', initSearchSuggestions);
     safeRun('updateCartBadge', updateCartBadge);
+    safeRun('initChatbox', initChatbox);
+    safeRun('initCheckerTabs', initCheckerTabs);
+    safeRun('renderHeaderMenu', renderHeaderMenu);
+    
+    // Create icons after everything is loaded
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 
+    // Listen for changes from Admin Panel in other tabs
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'wandeath_products') {
+            safeRun('renderStoreProducts', renderStoreProducts);
+            renderHeaderMenu();
+        }
+    });
+
+    renderHeaderMenu();
     console.log('[Wandeath] Todas as funções foram executadas.');
 });
+
+/**
+ * Renderiza dinamicamente o menu de produtos no Header
+ */
+function renderHeaderMenu() {
+    const menu = document.getElementById('header-products-menu');
+    if (!menu) return;
+
+    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+    
+    // Detectar profundidade da pasta para o link correto
+    const isSubDir = window.location.pathname.includes('/produto/') || 
+                     window.location.pathname.includes('/login/') || 
+                     window.location.pathname.includes('/pedidos/') || 
+                     window.location.pathname.includes('/carrinho/') ||
+                     window.location.pathname.includes('/proxy/');
+    const prefix = isSubDir ? '../' : './';
+
+    // Links das Categorias (Originais e Fixos)
+    let menuHTML = `
+        <a href="${prefix}proxy/proxyrotativa.html">🔄 Proxy Residencial Rotativa</a>
+        <a href="${prefix}proxy/proxymobile.html">📱 Proxy Mobile Premium</a>
+        <a href="${prefix}proxy/proxyfixa.html">🏠 Proxy Residencial Fixa</a>
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 5px 0;"></div>
+    `;
+
+    // 2. Links de Produtos Individuais (Destaques)
+    if (products.length > 0) {
+        menuHTML += `<div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px;">Destaques</div>`;
+        const mainProducts = products.slice(0, 5);
+        menuHTML += mainProducts.map(p => `
+            <a href="${prefix}produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">⚡ ${p.name}</a>
+        `).join('');
+    }
+
+    menuHTML += `
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 5px 0;"></div>
+        <a href="${prefix}index.html#produtos" style="color: var(--primary); font-weight: 800; text-align: center;">Ver Todos os Produtos</a>
+    `;
+
+    menu.innerHTML = menuHTML;
+}
 
 function initSearch() {
     // A busca agora é tratada majoritariamente pelo initSearchSuggestions para mostrar o dropdown.
@@ -103,6 +161,49 @@ function initCheckout() {
             if (!name || !email) return alert('Por favor, preencha seu nome e email.');
 
             finalizePurchase();
+        };
+    }
+
+    // Coupon Logic Integration
+    const applyCouponBtn = document.getElementById('apply-coupon-btn');
+    if (applyCouponBtn) {
+        applyCouponBtn.onclick = () => {
+            const code = document.getElementById('checkout-coupon').value.trim().toUpperCase();
+            const msg = document.getElementById('coupon-msg');
+            if (!code) return;
+
+            const coupons = JSON.parse(localStorage.getItem('wandeath_coupons') || '[]');
+            const coupon = coupons.find(c => c.name === code);
+
+            if (!coupon) {
+                msg.textContent = '❌ Cupom inválido';
+                msg.style.color = '#ff4a4a';
+                msg.style.display = 'block';
+                window.appliedCoupon = null;
+            } else if (coupon.type === 'limited' && coupon.usesLeft <= 0) {
+                msg.textContent = '❌ Cupom esgotado';
+                msg.style.color = '#ff4a4a';
+                msg.style.display = 'block';
+                window.appliedCoupon = null;
+            } else {
+                msg.textContent = `✅ Desconto de ${coupon.discount}% aplicado!`;
+                msg.style.color = '#4ade80';
+                msg.style.display = 'block';
+                window.appliedCoupon = coupon;
+            }
+            
+            // Re-calc display total
+            if (window.currentCheckout) {
+                const { product, qty } = window.currentCheckout;
+                let total = product.price * qty;
+                if (window.appliedCoupon) {
+                    total = total * (1 - window.appliedCoupon.discount / 100);
+                }
+                const totalBtn = document.getElementById('checkout-total-btn');
+                const finalTotal = document.getElementById('final-total');
+                if (totalBtn) totalBtn.innerText = `R$ ${total.toFixed(2)}`;
+                if (finalTotal) finalTotal.innerText = `R$ ${total.toFixed(2)}`;
+            }
         };
     }
 }
@@ -294,6 +395,15 @@ function renderStoreProducts(filter = 'all') {
             ? (prod.description.length > 90 ? prod.description.substring(0, 90) + '…' : prod.description)
             : 'Solução premium para máxima performance.';
 
+        // Mapeamento de ícones por categoria
+        const iconMap = {
+            'rotativa': '🔄',
+            'mobile': '📱',
+            'fixa': '🏠',
+            'datacenter': '🛜'
+        };
+        const icon = iconMap[prod.category] || '📦';
+
         productCard.innerHTML = `
             ${tagHtml}
             <div class="product-img">
@@ -301,7 +411,7 @@ function renderStoreProducts(filter = 'all') {
                 <div class="img-overlay"></div>
             </div>
             <div class="product-content">
-                <h4 class="product-title">🛜 ${prod.name}</h4>
+                <h4 class="product-title">${icon} ${prod.name}</h4>
                 <p class="product-desc">${shortDesc}</p>
                 <div class="price-section">
                     <div class="price-info">
@@ -313,8 +423,7 @@ function renderStoreProducts(filter = 'all') {
             </div>
             <div class="product-footer">
                 <a href="./produto/produto.html?name=${encodeURIComponent(prod.name)}"
-                   class="btn-buy btn-shine"
-                   style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; background:var(--primary); border:none; border-radius:8px; color:#fff; font-weight:800; font-size:14px; cursor:pointer; text-decoration:none; transition:0.3s;">
+                   class="btn-buy btn-shine">
                     Ver Produto
                 </a>
             </div>
@@ -361,13 +470,24 @@ function renderUserOrders() {
     const list = document.getElementById('my-orders-list');
     if (!list) return;
 
-    const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
-    if (orders.length === 0) {
-        list.innerHTML = '<p style="text-align: center; color: var(--text-sec); padding: 40px;">Você ainda não possui pedidos.</p>';
+    // 1. Get current logged-in user
+    const userDataStr = localStorage.getItem('wandeath_user');
+    if (!userDataStr) {
+        list.innerHTML = '<p style="text-align: center; color: var(--text-sec); padding: 40px;">Por favor, faça login para ver seus pedidos.</p>';
+        return;
+    }
+    const currentUser = JSON.parse(userDataStr);
+
+    // 2. Load and Filter orders
+    const allOrders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+    const userOrders = allOrders.filter(order => order.customerEmail === currentUser.email);
+
+    if (userOrders.length === 0) {
+        list.innerHTML = '<p style="text-align: center; color: var(--text-sec); padding: 40px;">Você ainda não possui pedidos registrados neste e-mail.</p>';
         return;
     }
 
-    list.innerHTML = orders.reverse().map(order => `
+    list.innerHTML = userOrders.reverse().map(order => `
         <div class="order-item">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h4>${order.productName}</h4>
@@ -393,7 +513,13 @@ async function finalizePurchase() {
     if (!window.currentCheckout) return alert('Nenhum produto selecionado.');
 
     const { product, qty } = window.currentCheckout;
-    const total = parseFloat(product.price) * qty;
+    let total = parseFloat(product.price) * qty;
+
+    // Apply Discount if coupon is valid
+    if (window.appliedCoupon) {
+        total = total * (1 - window.appliedCoupon.discount / 100);
+    }
+
     const checkoutBody = document.querySelector('.checkout-body');
 
     // Show Loading
@@ -476,6 +602,21 @@ async function finalizePurchase() {
 
                 if (statusData.status === 'approved') {
                     clearInterval(pollInterval);
+                    
+                    // Update Coupon usage if applied
+                    if (window.appliedCoupon) {
+                        const coupons = JSON.parse(localStorage.getItem('wandeath_coupons') || '[]');
+                        const idx = coupons.findIndex(c => c.name === window.appliedCoupon.name);
+                        if (idx !== -1) {
+                            if (coupons[idx].type === 'limited') {
+                                coupons[idx].usesLeft = Math.max(0, coupons[idx].usesLeft - 1);
+                            }
+                            coupons[idx].usedCount = (coupons[idx].usedCount || 0) + 1;
+                            localStorage.setItem('wandeath_coupons', JSON.stringify(coupons));
+                        }
+                        window.appliedCoupon = null; // Clear after use
+                    }
+
                     completePurchaseProcess();
                     showPaymentSuccess(product, qty, total);
                 } else if (statusData.status === 'cancelled' || statusData.status === 'rejected') {
@@ -610,7 +751,10 @@ function completePurchaseProcess() {
         }
 
         const subtotal = parseFloat(prod.price) * qty;
-        const total = window.currentCoupon ? (subtotal * (1 - window.currentCoupon.discount / 100)) : subtotal;
+        const total = window.appliedCoupon ? (subtotal * (1 - window.appliedCoupon.discount / 100)) : subtotal;
+
+        const customerName = document.getElementById('checkout-name')?.value || 'Visitante';
+        const customerEmail = document.getElementById('checkout-email')?.value || 'N/A';
 
         const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
         orders.push({
@@ -618,7 +762,9 @@ function completePurchaseProcess() {
             delivery: deliveredItems.join('\n'),
             date: Date.now(),
             qty: qty,
-            total: total
+            total: total,
+            customerName,
+            customerEmail
         });
         localStorage.setItem('wandeath_orders', JSON.stringify(orders));
 
@@ -641,7 +787,24 @@ function initProductTabs() {
 
 
 /* ─── Check Login State ─────────────────────────── */
-function checkLoginState() {
+async function checkLoginState() {
+    // 1. Sync with Supabase Session
+    if (window.supabaseClient) {
+        try {
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (session && session.user) {
+                localStorage.setItem('wandeath_logged_in', 'true');
+                localStorage.setItem('wandeath_user', JSON.stringify({
+                    name: session.user.user_metadata.full_name || session.user.email.split('@')[0],
+                    email: session.user.email,
+                    avatar: session.user.user_metadata.avatar_url
+                }));
+            }
+        } catch (e) {
+            console.warn('[Wandeath] Supabase Session Error:', e);
+        }
+    }
+
     const isLoggedIn = localStorage.getItem('wandeath_logged_in');
     const userDataStr = localStorage.getItem('wandeath_user');
     const userBtn = document.querySelector('.header-user-btn');
@@ -657,7 +820,7 @@ function checkLoginState() {
             } catch (e) { }
         }
 
-        const isSubDir = window.location.pathname.includes('/produto/') || window.location.pathname.includes('/login/') || window.location.pathname.includes('/pedidos/') || window.location.pathname.includes('/carrinho/');
+        const isSubDir = window.location.pathname.includes('/produto/') || window.location.pathname.includes('/login/') || window.location.pathname.includes('/pedidos/') || window.location.pathname.includes('/carrinho/') || window.location.pathname.includes('/proxy/');
         const prefix = isSubDir ? '../' : './';
 
         userBtn.outerHTML = `
@@ -681,10 +844,15 @@ function checkLoginState() {
 
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        window.wandeathLogout = function (e) {
-            e.preventDefault();
+        window.wandeathLogout = async function (e) {
+            if (e) e.preventDefault();
             if (confirm('Tem certeza que deseja sair?')) {
+                try {
+                    if (window.supabaseClient) await window.supabaseClient.auth.signOut();
+                } catch (err) { console.error('SignOut error:', err); }
+                
                 localStorage.removeItem('wandeath_logged_in');
+                localStorage.removeItem('wandeath_user');
                 window.location.reload();
             }
         };
@@ -870,15 +1038,23 @@ function initNeuralNetwork() {
 
 /* ─── FAQ Accordion ─────────────────────────────── */
 function initFAQ() {
-    document.querySelectorAll('.faq-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const isOpen = item.classList.contains('open');
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        if (!question) return;
 
-            // Fecha todos
-            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        question.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar bolha
+            const isActive = item.classList.contains('active');
 
-            // Abre o clicado (se estava fechado)
-            if (!isOpen) item.classList.add('open');
+            // Fecha todos os outros para um efeito acordeão limpo
+            faqItems.forEach(i => i.classList.remove('active'));
+
+            // Se o clicado não estava ativo, abre ele
+            if (!isActive) {
+                item.classList.add('active');
+            }
         });
     });
 }
@@ -915,6 +1091,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle Chatbox
     openChatBtn.addEventListener('click', (e) => {
+        // Video Tutorial Handling
+        const videoWrapper = document.querySelector('.prod-video-wrapper');
+        if (videoWrapper) {
+            if (prod.youtubeUrl) {
+                videoWrapper.style.display = 'block';
+                videoWrapper.innerHTML = `
+                    <a href="${prod.youtubeUrl}" target="_blank" style="text-decoration:none; display:block; position:relative; width:100%; height:100%; border-radius:12px; overflow:hidden;">
+                        <img src="${prod.image || '../image.png'}" style="width:100%; height:100%; object-fit:cover; opacity:0.6;">
+                        <div class="btn-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:70px; height:70px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 0 30px rgba(238,0,0,0.6); transition:0.3s;">
+                            <i data-lucide="play" style="width:32px; height:32px; margin-left:4px;" fill="white"></i>
+                        </div>
+                        <div style="position:absolute; bottom:20px; left:0; width:100%; text-align:center; color:#fff; font-weight:800; font-size:15px; text-shadow:0 2px 10px rgba(0,0,0,0.8); letter-spacing:1px;">
+                            ASSISTIR VÍDEO TUTORIAL
+                        </div>
+                    </a>
+                `;
+            } else {
+                videoWrapper.style.display = 'none';
+            }
+        }
+        if (window.lucide) lucide.createIcons();
         e.preventDefault();
         chatboxContainer.classList.add('show');
         renderMessages();
@@ -1062,12 +1259,67 @@ function initSearchSuggestions() {
             }
         });
 
-        // Fechar ao clicar fora
-        document.addEventListener('click', (e) => {
-            if (!input.parentElement.contains(e.target)) {
-                suggestionsBox.style.display = 'none';
+    });
+}
+
+// ─── Chat-box Controls ────────────────────────────────
+function initChatbox() {
+    const openChatBtn = document.getElementById('open-chat-btn');
+    const closeChatBtn = document.getElementById('close-chat-btn');
+    const chatboxContainer = document.getElementById('chatbox-container');
+
+    if (openChatBtn && chatboxContainer) {
+        openChatBtn.onclick = () => {
+            chatboxContainer.style.display = 'flex';
+            setTimeout(() => chatboxContainer.classList.add('show'), 10);
+        };
+    }
+
+    if (closeChatBtn && chatboxContainer) {
+        closeChatBtn.onclick = () => {
+            chatboxContainer.classList.remove('show');
+            setTimeout(() => chatboxContainer.style.display = 'none', 300);
+        };
+    }
+
+    // Modal Close Buttons
+    const closeCheckoutBtn = document.getElementById('close-checkout-btn');
+    if (closeCheckoutBtn) {
+        closeCheckoutBtn.onclick = () => {
+            const modal = document.getElementById('checkout-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
             }
+        };
+    }
+
+    // Close on overlay click
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+function initCheckerTabs() {
+    // Checker Tabs
+    const checkerTabs = document.querySelectorAll('.checker-tab-btn');
+    checkerTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetId = tab.getAttribute('data-tab');
+            
+            // Toggle active state
+            document.querySelectorAll('.checker-tab-btn').forEach(b => b.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Show target content
+            document.querySelectorAll('.checker-tab-content').forEach(c => c.style.display = 'none');
+            const target = document.getElementById(targetId);
+            if (target) target.style.display = 'block';
         });
     });
 }
+
 
