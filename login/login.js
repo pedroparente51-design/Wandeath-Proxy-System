@@ -1,20 +1,30 @@
 /* 
    Wandeath VIP - Login Engine
-   Extracted from inline HTML for better performance and organization.
+   Refactored for maximum stability and VPS compatibility.
 */
 
 const safeRun = (name, fn) => {
     try { 
-        if (typeof fn === 'function') fn(); 
+        if (typeof fn === 'function') {
+            fn(); 
+        } else {
+            console.warn(`[Wandeath Login] safeRun: ${name} não é uma função.`);
+        }
     } catch (e) { 
         console.error(`[Wandeath Login] Erro em ${name}:`, e); 
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.lucide) lucide.createIcons();
+    console.log('[Wandeath Login] Inicializando engine de autenticação...');
+    
+    if (window.lucide) {
+        try { lucide.createIcons(); } catch(e) { console.error('Lucide Error:', e); }
+    }
+
     safeRun('initMouseGlow', initMouseGlow);
     safeRun('initNeuralNetwork', initNeuralNetwork);
+    safeRun('updateCartBadge', updateCartBadge);
 
     // Form Submissions
     const loginForm = document.getElementById('login-form');
@@ -22,25 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
+        console.log('[Wandeath Login] Formulário de login pronto.');
     }
     if (registerForm) {
         registerForm.addEventListener('submit', handleRegister);
+        console.log('[Wandeath Login] Formulário de registro pronto.');
     }
 
-    // Social Buttons - Real Supabase Integration
+    // Social Buttons
     const googleBtn = document.querySelector('.btn-google');
     const discordBtn = document.querySelector('.btn-discord');
 
     if (googleBtn) {
         googleBtn.addEventListener('click', async e => {
             e.preventDefault();
+            console.log('[Wandeath Login] Tentando login via Google...');
+            
             if (!window.supabaseClient) {
-                console.error('Supabase não inicializado.');
+                console.warn('Supabase não disponível. Usando simulação.');
                 return simulateOAuth('Google', 'user@gmail.com', 'Usuário Google');
             }
             
             const redirectUrl = window.location.href.split('/login/')[0] + '/index.html';
-            console.log('[Wandeath] Redirecting to:', redirectUrl);
+            console.log('[Wandeath Login] URL de retorno:', redirectUrl);
 
             try {
                 const { error } = await window.supabaseClient.auth.signInWithOAuth({
@@ -49,30 +63,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 if (error) throw error;
             } catch (err) {
-                console.error('Erro OAuth:', err.message);
-                alert('Erro ao conectar com Google. Usando modo de simulação.');
+                console.error('OAuth Error:', err.message);
+                alert('Erro na conexão com Supabase. Iniciando modo de segurança (Simulação).');
                 simulateOAuth('Google', 'user@gmail.com', 'Usuário Google');
             }
         });
     }
+
     if (discordBtn) {
         discordBtn.addEventListener('click', async e => {
             e.preventDefault();
-            if (!window.supabaseClient) return alert('Erro: Supabase não inicializado.');
+            console.log('[Wandeath Login] Tentando login via Discord...');
+            
+            if (!window.supabaseClient) {
+                console.warn('Supabase não disponível.');
+                return simulateOAuth('Discord', 'user@discord.com', 'Usuário Discord');
+            }
 
             const redirectUrl = window.location.href.split('/login/')[0] + '/index.html';
 
-            const { error } = await window.supabaseClient.auth.signInWithOAuth({
-                provider: 'discord',
-                options: { redirectTo: redirectUrl }
-            });
-            if (error) alert('Erro ao logar com Discord: ' + error.message);
+            try {
+                const { error } = await window.supabaseClient.auth.signInWithOAuth({
+                    provider: 'discord',
+                    options: { redirectTo: redirectUrl }
+                });
+                if (error) throw error;
+            } catch (err) {
+                console.error('OAuth Error:', err.message);
+                simulateOAuth('Discord', 'user@discord.com', 'Usuário Discord');
+            }
         });
     }
 });
 
 function toggleAuth(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const title = document.getElementById('auth-title');
@@ -80,91 +105,120 @@ function toggleAuth(e) {
     const footerText = document.getElementById('auth-footer-text');
     const divider = document.getElementById('auth-divider');
 
+    if (!loginForm || !registerForm) return;
+
     if (loginForm.style.display !== 'none') {
         loginForm.style.display = 'none';
         registerForm.style.display = 'block';
-        title.innerText = 'Crie sua conta';
-        subtitle.innerText = 'Comece sua jornada elite no Wandeath VIP.';
-        divider.innerText = 'OU CADASTRE COM E-MAIL';
-        footerText.innerHTML = 'Já tem uma conta? <a href="#" onclick="toggleAuth(event)">Entre aqui</a>';
+        if (title) title.innerText = 'Crie sua conta';
+        if (subtitle) subtitle.innerText = 'Comece sua jornada elite no Wandeath VIP.';
+        if (divider) divider.innerText = 'OU CADASTRE COM E-MAIL';
+        if (footerText) footerText.innerHTML = 'Já tem uma conta? <a href="#" onclick="toggleAuth(event)">Entre aqui</a>';
     } else {
         loginForm.style.display = 'block';
         registerForm.style.display = 'none';
-        title.innerText = 'Acesse sua conta';
-        subtitle.innerText = 'Seja bem-vindo de volta ao ecossistema VIP.';
-        divider.innerText = 'OU COM E-MAIL';
-        footerText.innerHTML = 'Não tem uma conta? <a href="#" onclick="toggleAuth(event)">Crie agora</a>';
+        if (title) title.innerText = 'Acesse sua conta';
+        if (subtitle) subtitle.innerText = 'Seja bem-vindo de volta ao ecossistema VIP.';
+        if (divider) divider.innerText = 'OU COM E-MAIL';
+        if (footerText) footerText.innerHTML = 'Não tem uma conta? <a href="#" onclick="toggleAuth(event)">Crie agora</a>';
     }
 }
 window.toggleAuth = toggleAuth;
 
 function handleRegister(e) {
     e.preventDefault();
+    console.log('[Wandeath Login] Processando registro...');
     const inputs = this.querySelectorAll('input');
-    const name = inputs[0].value;
-    const email = inputs[1].value;
-    const password = inputs[2].value;
+    const name = inputs[0].value.trim();
+    const email = inputs[1].value.trim();
+    const password = inputs[2].value.trim();
+
+    if (!name || !email || !password) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+    }
 
     const user = { name, email, password, createdAt: new Date().toISOString() };
     
-    // Save current session
     localStorage.setItem('wandeath_user', JSON.stringify(user));
     localStorage.setItem('wandeath_logged_in', 'true');
 
-    // Add to global user list for Admin Panel
     const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
     if (!users.find(u => u.email === email)) {
         users.push(user);
         localStorage.setItem('wandeath_users', JSON.stringify(users));
     }
 
-    alert('Conta criada com sucesso! Redirecionando...');
+    console.log('[Wandeath Login] Registro concluído para:', email);
+    alert('Conta criada com sucesso! Bem-vindo ao Wandeath VIP.');
     window.location.href = '../index.html';
 }
 
 function handleLogin(e) {
     e.preventDefault();
+    console.log('[Wandeath Login] Processando login local...');
     const inputs = this.querySelectorAll('input');
-    const email = inputs[0].value;
-    const password = inputs[1].value;
+    const email = inputs[0].value.trim();
+    const password = inputs[1].value.trim();
 
-    const storedData = localStorage.getItem('wandeath_user');
-    if (storedData) {
-        const user = JSON.parse(storedData);
-        if (user.email === email && user.password === password) {
-            localStorage.setItem('wandeath_logged_in', 'true');
-            alert('Login realizado com sucesso! Bem-vindo de volta, ' + user.name);
-            window.location.href = '../index.html';
-            return;
-        }
-    }
-
+    // Bypass Admin
     if (email === 'admin@admin.com' && password === 'admin') {
         localStorage.setItem('wandeath_logged_in', 'true');
         alert('Login de Administrador realizado!');
         window.location.href = '../index.html';
-    } else {
-        alert('E-mail ou senha incorretos! (Tente criar uma conta primeiro ou use admin@admin.com / admin)');
+        return;
     }
+
+    const storedData = localStorage.getItem('wandeath_user');
+    if (storedData) {
+        try {
+            const user = JSON.parse(storedData);
+            if (user.email === email && user.password === password) {
+                localStorage.setItem('wandeath_logged_in', 'true');
+                alert(`Login realizado com sucesso! Bem-vindo de volta, ${user.name}`);
+                window.location.href = '../index.html';
+                return;
+            }
+        } catch (err) {
+            console.error('Erro ao ler dados do usuário:', err);
+        }
+    }
+
+    // Tentar encontrar na lista global de usuários
+    const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
+    const foundUser = users.find(u => u.email === email && u.password === password);
+    
+    if (foundUser) {
+        localStorage.setItem('wandeath_user', JSON.stringify(foundUser));
+        localStorage.setItem('wandeath_logged_in', 'true');
+        alert(`Login realizado com sucesso! Bem-vindo, ${foundUser.name}`);
+        window.location.href = '../index.html';
+        return;
+    }
+
+    alert('E-mail ou senha incorretos! Verifique seus dados ou crie uma nova conta.');
 }
 
 function simulateOAuth(provider, mockEmail, mockName) {
-    const width = 500;
-    const height = 600;
+    const width = 500, height = 600;
     const left = (window.innerWidth / 2) - (width / 2);
     const top = (window.innerHeight / 2) - (height / 2);
 
     const popup = window.open('', '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+    if (!popup) {
+        alert('Por favor, habilite popups para realizar o login social.');
+        return;
+    }
 
     let color = provider === 'Google' ? '#fff' : '#5865F2';
     let bg = provider === 'Google' ? '#111' : '#36393f';
 
     popup.document.write(`
-        <html style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 50px; background: ${bg}; color: #fff;">
-            <h2 style="margin-top: 40px;">Conectando com ${provider}...</h2>
-            <p style="color: #aaa;">Aguardando autorização segura.</p>
-            <div style="margin: 50px auto; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: ${color}; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <html style="font-family: sans-serif; text-align: center; padding: 50px; background: ${bg}; color: #fff;">
+            <h2 style="margin-top: 40px;">Autenticando via ${provider}...</h2>
+            <div style="margin: 50px auto; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: ${color}; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+            <p style="opacity: 0.6;">Redirecionando de volta em instantes...</p>
         </html>
     `);
 
@@ -173,23 +227,30 @@ function simulateOAuth(provider, mockEmail, mockName) {
         const user = { name: mockName, email: mockEmail, provider: provider };
         localStorage.setItem('wandeath_user', JSON.stringify(user));
         localStorage.setItem('wandeath_logged_in', 'true');
-        alert('Autenticado via ' + provider + ' com sucesso!');
         window.location.href = '../index.html';
-    }, 2500);
+    }, 2000);
 }
 
-/* ─── Neural Network & Mouse Effects ─── */
+function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    const badge = document.getElementById('cart-count');
+    if (badge) {
+        badge.innerText = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+}
+
+/* ─── Efeitos Visuais ─── */
 function initMouseGlow() {
     const glow = document.getElementById('mouse-glow');
     if (!glow) return;
-    let mouseX = 0, mouseY = 0;
-    let ballX = 0, ballY = 0;
-    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    let mouseX = 0, mouseY = 0, ballX = 0, ballY = 0;
+    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
     function animate() {
-        ballX += (mouseX - ballX) * 0.08;
-        ballY += (mouseY - ballY) * 0.08;
-        glow.style.left = ballX + 'px';
-        glow.style.top  = ballY + 'px';
+        ballX += (mouseX - ballX) * 0.1;
+        ballY += (mouseY - ballY) * 0.1;
+        glow.style.transform = `translate(${ballX}px, ${ballY}px)`;
         requestAnimationFrame(animate);
     }
     animate();
@@ -201,15 +262,17 @@ function initNeuralNetwork() {
     const ctx = canvas.getContext('2d');
     let W, H, particles = [];
     const COUNT = 60;
-    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
     window.addEventListener('resize', resize);
+    
     class Particle {
         constructor() { this.reset(); }
         reset() { this.x = Math.random() * W; this.y = Math.random() * H; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.r = Math.random()*2; }
         update() { this.x += this.vx; this.y += this.vy; if(this.x<0||this.x>W)this.vx*=-1; if(this.y<0||this.y>H)this.vy*=-1; }
-        draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(238,0,0,0.4)'; ctx.fill(); }
+        draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(238,0,0,0.3)'; ctx.fill(); }
     }
-    function spawn() { for(let i=0;i<COUNT;i++) particles.push(new Particle()); }
-    function loop() { ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
-    resize(); spawn(); loop();
+    
+    const spawn = () => { resize(); for(let i=0;i<COUNT;i++) particles.push(new Particle()); };
+    const loop = () => { ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); };
+    spawn(); loop();
 }
