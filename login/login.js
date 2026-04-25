@@ -265,7 +265,7 @@ function simulateOAuth(provider, mockEmail, mockName) {
         const user = { name: mockName, email: mockEmail, provider: provider };
         localStorage.setItem('wandeath_user', JSON.stringify(user));
         localStorage.setItem('wandeath_logged_in', 'true');
-        window.location.href = '../index.html';
+        window.location.href = '/';
     }, 2000);
 }
 
