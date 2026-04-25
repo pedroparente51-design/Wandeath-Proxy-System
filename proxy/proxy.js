@@ -86,7 +86,7 @@ function generateCardHTML(p) {
         : 'Solução premium para máxima performance.';
 
     return `
-        <div class="product-card rx-reveal">
+        <div class="product-card">
             <div class="product-tag">${p.tag || 'Novo'}</div>
             <div class="product-img">
                 <img src="${imgUrl}" alt="${p.name}" onerror="this.src='/image.png'">
@@ -122,7 +122,6 @@ function renderRotativas() {
             return;
         }
         grid.innerHTML = products.map(generateCardHTML).join('');
-        if (window.revealObserver) grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
         lucide.createIcons();
     }
 }
@@ -136,7 +135,6 @@ function renderMobile() {
             return;
         }
         grid.innerHTML = products.map(generateCardHTML).join('');
-        if (window.revealObserver) grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
         lucide.createIcons();
     }
 }
@@ -150,7 +148,6 @@ function renderFixas() {
             return;
         }
         grid.innerHTML = products.map(generateCardHTML).join('');
-        if (window.revealObserver) grid.querySelectorAll('.rx-reveal').forEach(el => window.revealObserver.observe(el));
         lucide.createIcons();
     }
 }
