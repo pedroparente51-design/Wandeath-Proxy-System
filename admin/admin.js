@@ -535,4 +535,3 @@ window.removeAdmin = function(index) {
     }
 };
 
-window.addEventListener('storage', (e) => { if (e.key === 'wandeath_chat_history') { if (typeof renderAdminMessages === 'function') renderAdminMessages(); } });
