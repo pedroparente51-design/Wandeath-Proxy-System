@@ -210,13 +210,18 @@ footer {
 }
 
 .dropdown-menu a {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 10px 20px;
     color: var(--text-sec);
     text-decoration: none;
     font-size: 13px;
     font-weight: 600;
     transition: 0.3s;
+}
+
+.dropdown-menu a i {
+    flex-shrink: 0;
 }
 
 .dropdown-menu a:hover {

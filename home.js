@@ -52,7 +52,6 @@ function renderHeaderMenu() {
 
     const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
     
-    // Detectar profundidade da pasta para o link correto
     const isSubDir = window.location.pathname.includes('/produto/') || 
                      window.location.pathname.includes('/login/') || 
                      window.location.pathname.includes('/pedidos/') || 
@@ -60,29 +59,40 @@ function renderHeaderMenu() {
                      window.location.pathname.includes('/proxy/');
     const prefix = isSubDir ? '../' : './';
 
-    // Links das Categorias (Originais e Fixos)
     let menuHTML = `
-        <a href="${prefix}proxy/proxyrotativa.html">🔄 Proxy Residencial Rotativa</a>
-        <a href="${prefix}proxy/proxymobile.html">📱 Proxy Mobile Premium</a>
-        <a href="${prefix}proxy/proxyfixa.html">🏠 Proxy Residencial Fixa</a>
-        <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 5px 0;"></div>
+        <div style="padding: 10px 0;">
+            <div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Categorias</div>
+            <a href="${prefix}proxy/proxyrotativa.html"><i data-lucide="refresh-cw" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Rotativa</a>
+            <a href="${prefix}proxy/proxymobile.html"><i data-lucide="smartphone" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Mobile Premium</a>
+            <a href="${prefix}proxy/proxyfixa.html"><i data-lucide="home" style="width:14px; margin-right:8px; color:var(--primary);"></i> Proxy Residencial Fixa</a>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 10px 0;"></div>
     `;
 
-    // 2. Links de Produtos Individuais (Destaques)
     if (products.length > 0) {
-        menuHTML += `<div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px;">Destaques</div>`;
-        const mainProducts = products.slice(0, 5);
+        menuHTML += `<div style="font-size: 10px; color: var(--text-sec); font-weight: 800; padding: 5px 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Destaques</div>`;
+        const mainProducts = products.slice(0, 6);
         menuHTML += mainProducts.map(p => `
-            <a href="${prefix}produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">⚡ ${p.name}</a>
+            <a href="${prefix}produto/produto.html?name=${encodeURIComponent(p.name)}" style="font-size: 13px;">
+                <i data-lucide="zap" style="width:14px; margin-right:8px; color:var(--primary);"></i> ${p.name}
+            </a>
         `).join('');
     }
 
     menuHTML += `
-        <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 5px 0;"></div>
-        <a href="${prefix}index.html#produtos" style="color: var(--primary); font-weight: 800; text-align: center;">Ver Todos os Produtos</a>
+            <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 10px 0;"></div>
+            <a href="${prefix}index.html#produtos" style="color: var(--primary); font-weight: 800; text-align: center; background: rgba(238,0,0,0.05);">
+                <i data-lucide="plus-circle" style="width:14px; margin-right:8px;"></i> Ver Todos
+            </a>
+        </div>
     `;
 
     menu.innerHTML = menuHTML;
+    
+    // Refresh icons
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
 
 function initSearch() {
