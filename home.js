@@ -1,4 +1,4 @@
-﻿const safeRun = (name, fn) => {
+const safeRun = (name, fn) => {
     try { 
         if (typeof fn === 'function') {
             fn(); 
@@ -1111,13 +1111,13 @@ function initFAQ() {
         if (!question) return;
 
         question.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar bolha
+            e.stopPropagation();
             const isActive = item.classList.contains('active');
 
-            // Fecha todos os outros para um efeito acordeão limpo
+            // Fecha todos os outros
             faqItems.forEach(i => i.classList.remove('active'));
 
-            // Se o clicado não estava ativo, abre ele
+            // Se não estava ativo, abre
             if (!isActive) {
                 item.classList.add('active');
             }
@@ -1131,62 +1131,45 @@ function initInteractiveBackground() {
     if (!shapes.length) return;
 
     window.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
+        const x = (window.innerWidth / 2 - e.clientX) / 50;
+        const y = (window.innerHeight / 2 - e.clientY) / 50;
 
         shapes.forEach((shape, index) => {
-            const speed = (index + 1) * 20;
-            const xOffset = (window.innerWidth / 2 - e.clientX) * speed / 1000;
-            const yOffset = (window.innerHeight / 2 - e.clientY) * speed / 1000;
-
-            shape.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            const speed = (index + 1) * 0.5;
+            shape.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
         });
     });
 }
 
-
 function initModals() {
-    // Modal Close Buttons
-    const closeCheckoutBtn = document.getElementById('close-checkout-btn');
-    if (closeCheckoutBtn) {
-        closeCheckoutBtn.onclick = () => {
-            const modal = document.getElementById('checkout-modal');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        };
-    }
-
-    // Close on overlay click
+    // Fechar modais ao clicar no overlay
     window.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal')) {
             e.target.style.display = 'none';
             document.body.style.overflow = '';
         }
     });
+
+    const closeBtn = document.getElementById('close-checkout-btn');
+    if (closeBtn) {
+        closeBtn.onclick = () => closeCheckoutModal();
+    }
 }
 
 function initCheckerTabs() {
-    // Checker Tabs
     const checkerTabs = document.querySelectorAll('.checker-tab-btn');
     checkerTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const targetId = tab.getAttribute('data-tab');
-            
-            // Toggle active state
             document.querySelectorAll('.checker-tab-btn').forEach(b => b.classList.remove('active'));
             tab.classList.add('active');
 
-            // Show target content
             document.querySelectorAll('.checker-tab-content').forEach(c => c.style.display = 'none');
             const target = document.getElementById(targetId);
             if (target) target.style.display = 'block';
         });
     });
 }
-
-
 
 function closeCheckoutModal(reload = false) {
     const modal = document.getElementById('checkout-modal');
@@ -1197,4 +1180,5 @@ function closeCheckoutModal(reload = false) {
     }
     if (reload) window.location.reload();
 }
+
 window.closeCheckoutModal = closeCheckoutModal;

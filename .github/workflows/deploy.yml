@@ -22,7 +22,7 @@ jobs:
             git config --global --add safe.directory /var/www/$TARGET
             
             echo "📥 Sincronizando com o repositório Wandeath..."
-            git remote set-url origin https://github.com/pedroparente51-design/wandeath.git || git remote add origin https://github.com/pedroparente51-design/wandeath.git
+            git remote set-url origin git@github.com:pedroparente51-design/wandeath.git || git remote add origin git@github.com:pedroparente51-design/wandeath.git
             
             echo "📥 Buscando atualizações..."
             git fetch --all
