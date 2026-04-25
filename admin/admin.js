@@ -248,23 +248,56 @@ window.deleteCoupon = function(index) {
     renderAdminCoupons();
 };
 
-function renderAdminCustomers() {
+async function renderAdminCustomers() {
     const listBody = document.getElementById('customers-list-body');
     if (!listBody) return;
-    const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
-    const registeredUsers = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
-    
-    const customerMap = {};
 
-    // First, add all registered users
+    // Mostrar loading
+    listBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-sec);"><div class="loader" style="width:24px;height:24px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px;"></div>Carregando clientes do Supabase...</td></tr>';
+
+    const customerMap = {};
+    const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+
+    // 1. Buscar todos os perfis do Supabase
+    if (window.supabaseClient) {
+        try {
+            const { data: profiles, error } = await window.supabaseClient
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            if (profiles && profiles.length > 0) {
+                profiles.forEach(p => {
+                    customerMap[p.email] = {
+                        name: p.full_name || p.email.split('@')[0],
+                        totalSpent: 0,
+                        orderCount: 0,
+                        registered: true,
+                        provider: p.provider || 'email',
+                        createdAt: p.created_at
+                    };
+                });
+                console.log(`[Admin] ${profiles.length} clientes carregados do Supabase.`);
+            }
+        } catch (err) {
+            console.error('[Admin] Erro ao buscar perfis do Supabase:', err);
+        }
+    }
+
+    // 2. Fallback: também ler do localStorage
+    const registeredUsers = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
     registeredUsers.forEach(u => {
-        customerMap[u.email] = { name: u.name, totalSpent: 0, orderCount: 0, registered: true };
+        if (!customerMap[u.email]) {
+            customerMap[u.email] = { name: u.name, totalSpent: 0, orderCount: 0, registered: true, provider: 'local' };
+        }
     });
 
-    // Then, add/update with orders data
+    // 3. Enriquecer com dados de pedidos
     orders.forEach(o => {
         if (!customerMap[o.customerEmail]) {
-            customerMap[o.customerEmail] = { name: o.customerName || 'Cliente', totalSpent: 0, orderCount: 0, registered: false };
+            customerMap[o.customerEmail] = { name: o.customerName || 'Cliente', totalSpent: 0, orderCount: 0, registered: false, provider: 'unknown' };
         }
         customerMap[o.customerEmail].totalSpent += o.total || 0;
         customerMap[o.customerEmail].orderCount += 1;
@@ -275,6 +308,7 @@ function renderAdminCustomers() {
         listBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-sec);">Nenhum cliente ainda.</td></tr>';
         return;
     }
+
     listBody.innerHTML = emails.map(email => {
         const c = customerMap[email];
         const statusMap = JSON.parse(localStorage.getItem('wandeath_customer_status') || '{}');
@@ -284,10 +318,12 @@ function renderAdminCustomers() {
         if (currentStatus === 'Banido') statusClass = 'banned';
         if (currentStatus === 'Bloqueado') statusClass = 'blocked';
 
+        const providerBadge = c.provider ? `<span style="font-size:8px; color:${c.provider === 'google' ? '#4285f4' : c.provider === 'discord' ? '#5865F2' : 'var(--primary)'}; border:1px solid currentColor; padding:1px 4px; border-radius:4px; margin-left:5px; text-transform:uppercase; font-weight:800;">${c.provider}</span>` : '';
+
         return `
             <tr>
                 <td><div class="avatar-small">${c.name.charAt(0).toUpperCase()}</div></td>
-                <td>${c.name} ${c.registered ? '<span style="font-size:8px; color:var(--primary); border:1px solid var(--primary); padding:1px 4px; border-radius:4px; margin-left:5px;">REG</span>' : ''}</td>
+                <td>${c.name} ${providerBadge}</td>
                 <td>${email}</td>
                 <td>R$ ${c.totalSpent.toFixed(2)}</td>
                 <td><span class="status-tag ${statusClass}">${currentStatus}</span></td>
