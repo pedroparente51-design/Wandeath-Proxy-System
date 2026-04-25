@@ -24,7 +24,11 @@ window.syncProductsFromSupabase = async function() {
         if (error) throw error;
         
         if (products && products.length > 0) {
-            localStorage.setItem('wandeath_products', JSON.stringify(products));
+            const mappedProducts = products.map(p => ({
+                ...p,
+                youtubeUrl: p.youtubeurl
+            }));
+            localStorage.setItem('wandeath_products', JSON.stringify(mappedProducts));
             window.dispatchEvent(new Event('wandeath_products_updated'));
             console.log('[Wandeath] Produtos sincronizados com o Supabase!', products.length);
         }

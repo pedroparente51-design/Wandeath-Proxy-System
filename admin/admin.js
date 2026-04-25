@@ -580,9 +580,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 tag: defaultTags[category] || 'Novo',
                 description: description || 'Produto de alta qualidade.',
                 delivery: delivery || '',
-                youtubeUrl: youtubeUrl || '',
+                youtubeurl: youtubeUrl || '',
                 image
             };
+
+            // Para salvar no localStorage localmente, usamos youtubeUrl (camelCase)
+            const localProdData = { ...prodData, youtubeUrl: youtubeUrl || '' };
 
             try {
                 if (window.supabaseClient) {
@@ -591,16 +594,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         await window.supabaseClient.from('products').update(prodData).eq('id', products[editingProductIndex].id);
                     } else {
                         // Insert in Supabase
-                        await window.supabaseClient.from('products').insert([prodData]);
+                        const { error } = await window.supabaseClient.from('products').insert([prodData]);
+                        if (error) throw error;
                     }
                     // Sincroniza do supabase de volta
                     if (window.syncProductsFromSupabase) await window.syncProductsFromSupabase();
                 } else {
                     // Fallback to local storage
                     if (editingProductIndex !== null) {
-                        products[editingProductIndex] = prodData;
+                        products[editingProductIndex] = localProdData;
                     } else {
-                        products.push(prodData);
+                        products.push(localProdData);
                     }
                     localStorage.setItem('wandeath_products', JSON.stringify(products));
                 }
