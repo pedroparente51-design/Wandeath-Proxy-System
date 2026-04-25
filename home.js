@@ -142,7 +142,7 @@ function renderHeaderMenu() {
 
     menuHTML += `
             <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 10px 0;"></div>
-            <a href="${prefix}index.html#produtos" style="color: var(--primary); font-weight: 800; text-align: center; background: rgba(238,0,0,0.05);">
+            <a href="/" style="color: var(--primary); font-weight: 800; text-align: center; background: rgba(238,0,0,0.05);">
                 <i data-lucide="plus-circle" style="width:14px; margin-right:8px;"></i> Ver Todos
             </a>
         </div>
@@ -285,7 +285,7 @@ function initOrdersModal() {
         // Fallback: define global open function for the redirect
         window.wandeathOpenOrders = (e) => {
             if (e) e.preventDefault();
-            window.location.href = './pedidos/pedidos.html';
+            window.location.href = '/pedidos/';
         };
         return;
     }
@@ -740,7 +740,7 @@ function showPaymentSuccess(product, qty, total, deliveredItems = []) {
                     style="padding: 14px 30px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: #fff; font-weight: 800; cursor: pointer;">
                     Fechar
                 </button>
-                <a href="../pedidos/pedidos.html" 
+                <a href="/pedidos/" 
                     style="padding: 14px 30px; background: var(--primary); border: none; border-radius: 10px; color: #fff; font-weight: 800; text-decoration:none; display:flex; align-items:center;">
                     Ver Meus Pedidos
                 </a>
@@ -897,7 +897,7 @@ async function checkLoginState() {
                 </div>
             </a>
             <div class="dropdown-menu">
-                <a href="${prefix}pedidos/pedidos.html">
+                <a href="/pedidos/">
                     <i data-lucide="package"></i> Meus Pedidos
                 </a>
                 <a href="#" onclick="window.wandeathLogout(event)" style="color: #ff4a4a;">

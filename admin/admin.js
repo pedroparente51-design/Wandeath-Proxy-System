@@ -299,8 +299,8 @@ function renderAdminCustomers() {
                         <button onclick="updateCustomerStatus('${email}', 'Bloqueado')" class="btn-action block" title="Bloquear Temporariamente">
                             <i data-lucide="user-minus"></i>
                         </button>
-                        <button onclick="updateCustomerStatus('${email}', 'Ativo')" class="btn-action unlock" title="Desbloquear">
-                            <i data-lucide="user-check"></i>
+                        <button onclick="promoteToAdmin('${email}')" class="btn-action unlock" style="background:rgba(238,0,0,0.1); border-color:var(--primary);" title="Tornar Administrador">
+                            <i data-lucide="shield-check" style="color:var(--primary);"></i>
                         </button>
                     </div>
                 </td>
@@ -320,6 +320,25 @@ window.updateCustomerStatus = function(email, newStatus) {
     
     renderAdminCustomers();
     console.log(`[Admin] Status de ${email} alterado para: ${newStatus}`);
+};
+
+window.promoteToAdmin = function(email) {
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+    if (admins.find(a => a.email === email)) {
+        alert('Este usuário já é um administrador.');
+        return;
+    }
+    if (confirm(`Deseja realmente tornar ${email} um administrador? Ele terá acesso total ao painel.`)) {
+        const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
+        const user = users.find(u => u.email === email);
+        const pass = user ? (user.password || '123456') : '123456';
+        
+        admins.push({ email: email, pass: pass });
+        localStorage.setItem('wandeath_admins', JSON.stringify(admins));
+        addLog('Novo Admin Promovido', `O cliente ${email} foi promovido a administrador.`);
+        alert(`${email} agora é um administrador!\nSenha de acesso: ${pass}`);
+        renderAdminsList();
+    }
 };
 
 function renderDashboardMetrics() {

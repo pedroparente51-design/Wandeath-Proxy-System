@@ -133,6 +133,7 @@ function renderCart() {
     const summaryList = document.getElementById('cart-summary-items');
     const cart = getCart();
     const products = getProducts();
+    console.log(`[Wandeath] Renderizando carrinho. Itens: ${cart.length}, Produtos Disponíveis: ${products.length}`);
 
     if (!list) return;
 
