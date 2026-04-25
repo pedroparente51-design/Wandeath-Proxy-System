@@ -132,9 +132,9 @@ function toggleAuth(e) {
 }
 window.toggleAuth = toggleAuth;
 
-function handleRegister(e) {
+async function handleRegister(e) {
     e.preventDefault();
-    console.log('[Wandeath Login] Processando registro...');
+    console.log('[Wandeath Login] Processando registro no Supabase...');
     const inputs = this.querySelectorAll('input');
     const name = inputs[0].value.trim();
     const email = inputs[1].value.trim();
@@ -145,65 +145,79 @@ function handleRegister(e) {
         return;
     }
 
-    const user = { name, email, password, createdAt: new Date().toISOString() };
-    
-    localStorage.setItem('wandeath_user', JSON.stringify(user));
-    localStorage.setItem('wandeath_logged_in', 'true');
-
-    const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
-    if (!users.find(u => u.email === email)) {
-        users.push(user);
-        localStorage.setItem('wandeath_users', JSON.stringify(users));
+    if (!window.supabaseClient) {
+        alert('Erro: Supabase não inicializado.');
+        return;
     }
 
-    console.log('[Wandeath Login] Registro concluído para:', email);
-    alert('Conta criada com sucesso! Bem-vindo ao Wandeath VIP.');
-    window.location.href = '../index.html';
+    try {
+        const { data, error } = await window.supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: name
+                }
+            }
+        });
+
+        if (error) throw error;
+
+        console.log('[Wandeath Login] Registro concluído para:', email);
+        alert('Conta criada com sucesso! Verifique seu e-mail para confirmar (se necessário) e faça login.');
+        
+        // Opcional: Auto-login ou redirecionar para login
+        toggleAuth();
+    } catch (err) {
+        console.error('[Wandeath Login] Erro no registro:', err.message);
+        alert('Falha ao criar conta: ' + err.message);
+    }
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
-    console.log('[Wandeath Login] Processando login local...');
+    console.log('[Wandeath Login] Processando login no Supabase...');
     const inputs = this.querySelectorAll('input');
     const email = inputs[0].value.trim();
     const password = inputs[1].value.trim();
 
-    // Bypass Admin
-    if (email === 'admin@admin.com' && password === 'admin') {
-        localStorage.setItem('wandeath_logged_in', 'true');
-        alert('Login de Administrador realizado!');
-        window.location.href = '../index.html';
+    if (!window.supabaseClient) {
+        alert('Erro: Supabase não inicializado.');
         return;
     }
 
-    const storedData = localStorage.getItem('wandeath_user');
-    if (storedData) {
-        try {
-            const user = JSON.parse(storedData);
-            if (user.email === email && user.password === password) {
-                localStorage.setItem('wandeath_logged_in', 'true');
-                alert(`Login realizado com sucesso! Bem-vindo de volta, ${user.name}`);
-                window.location.href = '../index.html';
-                return;
-            }
-        } catch (err) {
-            console.error('Erro ao ler dados do usuário:', err);
+    try {
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) throw error;
+
+        console.log('[Wandeath Login] Login realizado com sucesso:', email);
+        
+        // Sincronizar com localStorage para compatibilidade
+        localStorage.setItem('wandeath_logged_in', 'true');
+        localStorage.setItem('wandeath_user', JSON.stringify({
+            name: data.user.user_metadata.full_name || email.split('@')[0],
+            email: data.user.email
+        }));
+
+        alert(`Bem-vindo de volta!`);
+        window.location.href = '../index.html';
+    } catch (err) {
+        console.error('[Wandeath Login] Erro no login:', err.message);
+        
+        // Fallback para admin fixo se necessário (opcional)
+        if (email === 'admin@admin.com' && password === 'admin') {
+            localStorage.setItem('wandeath_logged_in', 'true');
+            alert('Login de Administrador (Bypass) realizado!');
+            window.location.href = '../index.html';
+            return;
         }
-    }
 
-    // Tentar encontrar na lista global de usuários
-    const users = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
-    const foundUser = users.find(u => u.email === email && u.password === password);
-    
-    if (foundUser) {
-        localStorage.setItem('wandeath_user', JSON.stringify(foundUser));
-        localStorage.setItem('wandeath_logged_in', 'true');
-        alert(`Login realizado com sucesso! Bem-vindo, ${foundUser.name}`);
-        window.location.href = '../index.html';
-        return;
+        alert('E-mail ou senha incorretos! ' + err.message);
     }
-
-    alert('E-mail ou senha incorretos! Verifique seus dados ou crie uma nova conta.');
 }
 
 function simulateOAuth(provider, mockEmail, mockName) {

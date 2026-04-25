@@ -323,7 +323,7 @@ window.updateCustomerStatus = function(email, newStatus) {
 };
 
 window.promoteToAdmin = function(email) {
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
     if (admins.find(a => a.email === email)) {
         alert('Este usuário já é um administrador.');
         return;
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('admin-email').value.trim();
             const pass = document.getElementById('admin-pass').value.trim();
             
-            const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+            const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
             const foundAdmin = admins.find(a => a.email === email && a.pass === pass);
 
             if (foundAdmin) {
@@ -573,7 +573,7 @@ window.clearLogs = function() {
 function renderAdminsList() {
     const list = document.getElementById('admins-list');
     if (!list) return;
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
     
     list.innerHTML = admins.map((admin, index) => `
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:12px 18px; border-radius:10px; display:flex; align-items:center; justify-content:space-between;">
@@ -600,7 +600,7 @@ window.addNewAdmin = function() {
 
     if (!email || !pass) return alert('Preencha e-mail e senha!');
 
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
     if (admins.find(a => a.email === email)) return alert('Este e-mail já é administrador!');
 
     admins.push({ email, pass });
@@ -615,7 +615,7 @@ window.addNewAdmin = function() {
 };
 
 window.removeAdmin = function(index) {
-    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"admin@admin.com","pass":"admin"}]');
+    const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[{"email":"workpedro002@gmail.com","pass":"admin"},{"email":"admin@admin.com","pass":"admin"}]');
     const removedEmail = admins[index].email;
     
     if (confirm(`Remover as permissões de admin de ${removedEmail}?`)) {
