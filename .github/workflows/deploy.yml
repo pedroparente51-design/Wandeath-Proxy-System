@@ -10,7 +10,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 89.117.79.191
-          username: root
+          username: deployer
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
@@ -28,10 +28,11 @@ jobs:
             git reset --hard origin/main
             
             echo "🔑 Ajustando permissões..."
-            chown -R deployer:www-data /var/www/$TARGET
-            chmod -R 775 /var/www/$TARGET
+            # Usando sudo para garantir que as permissões sejam aplicadas
+            sudo chown -R deployer:www-data /var/www/$TARGET
+            sudo chmod -R 775 /var/www/$TARGET
             
             echo "🌐 Recarregando Nginx..."
-            systemctl reload nginx
+            sudo systemctl reload nginx
             
             echo "✅ DEPLOY FINALIZADO COM SUCESSO!"
