@@ -187,16 +187,25 @@ function renderCart() {
 
     cart.forEach((item, index) => {
         const prod = products.find(p => p && p.name === item.name);
-        const name  = item.name;
+        const name  = item.name || 'Produto sem nome';
         const qty = parseInt(item.qty) || 1;
-        let price = prod ? parseFloat(prod.price) : parseFloat(item.price);
-        if (isNaN(price) || price <= 0) price = 10; // Fallback extremo
+        
+        let price = 0;
+        if (prod && !isNaN(parseFloat(prod.price))) {
+            price = parseFloat(prod.price);
+        } else if (!isNaN(parseFloat(item.price))) {
+            price = parseFloat(item.price);
+        } else {
+            price = 10.00; // Fallback
+        }
         
         const image = prod ? (prod.image || '/image.png') : (item.image || '/image.png');
         const category = prod ? (prod.category || '') : '';
 
         const totalItem = price * qty;
         subtotal += totalItem;
+
+        console.log(`[Wandeath] Renderizando item ${index}:`, { name, price, qty, totalItem });
 
         const row = document.createElement('div');
         row.className = 'cart-item';
