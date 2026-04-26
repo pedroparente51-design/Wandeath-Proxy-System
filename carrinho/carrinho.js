@@ -122,7 +122,10 @@ function getProducts() {
         products = productsStr ? JSON.parse(productsStr) : [];
     } catch (e) { console.error('[Wandeath] Erro ao carregar produtos:', e); }
 
-    if (!Array.isArray(products) || products.length === 0) {
+    // Garante que o array não seja nulo ou indefinido por falha no parse
+    if (!Array.isArray(products)) products = [];
+
+    if (products.length === 0) {
         products = [
             { name: "Proxy Residencial Rotativa", price: "13.99", category: "rotativa", image: "/img-rotativa/1gb.png" },
             { name: "Proxy Mobile Premium", price: "27.79", category: "mobile", image: "/img-rotativa/3gb.png" },

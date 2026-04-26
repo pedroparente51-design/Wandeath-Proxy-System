@@ -90,29 +90,47 @@ function renderSimilar(products, currentName) {
     `).join('');
 }
 
-window.addToCart = function() {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get('name');
+window.addToCart = function(nameOverride, btn) {
+    let name = nameOverride;
+    if (!name) {
+        const params = new URLSearchParams(window.location.search);
+        name = params.get('name');
+    }
+    if (!name) return;
+
     const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
     const prod = products.find(p => p.name === name);
-    
     if (!prod) return;
 
-    const price = parseFloat(prod.price) || 0;
-    const image = prod.image || '/image.png';
+    let cart = [];
+    try {
+        cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+    } catch(e) { cart = []; }
+
+    const itemIndex = cart.findIndex(i => i.name === name);
     
-    let cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
-    const item = cart.find(i => i.name === name);
-    
-    if (item) {
-        item.qty++;
+    if (itemIndex > -1) {
+        cart[itemIndex].qty++;
     } else {
-        cart.push({ name, qty: 1, price, image });
+        cart.push({ 
+            name: prod.name, 
+            qty: 1, 
+            price: parseFloat(prod.price), 
+            image: prod.image || '/image.png' 
+        });
     }
     
     localStorage.setItem('wandeath_cart', JSON.stringify(cart));
-    updateCartBadge();
-    alert('Adicionado ao carrinho!');
+    if (typeof updateCartBadge === 'function') updateCartBadge();
+    
+    if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = 'Adicionado!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    } else {
+        alert('Adicionado ao carrinho!');
+    }
 };
 
 window.buyNow = function() {
@@ -125,8 +143,9 @@ function updateCartBadge() {
     try {
         cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
         if (!Array.isArray(cart)) cart = [];
-    } catch(e) {}
-    const count = cart.reduce((s, i) => s + i.qty, 0);
+    } catch(e) { cart = []; }
+
+    const count = cart.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
     const badge = document.getElementById('cart-count');
     if (badge) {
         badge.innerText = count;

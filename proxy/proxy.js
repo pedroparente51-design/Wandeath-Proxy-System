@@ -1,61 +1,55 @@
 function addToCart(name, btn) {
-    const qtyInput = btn.closest('.product-footer').querySelector('.qty-input');
-    const qty = parseInt(qtyInput.value) || 1;
-    let cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
-    const existing = cart.find(item => item.name === name);
+    if (typeof window.addToCart === 'function' && window.addToCart !== addToCart) {
+        return window.addToCart(name, btn);
+    }
     
-    // Buscar price e image do produto para salvar junto
+    let cart = [];
+    try {
+        cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+    } catch(e) { cart = []; }
+
     const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
     const prod = products.find(p => p.name === name);
-    const price = prod ? parseFloat(prod.price) : 0;
-    const image = prod ? (prod.image || '/image.png') : '/image.png';
+    if (!prod) return;
 
+    const existing = cart.find(item => item.name === name);
     if (existing) {
-        existing.qty += qty;
+        existing.qty++;
     } else {
-        cart.push({ name, qty, price, image });
+        cart.push({ 
+            name: prod.name, 
+            qty: 1, 
+            price: parseFloat(prod.price), 
+            image: prod.image || '/image.png' 
+        });
     }
     
     localStorage.setItem('wandeath_cart', JSON.stringify(cart));
     if (window.updateCartBadge) window.updateCartBadge();
-    
-    // Animation/Feedback
-    btn.innerHTML = 'Adicionado!';
-    btn.style.background = '#00ff66';
-    setTimeout(() => {
-        btn.innerHTML = 'Carrinho';
-        btn.style.background = '';
-    }, 2000);
+
+    if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = 'Adicionado!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    }
 }
 
 function processPurchase(name, btn) {
-    const qtyInput = btn.closest('.product-footer').querySelector('.qty-input');
-    const qty = parseInt(qtyInput.value) || 1;
     const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
     const product = products.find(p => p.name === name);
-    
     if (!product) return;
     
-    window.currentCheckout = { product, qty };
-    const modal = document.getElementById('checkout-modal');
-    if (modal) {
-        modal.classList.add('show');
-        // Update price in modal
-        const total = product.price * qty;
-        const totalBtn = document.getElementById('checkout-total-btn');
-        if (totalBtn) totalBtn.innerText = `R$ ${total.toFixed(2)}`;
-    }
+    window.location.href = `/produto/?name=${encodeURIComponent(name)}`;
 }
 
 window.addToCart = addToCart;
 window.processPurchase = processPurchase;
 
-// Fetch products from localStorage to sync with Admin
 function getProductsByCategory(category) {
     let productsStr = localStorage.getItem('wandeath_products');
     let products = productsStr ? JSON.parse(productsStr) : [];
     
-    // Sync default products if empty
     if (products.length === 0) {
         products = [
             { name: "Proxy Residencial Rotativa", price: "13.99", category: "rotativa", image: "/img-rotativa/1gb.png", tag: "Mais vendido", description: "IPs residenciais rotativos com alta reputação e baixa detecção.", delivery: "proxy-rot:1234:user:pass", minQty: 1, maxQty: 100 },
@@ -70,8 +64,6 @@ function getProductsByCategory(category) {
 
 function generateCardHTML(p) {
     const imgUrl = p.image || '/img-rotativa/1gb.png';
-
-    // Mapeamento de ícones por categoria
     const iconMap = {
         'rotativa': '🔄',
         'mobile': '📱',
@@ -79,8 +71,6 @@ function generateCardHTML(p) {
         'datacenter': '🛜'
     };
     const icon = iconMap[p.category] || '📦';
-
-    // Descrição curta para manter o alinhamento
     const shortDesc = p.description
         ? (p.description.length > 90 ? p.description.substring(0, 90) + '…' : p.description)
         : 'Solução premium para máxima performance.';
@@ -117,12 +107,8 @@ function renderRotativas() {
     const grid = document.getElementById('rotativa-grid');
     if (grid) {
         const products = getProductsByCategory('rotativa');
-        if (products.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy rotativa cadastrada.</p>';
-            return;
-        }
-        grid.innerHTML = products.map(generateCardHTML).join('');
-        lucide.createIcons();
+        grid.innerHTML = products.length === 0 ? '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy rotativa cadastrada.</p>' : products.map(generateCardHTML).join('');
+        if (window.lucide) lucide.createIcons();
     }
 }
 
@@ -130,12 +116,8 @@ function renderMobile() {
     const grid = document.getElementById('mobile-grid');
     if (grid) {
         const products = getProductsByCategory('mobile');
-        if (products.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy mobile cadastrada.</p>';
-            return;
-        }
-        grid.innerHTML = products.map(generateCardHTML).join('');
-        lucide.createIcons();
+        grid.innerHTML = products.length === 0 ? '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy mobile cadastrada.</p>' : products.map(generateCardHTML).join('');
+        if (window.lucide) lucide.createIcons();
     }
 }
 
@@ -143,12 +125,8 @@ function renderFixas() {
     const grid = document.getElementById('fixa-grid');
     if (grid) {
         const products = getProductsByCategory('fixa');
-        if (products.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy fixa cadastrada.</p>';
-            return;
-        }
-        grid.innerHTML = products.map(generateCardHTML).join('');
-        lucide.createIcons();
+        grid.innerHTML = products.length === 0 ? '<p style="color: var(--text-sec); padding: 40px; text-align: center; grid-column: 1/-1;">Nenhuma proxy fixa cadastrada.</p>' : products.map(generateCardHTML).join('');
+        if (window.lucide) lucide.createIcons();
     }
 }
 
@@ -156,7 +134,6 @@ window.renderRotativas = renderRotativas;
 window.renderMobile = renderMobile;
 window.renderFixas = renderFixas;
 
-// --- Admin Sync Logic ---
 window.addEventListener('storage', (e) => {
     if (e.key === 'wandeath_products') {
         if (document.getElementById('rotativa-grid')) renderRotativas();
@@ -165,7 +142,6 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('rotativa-grid')) renderRotativas();
     if (document.getElementById('mobile-grid')) renderMobile();
