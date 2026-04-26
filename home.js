@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funções comuns a todas as páginas
     safeRun('checkLoginState', checkLoginState);
     safeRun('renderHeaderMenu', renderHeaderMenu);
-    safeRun('updateCartBadge', updateCartBadge);
     safeRun('initSearch', initSearch);
     safeRun('initModals', initModals);
 
@@ -486,29 +485,6 @@ function processPurchase(name) {
 
 window.processPurchase = processPurchase;
 
-function updateCartBadge() {
-    let cart = [];
-    try {
-        const storedCart = localStorage.getItem('wandeath_cart');
-        cart = storedCart ? JSON.parse(storedCart) : [];
-        if (!Array.isArray(cart)) cart = [];
-    } catch(e) { cart = []; }
-
-    const count = cart.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
-    const badge = document.getElementById('cart-count');
-    
-    if (badge) {
-        badge.innerText = count;
-        if (count > 0) {
-            badge.style.display = 'flex';
-            // Garante visibilidade e estilos corretos
-            badge.style.opacity = '1';
-            if (!badge.style.background) badge.style.background = 'var(--primary)';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-}
 
 window.updateCartBadge = updateCartBadge;
 

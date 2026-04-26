@@ -1,45 +1,8 @@
 function addToCart(name, btn) {
-    if (typeof window.addToCart === 'function' && window.addToCart !== addToCart) {
-        return window.addToCart(name, btn);
-    }
-    
-    let cart = [];
-    try {
-        cart = JSON.parse(localStorage.getItem('wandeath_cart') || '[]');
-        if (!Array.isArray(cart)) cart = [];
-    } catch(e) { cart = []; }
-
-    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-    const prod = products.find(p => p.name === name);
-    if (!prod) return;
-
-    const existing = cart.find(item => item.name === name);
-    if (existing) {
-        existing.qty++;
-    } else {
-        cart.push({ 
-            name: prod.name, 
-            qty: 1, 
-            price: parseFloat(prod.price), 
-            image: prod.image || '/image.png' 
-        });
-    }
-    
-    localStorage.setItem('wandeath_cart', JSON.stringify(cart));
-    if (window.updateCartBadge) window.updateCartBadge();
-
-    if (btn) {
-        const orig = btn.innerHTML;
-        btn.innerHTML = 'Adicionado!';
-        setTimeout(() => { btn.innerHTML = orig; }, 2000);
-    }
+    window.WandeathCart.add(name, 1, btn);
 }
 
-function processPurchase(name, btn) {
-    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
-    const product = products.find(p => p.name === name);
-    if (!product) return;
-    
+function processPurchase(name) {
     window.location.href = `/produto/?name=${encodeURIComponent(name)}`;
 }
 
