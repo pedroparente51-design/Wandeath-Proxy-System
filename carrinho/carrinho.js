@@ -1,4 +1,4 @@
-const safeRun = window.safeRun;
+// safeRun é provido pelo home.js
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {

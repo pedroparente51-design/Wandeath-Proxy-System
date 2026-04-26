@@ -8,7 +8,7 @@ window.safeRun = window.safeRun || ((name, fn) => {
         console.error(`[Wandeath] Erro em ${name}:`, e); 
     }
 });
-const safeRun = window.safeRun;
+var safeRun = window.safeRun;
 
 document.addEventListener('DOMContentLoaded', () => {
     const isHomePage = document.getElementById('products-grid') !== null || document.querySelector('.faq-list') !== null;
