@@ -1,10 +1,4 @@
-const safeRun = (name, fn) => {
-    try { 
-        if (typeof fn === 'function') fn(); 
-    } catch (e) { 
-        console.error(`[Wandeath] Erro em ${name}:`, e); 
-    }
-};
+const safeRun = window.safeRun;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {

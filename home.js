@@ -1,14 +1,14 @@
-const safeRun = (name, fn) => {
+// Função utilitária global para execução segura
+window.safeRun = window.safeRun || ((name, fn) => {
     try { 
         if (typeof fn === 'function') {
             fn(); 
-        } else {
-            // Silencioso se for opcional
         }
     } catch (e) { 
         console.error(`[Wandeath] Erro em ${name}:`, e); 
     }
-};
+});
+const safeRun = window.safeRun;
 
 document.addEventListener('DOMContentLoaded', () => {
     const isHomePage = document.getElementById('products-grid') !== null || document.querySelector('.faq-list') !== null;
