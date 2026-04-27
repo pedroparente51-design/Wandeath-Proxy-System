@@ -226,6 +226,17 @@ function applyCartCoupon() {
 }
 
 function initCheckoutActions() {
+    const userStr = localStorage.getItem('wandeath_user');
+    if (userStr) {
+        try {
+            const user = JSON.parse(userStr);
+            const nameInput = document.getElementById('checkout-name');
+            const emailInput = document.getElementById('checkout-email');
+            if (nameInput && !nameInput.value && user.name) nameInput.value = user.name;
+            if (emailInput && !emailInput.value && user.email) emailInput.value = user.email;
+        } catch (e) {}
+    }
+
     const confirmBtn = document.getElementById('confirm-payment-btn');
     if (confirmBtn) {
         confirmBtn.onclick = () => {
@@ -287,6 +298,38 @@ async function startPaymentProcess(name, email) {
             const s = await r.json();
             if (s.status === 'approved') {
                 clearInterval(poll);
+
+                // Salvar pedido no localStorage
+                try {
+                    const cart = window.WandeathCart.get();
+                    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+                    const currentOrders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+                    const date = new Date().toISOString();
+                    
+                    cart.forEach(item => {
+                        const prod = products.find(p => p.name === item.name);
+                        const deliveryData = prod ? prod.delivery : "Aguardando entrega do sistema.";
+                        
+                        let fullDelivery = [];
+                        for(let i=0; i<(item.qty || 1); i++) {
+                            fullDelivery.push(deliveryData);
+                        }
+                        
+                        currentOrders.push({
+                            customerEmail: email,
+                            productName: item.name,
+                            qty: item.qty || 1,
+                            total: (parseFloat(item.price) || 0) * (parseInt(item.qty) || 1),
+                            date: date,
+                            delivery: fullDelivery.join('\n')
+                        });
+                    });
+                    
+                    localStorage.setItem('wandeath_orders', JSON.stringify(currentOrders));
+                } catch(e) {
+                    console.error("Erro ao salvar pedido:", e);
+                }
+
                 window.WandeathCart.clear();
                 window.location.href = '/pedidos/';
             }
