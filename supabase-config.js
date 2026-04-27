@@ -32,8 +32,8 @@ window.syncProductsFromSupabase = async function() {
                 return {
                     ...p,
                     youtubeUrl: p.youtubeurl || localP.youtubeUrl || '',
-                    minQty: p.minqty || p.minQty || p.min_qty || localP.minQty || 1,
-                    maxQty: p.maxqty || p.maxQty || p.max_qty || localP.maxQty || 100,
+                    minQty: [p.minqty, p.minQty, p.min_qty, localP.minQty].find(v => v !== undefined && v !== null) || 1,
+                    maxQty: [p.maxqty, p.maxQty, p.max_qty, localP.maxQty].find(v => v !== undefined && v !== null) || 100,
                     delivery: p.delivery !== undefined ? p.delivery : (localP.delivery || '')
                 };
             });

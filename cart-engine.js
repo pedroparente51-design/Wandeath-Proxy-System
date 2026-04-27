@@ -46,8 +46,8 @@ window.WandeathCart = {
         let currentQty = existingIndex > -1 ? cart[existingIndex].qty : 0;
         let newQty = currentQty + qty;
         
-        const minQty = prod.minQty || 1;
-        const maxQty = prod.maxQty || 100;
+        const minQty = parseInt(prod.minqty || prod.minQty || prod.min_qty) || 1;
+        const maxQty = parseInt(prod.maxqty || prod.maxQty || prod.max_qty) || 100;
         
         if (newQty > maxQty) {
             alert(`O limite máximo para este produto é ${maxQty} unidade(s).`);
@@ -101,8 +101,8 @@ window.WandeathCart = {
         
         const products = JSON.parse(localStorage.getItem(this.PRODUCTS_KEY) || '[]');
         const prod = products.find(p => p.name === cart[index].name);
-        const minQty = prod ? (prod.minQty || 1) : 1;
-        const maxQty = prod ? (prod.maxQty || 100) : 100;
+        const minQty = prod ? (parseInt(prod.minqty || prod.minQty || prod.min_qty) || 1) : 1;
+        const maxQty = prod ? (parseInt(prod.maxqty || prod.maxQty || prod.max_qty) || 100) : 100;
         
         let newQty = cart[index].qty + delta;
         
