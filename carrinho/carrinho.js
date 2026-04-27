@@ -308,11 +308,25 @@ async function startPaymentProcess(name, email) {
                     
                     cart.forEach(item => {
                         const prod = products.find(p => p.name === item.name);
-                        const deliveryData = prod ? prod.delivery : "Aguardando entrega do sistema.";
+                        const qty = parseInt(item.qty) || 1;
                         
-                        let fullDelivery = [];
-                        for(let i=0; i<(item.qty || 1); i++) {
-                            fullDelivery.push(deliveryData);
+                        let deliveryLines = [];
+                        let originalDeliveryLines = prod && prod.delivery ? prod.delivery.split('\n').filter(l => l.trim() !== '') : [];
+                        
+                        if (originalDeliveryLines.length >= qty) {
+                            deliveryLines = originalDeliveryLines.slice(0, qty);
+                            prod.delivery = originalDeliveryLines.slice(qty).join('\n');
+                        } else {
+                            deliveryLines = [...originalDeliveryLines];
+                            for(let i=0; i < (qty - originalDeliveryLines.length); i++) {
+                                deliveryLines.push("Sem estoque automático. Contate o suporte com o ID deste pedido.");
+                            }
+                            if (prod) prod.delivery = '';
+                        }
+                        
+                        // Atualizar estoque no Supabase se possível
+                        if (prod && window.supabaseClient && prod.id) {
+                            window.supabaseClient.from('products').update({ delivery: prod.delivery }).eq('id', prod.id).then();
                         }
                         
                         const userStr = localStorage.getItem('wandeath_user');
@@ -321,12 +335,14 @@ async function startPaymentProcess(name, email) {
                         currentOrders.push({
                             customerEmail: loggedEmail,
                             productName: item.name,
-                            qty: item.qty || 1,
-                            total: (parseFloat(item.price) || 0) * (parseInt(item.qty) || 1),
+                            qty: qty,
+                            total: (parseFloat(item.price) || 0) * qty,
                             date: date,
-                            delivery: fullDelivery.join('\n')
+                            delivery: deliveryLines.join('\n')
                         });
                     });
+                    
+                    localStorage.setItem('wandeath_products', JSON.stringify(products));
                     
                     localStorage.setItem('wandeath_orders', JSON.stringify(currentOrders));
                 } catch(e) {
