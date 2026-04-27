@@ -29,11 +29,23 @@ window.syncProductsFromSupabase = async function() {
             const mappedProducts = products.map(p => {
                 const localP = localProducts.find(lp => lp.id === p.id || lp.name === p.name) || {};
                 
+                let minQty = [p.minqty, p.minQty, p.min_qty, localP.minQty].find(v => v !== undefined && v !== null) || 1;
+                let maxQty = [p.maxqty, p.maxQty, p.max_qty, localP.maxQty].find(v => v !== undefined && v !== null) || 100;
+                let cleanDescription = p.description || '';
+
+                const metaMatch = cleanDescription.match(/\[\[MQ:(\d+),MX:(\d+)\]\]/);
+                if (metaMatch) {
+                    minQty = parseInt(metaMatch[1]);
+                    maxQty = parseInt(metaMatch[2]);
+                    cleanDescription = cleanDescription.replace(/\[\[MQ:(\d+),MX:(\d+)\]\]/, '').trim();
+                }
+
                 return {
                     ...p,
                     youtubeUrl: p.youtubeurl || localP.youtubeUrl || '',
-                    minQty: [p.minqty, p.minQty, p.min_qty, localP.minQty].find(v => v !== undefined && v !== null) || 1,
-                    maxQty: [p.maxqty, p.maxQty, p.max_qty, localP.maxQty].find(v => v !== undefined && v !== null) || 100,
+                    minQty: minQty,
+                    maxQty: maxQty,
+                    description: cleanDescription,
                     delivery: p.delivery !== undefined ? p.delivery : (localP.delivery || '')
                 };
             });

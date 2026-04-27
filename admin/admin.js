@@ -241,10 +241,21 @@ window.editProduct = function(index) {
     editingProductIndex = index;
     
     // Populate form
+    let cleanDesc = prod.description || '';
+    let minQty = prod.minQty || 1;
+    let maxQty = prod.maxQty || 100;
+
+    const metaMatch = cleanDesc.match(/\[\[MQ:(\d+),MX:(\d+)\]\]/);
+    if (metaMatch) {
+        minQty = parseInt(metaMatch[1]);
+        maxQty = parseInt(metaMatch[2]);
+        cleanDesc = cleanDesc.replace(/\[\[MQ:(\d+),MX:(\d+)\]\]/, '').trim();
+    }
+
     document.getElementById('prod-name').value = prod.name;
     document.getElementById('prod-price').value = prod.price;
     document.getElementById('prod-category').value = prod.category;
-    document.getElementById('prod-desc').value = prod.description;
+    document.getElementById('prod-desc').value = cleanDesc;
     document.getElementById('prod-delivery').value = prod.delivery;
     if (document.getElementById('prod-youtube')) document.getElementById('prod-youtube').value = prod.youtubeUrl || '';
     if (document.getElementById('prod-min')) document.getElementById('prod-min').value = prod.minQty || 1;
@@ -670,18 +681,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 image = products[editingProductIndex].image || '';
             }
             
+            const finalDescription = `${(description || 'Produto de alta qualidade.').trim()} [[MQ:${minQty},MX:${maxQty}]]`;
+
             const prodData = {
                 name,
                 price: parseFloat(price),
                 category,
                 tag: defaultTags[category] || 'Novo',
-                description: description || 'Produto de alta qualidade.',
+                description: finalDescription,
                 delivery: delivery || '',
                 youtubeurl: youtubeUrl || '',
-                minqty: minQty,
-                maxqty: maxQty,
-                minQty: minQty,
-                maxQty: maxQty,
                 image
             };
 
