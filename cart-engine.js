@@ -42,15 +42,30 @@ window.WandeathCart = {
 
         let cart = this.get();
         const existingIndex = cart.findIndex(item => item.name === name);
+        
+        let currentQty = existingIndex > -1 ? cart[existingIndex].qty : 0;
+        let newQty = currentQty + qty;
+        
+        const minQty = prod.minQty || 1;
+        const maxQty = prod.maxQty || 100;
+        
+        if (newQty > maxQty) {
+            alert(`O limite máximo para este produto é ${maxQty} unidade(s).`);
+            return;
+        }
+        
+        if (newQty < minQty) {
+            newQty = minQty;
+        }
 
         if (existingIndex > -1) {
-            cart[existingIndex].qty += qty;
+            cart[existingIndex].qty = newQty;
         } else {
             cart.push({
                 name: prod.name,
                 price: parseFloat(prod.price) || 0,
                 image: prod.image || '/image.png',
-                qty: qty,
+                qty: newQty,
                 category: prod.category || ''
             });
         }
@@ -84,8 +99,24 @@ window.WandeathCart = {
         let cart = this.get();
         if (!cart[index]) return;
         
-        cart[index].qty += delta;
-        if (cart[index].qty < 1) cart[index].qty = 1;
+        const products = JSON.parse(localStorage.getItem(this.PRODUCTS_KEY) || '[]');
+        const prod = products.find(p => p.name === cart[index].name);
+        const minQty = prod ? (prod.minQty || 1) : 1;
+        const maxQty = prod ? (prod.maxQty || 100) : 100;
+        
+        let newQty = cart[index].qty + delta;
+        
+        if (newQty > maxQty) {
+            alert(`O limite máximo para este produto é ${maxQty} unidade(s).`);
+            return;
+        }
+        
+        if (newQty < minQty) {
+            if (delta < 0 && cart[index].qty <= minQty) return;
+            newQty = minQty;
+        }
+        
+        cart[index].qty = newQty;
         
         this.save(cart);
         if (typeof renderCart === 'function') renderCart();

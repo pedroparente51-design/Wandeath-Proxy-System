@@ -26,7 +26,9 @@ window.syncProductsFromSupabase = async function() {
         if (products && products.length > 0) {
             const mappedProducts = products.map(p => ({
                 ...p,
-                youtubeUrl: p.youtubeurl
+                youtubeUrl: p.youtubeurl,
+                minQty: p.minqty || p.minQty || p.min_qty || 1,
+                maxQty: p.maxqty || p.maxQty || p.max_qty || 100
             }));
             localStorage.setItem('wandeath_products', JSON.stringify(mappedProducts));
             window.dispatchEvent(new Event('wandeath_products_updated'));

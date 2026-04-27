@@ -247,6 +247,8 @@ window.editProduct = function(index) {
     document.getElementById('prod-desc').value = prod.description;
     document.getElementById('prod-delivery').value = prod.delivery;
     if (document.getElementById('prod-youtube')) document.getElementById('prod-youtube').value = prod.youtubeUrl || '';
+    if (document.getElementById('prod-min')) document.getElementById('prod-min').value = prod.minQty || 1;
+    if (document.getElementById('prod-max')) document.getElementById('prod-max').value = prod.maxQty || 100;
     
     // Change button text
     const btn = document.getElementById('add-product-btn');
@@ -606,6 +608,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const description = document.getElementById('prod-desc').value;
             const delivery = document.getElementById('prod-delivery').value;
             const youtubeUrl = document.getElementById('prod-youtube') ? document.getElementById('prod-youtube').value : '';
+            const minQty = parseInt(document.getElementById('prod-min')?.value) || 1;
+            const maxQty = parseInt(document.getElementById('prod-max')?.value) || 100;
             const imageInput = document.getElementById('prod-image');
             
             if (!name || !price) return alert('Nome e preço são obrigatórios!');
@@ -674,6 +678,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 description: description || 'Produto de alta qualidade.',
                 delivery: delivery || '',
                 youtubeurl: youtubeUrl || '',
+                minqty: minQty,
+                maxqty: maxQty,
+                minQty: minQty,
+                maxQty: maxQty,
                 image
             };
 
@@ -717,6 +725,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('prod-desc').value = '';
                 document.getElementById('prod-delivery').value = '';
                 if (document.getElementById('prod-youtube')) document.getElementById('prod-youtube').value = '';
+                if (document.getElementById('prod-min')) document.getElementById('prod-min').value = '1';
+                if (document.getElementById('prod-max')) document.getElementById('prod-max').value = '100';
                 if (imageInput) imageInput.value = '';
 
                 alert('Produto salvo com sucesso!');
