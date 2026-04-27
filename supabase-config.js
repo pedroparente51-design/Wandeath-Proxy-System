@@ -24,12 +24,19 @@ window.syncProductsFromSupabase = async function() {
         if (error) throw error;
         
         if (products && products.length > 0) {
-            const mappedProducts = products.map(p => ({
-                ...p,
-                youtubeUrl: p.youtubeurl,
-                minQty: p.minqty || p.minQty || p.min_qty || 1,
-                maxQty: p.maxqty || p.maxQty || p.max_qty || 100
-            }));
+            const localProducts = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+            
+            const mappedProducts = products.map(p => {
+                const localP = localProducts.find(lp => lp.id === p.id || lp.name === p.name) || {};
+                
+                return {
+                    ...p,
+                    youtubeUrl: p.youtubeurl || localP.youtubeUrl || '',
+                    minQty: p.minqty || p.minQty || p.min_qty || localP.minQty || 1,
+                    maxQty: p.maxqty || p.maxQty || p.max_qty || localP.maxQty || 100,
+                    delivery: p.delivery !== undefined ? p.delivery : (localP.delivery || '')
+                };
+            });
             localStorage.setItem('wandeath_products', JSON.stringify(mappedProducts));
             window.dispatchEvent(new Event('wandeath_products_updated'));
             console.log('[Wandeath] Produtos sincronizados com o Supabase!', products.length);

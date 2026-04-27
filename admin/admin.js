@@ -687,18 +687,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Para salvar no localStorage localmente, usamos youtubeUrl (camelCase)
             const localProdData = { ...prodData, youtubeUrl: youtubeUrl || '' };
+            
+            // Para o Supabase, removemos colunas que podem não existir ainda no DB para evitar erro fatal
+            const supabaseProdData = { ...prodData };
+            delete supabaseProdData.minqty;
+            delete supabaseProdData.maxqty;
+            delete supabaseProdData.minQty;
+            delete supabaseProdData.maxQty;
 
             try {
                 if (window.supabaseClient) {
                     if (editingProductIndex !== null && products[editingProductIndex].id) {
                         // Update in Supabase
-                        await window.supabaseClient.from('products').update(prodData).eq('id', products[editingProductIndex].id);
+                        const { error } = await window.supabaseClient.from('products').update(supabaseProdData).eq('id', products[editingProductIndex].id);
+                        if (error) {
+                            console.error('[Supabase Update Error]', error);
+                            // Fallback local caso a coluna não exista
+                            alert('Erro no banco: ' + error.message + '\n\nSalvando apenas localmente por enquanto.');
+                            products[editingProductIndex] = localProdData;
+                            localStorage.setItem('wandeath_products', JSON.stringify(products));
+                        }
                     } else {
                         // Insert in Supabase
-                        const { error } = await window.supabaseClient.from('products').insert([prodData]);
-                        if (error) throw error;
+                        const { error } = await window.supabaseClient.from('products').insert([supabaseProdData]);
+                        if (error) {
+                            console.error('[Supabase Insert Error]', error);
+                            alert('Erro no banco: ' + error.message + '\n\nSalvando apenas localmente por enquanto.');
+                            products.push(localProdData);
+                            localStorage.setItem('wandeath_products', JSON.stringify(products));
+                        }
                     }
-                    // Sincroniza do supabase de volta
+                    // Sincroniza do supabase de volta (apenas se não houve erro fatal que precise de fallback total, mas o ideal é deixar sincronizar e ver o que pega)
                     if (window.syncProductsFromSupabase) await window.syncProductsFromSupabase();
                 } else {
                     // Fallback to local storage
