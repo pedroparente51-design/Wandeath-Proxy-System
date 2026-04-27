@@ -49,6 +49,8 @@ window.WandeathCart = {
         const minQty = parseInt(prod.minqty || prod.minQty || prod.min_qty) || 1;
         const maxQty = parseInt(prod.maxqty || prod.maxQty || prod.max_qty) || 100;
         
+        console.log(`[Wandeath] Adicionando: ${name}. Estoque Local: ${prod.delivery?.split('\n').length || 0}. Limites: Min=${minQty}, Max=${maxQty}. Nova Quantidade desejada: ${newQty}`);
+
         if (newQty > maxQty) {
             alert(`O limite máximo para este produto é ${maxQty} unidade(s).`);
             return;

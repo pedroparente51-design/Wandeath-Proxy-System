@@ -211,6 +211,9 @@ function renderAdminProducts() {
             <div class="admin-prod-info">
                 <h4>${prod.name}</h4>
                 <p>R$ ${parseFloat(prod.price).toFixed(2)}</p>
+                <div style="font-size:10px; color:var(--text-sec); margin-top:4px;">
+                    Mín: ${prod.minQty || 1} | Máx: ${prod.maxQty || 100}
+                </div>
                 ${prod.youtubeUrl ? `
                     <a href="${prod.youtubeUrl}" target="_blank" style="font-size:10px; color:#ff0000; display:flex; align-items:center; gap:4px; margin-top:4px; text-decoration:none; font-weight:700;">
                         <i data-lucide="external-link" style="width:10px;"></i> Ver Vídeo Tutorial
