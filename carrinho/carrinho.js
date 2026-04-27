@@ -315,8 +315,11 @@ async function startPaymentProcess(name, email) {
                             fullDelivery.push(deliveryData);
                         }
                         
+                        const userStr = localStorage.getItem('wandeath_user');
+                        const loggedEmail = userStr ? JSON.parse(userStr).email : email;
+                        
                         currentOrders.push({
-                            customerEmail: email,
+                            customerEmail: loggedEmail,
                             productName: item.name,
                             qty: item.qty || 1,
                             total: (parseFloat(item.price) || 0) * (parseInt(item.qty) || 1),
