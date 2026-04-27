@@ -64,7 +64,7 @@ window.WandeathCart = {
             cart.push({
                 name: prod.name,
                 price: parseFloat(prod.price) || 0,
-                image: prod.image || '/image.png',
+                image: prod.image || '/logo.png',
                 qty: newQty,
                 category: prod.category || ''
             });

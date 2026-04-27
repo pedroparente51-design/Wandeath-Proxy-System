@@ -81,7 +81,7 @@ function renderSimilar(products, currentName) {
 
     grid.innerHTML = similar.map(p => `
         <a href="/produto/?name=${encodeURIComponent(p.name)}" class="similar-card">
-            <img src="${p.image || '/logo.png'}" alt="${p.name}" onerror="this.src='/image.png'">
+            <img src="${p.image || '/logo.png'}" alt="${p.name}" onerror="this.src='/logo.png'">
             <h5>🛜 ${p.name.replace('Proxy Residencial Rotativa BR - ', '')}</h5>
             <div class="sim-price">R$ ${parseFloat(p.price).toFixed(2)}</div>
             <div class="sim-sub">À vista no Pix</div>

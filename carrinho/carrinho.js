@@ -143,7 +143,7 @@ function renderCart() {
         const row = document.createElement('div');
         row.className = 'cart-item';
         row.innerHTML = `
-            <img src="${item.image || '/image.png'}" alt="${item.name}" onerror="this.src='/image.png'">
+            <img src="${item.image || '/logo.png'}" alt="${item.name}" onerror="this.src='/logo.png'">
             <div class="info">
                 <h5>${item.name}</h5>
                 <div class="cart-item-qty">

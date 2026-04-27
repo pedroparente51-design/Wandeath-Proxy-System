@@ -42,7 +42,7 @@ function generateCardHTML(p) {
         <div class="product-card">
             <div class="product-tag">${p.tag || 'Novo'}</div>
             <div class="product-img">
-                <img src="${imgUrl}" alt="${p.name}" onerror="this.src='/image.png'">
+                <img src="${imgUrl}" alt="${p.name}" onerror="this.src='/logo.png'">
                 <div class="img-overlay"></div>
             </div>
             <div class="product-content">
