@@ -696,37 +696,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             delete supabaseProdData.maxQty;
 
             try {
+                // PRIMEIRO, salva localmente para garantir que campos que não vão pro DB (como min/max) persistam!
+                if (editingProductIndex !== null) {
+                    products[editingProductIndex] = { ...products[editingProductIndex], ...localProdData };
+                } else {
+                    products.push(localProdData);
+                }
+                localStorage.setItem('wandeath_products', JSON.stringify(products));
+
                 if (window.supabaseClient) {
                     if (editingProductIndex !== null && products[editingProductIndex].id) {
                         // Update in Supabase
                         const { error } = await window.supabaseClient.from('products').update(supabaseProdData).eq('id', products[editingProductIndex].id);
                         if (error) {
                             console.error('[Supabase Update Error]', error);
-                            // Fallback local caso a coluna não exista
-                            alert('Erro no banco: ' + error.message + '\n\nSalvando apenas localmente por enquanto.');
-                            products[editingProductIndex] = localProdData;
-                            localStorage.setItem('wandeath_products', JSON.stringify(products));
+                            alert('Atenção: Houve um erro no banco (' + error.message + '). O produto foi salvo apenas localmente.');
                         }
                     } else {
                         // Insert in Supabase
                         const { error } = await window.supabaseClient.from('products').insert([supabaseProdData]);
                         if (error) {
                             console.error('[Supabase Insert Error]', error);
-                            alert('Erro no banco: ' + error.message + '\n\nSalvando apenas localmente por enquanto.');
-                            products.push(localProdData);
-                            localStorage.setItem('wandeath_products', JSON.stringify(products));
+                            alert('Atenção: Houve um erro no banco (' + error.message + '). O produto foi salvo apenas localmente.');
                         }
                     }
-                    // Sincroniza do supabase de volta (apenas se não houve erro fatal que precise de fallback total, mas o ideal é deixar sincronizar e ver o que pega)
+                    // Sincroniza do supabase de volta (vai fazer merge com o que acabamos de salvar no localStorage)
                     if (window.syncProductsFromSupabase) await window.syncProductsFromSupabase();
-                } else {
-                    // Fallback to local storage
-                    if (editingProductIndex !== null) {
-                        products[editingProductIndex] = localProdData;
-                    } else {
-                        products.push(localProdData);
-                    }
-                    localStorage.setItem('wandeath_products', JSON.stringify(products));
                 }
                 
                 if (editingProductIndex !== null) {
