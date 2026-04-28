@@ -486,7 +486,7 @@ async function renderDashboardMetrics() {
             
             if (!error && remoteOrders && remoteOrders.length > 0) {
                 // Mapear para o formato esperado pelo dashboard
-                orders = remoteOrders.map(o => ({
+                const mappedRemote = remoteOrders.map(o => ({
                     customerEmail: o.customer_email,
                     customerName: o.customer_name,
                     productName: o.product_name,
@@ -495,6 +495,22 @@ async function renderDashboardMetrics() {
                     date: new Date(o.created_at).getTime(),
                     delivery: o.delivery
                 }));
+                
+                // Mesclar com os dados locais, garantindo que não se percam dados antigos do localStorage
+                const allOrders = [...mappedRemote, ...orders];
+                
+                // Opcional: remover duplicatas baseadas no timestamp/email se houver
+                const uniqueOrders = [];
+                const seenKeys = new Set();
+                allOrders.forEach(o => {
+                    const key = `${o.customerEmail}-${o.date}-${o.total}`;
+                    if (!seenKeys.has(key)) {
+                        seenKeys.add(key);
+                        uniqueOrders.push(o);
+                    }
+                });
+                
+                orders = uniqueOrders.sort((a, b) => b.date - a.date);
             }
         } catch (e) {
             console.warn('[Dashboard] Erro ao carregar pedidos remotos:', e);
