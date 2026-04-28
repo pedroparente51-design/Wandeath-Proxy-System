@@ -85,18 +85,29 @@
 
         openChatBtn.onclick = (e) => {
             e.preventDefault();
+            openChat();
+        };
+
+        function openChat() {
             chatboxContainer.style.display = 'flex';
+            localStorage.setItem('wandeath_chat_open', 'true');
             setTimeout(() => {
                 chatboxContainer.classList.add('show');
                 renderMessages();
                 if (chatboxInput) chatboxInput.focus();
                 setupRealtime();
             }, 10);
-        };
+        }
+
+        // Reopen if it was open
+        if (localStorage.getItem('wandeath_chat_open') === 'true') {
+            openChat();
+        }
 
         if (closeChatBtn) {
             closeChatBtn.onclick = () => {
                 chatboxContainer.classList.remove('show');
+                localStorage.setItem('wandeath_chat_open', 'false');
                 setTimeout(() => chatboxContainer.style.display = 'none', 400);
             };
         }

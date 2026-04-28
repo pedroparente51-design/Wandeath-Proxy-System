@@ -30,6 +30,8 @@ window.showSection = function(sectionId) {
         };
         const pageTitle = document.getElementById('page-title');
         if (pageTitle) pageTitle.textContent = titles[sectionId] || 'Painel Admin';
+        
+        localStorage.setItem('wandeath_admin_active_section', sectionId);
 
         if (sectionId === 'chat') renderAdminMessages();
         if (sectionId === 'products') renderAdminProducts();
@@ -67,7 +69,7 @@ window.simulateAdminOAuth = function(provider) {
 };
 
 // Logic functions (must be global or reachable by showSection)
-let activeChatId = null;
+let activeChatId = localStorage.getItem('wandeath_admin_active_chat');
 let adminChatSubscription = null;
 
 async function renderAdminMessages() {
@@ -188,6 +190,7 @@ async function renderActiveChatsList() {
 
 window.selectChat = function(id) {
     activeChatId = id;
+    localStorage.setItem('wandeath_admin_active_chat', id);
     const headerInfo = document.querySelector('.session-info-header h4');
     if (headerInfo) headerInfo.textContent = `Cliente ${id.replace('session_', '').substring(0, 5)}`;
     renderAdminMessages();
@@ -457,7 +460,32 @@ window.promoteToAdmin = function(email) {
 };
 
 async function renderDashboardMetrics() {
-    const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+    let orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+
+    if (window.supabaseClient) {
+        try {
+            const { data: remoteOrders, error } = await window.supabaseClient
+                .from('orders')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (!error && remoteOrders && remoteOrders.length > 0) {
+                // Mapear para o formato esperado pelo dashboard
+                orders = remoteOrders.map(o => ({
+                    customerEmail: o.customer_email,
+                    customerName: o.customer_name,
+                    productName: o.product_name,
+                    qty: o.qty,
+                    total: parseFloat(o.total),
+                    date: new Date(o.created_at).getTime(),
+                    delivery: o.delivery
+                }));
+            }
+        } catch (e) {
+            console.warn('[Dashboard] Erro ao carregar pedidos remotos:', e);
+        }
+    }
+
     const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
 
     // ── 1. Vendas Hoje (filtrando por data de hoje) ──
@@ -631,6 +659,10 @@ function renderRecentOrders(orders) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Restaurar seção anterior
+    const lastSection = localStorage.getItem('wandeath_admin_active_section') || 'dashboard';
+    window.showSection(lastSection);
+
     if (window.lucide) lucide.createIcons();
     
     // Background Effects (RH7 Standard)

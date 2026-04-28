@@ -811,6 +811,21 @@ function completePurchaseProcess() {
         });
         localStorage.setItem('wandeath_orders', JSON.stringify(orders));
 
+        // Sync with Supabase
+        if (window.supabaseClient) {
+            window.supabaseClient.from('orders').insert([{
+                customer_email: customerEmail,
+                customer_name: customerName,
+                product_name: prod.name,
+                qty: qty,
+                total: total,
+                delivery: deliveredItems.join('\n')
+            }]).then(({ error }) => {
+                if (error) console.error('[Supabase] Sync Error:', error);
+                else console.log('[Supabase] Order synced');
+            });
+        }
+
         showPaymentSuccess(product, qty, total, deliveredItems);
     } catch (e) {
         console.error('completePurchaseProcess error:', e);

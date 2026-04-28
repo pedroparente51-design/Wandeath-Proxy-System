@@ -345,6 +345,22 @@ async function startPaymentProcess(name, email) {
                     localStorage.setItem('wandeath_products', JSON.stringify(products));
                     
                     localStorage.setItem('wandeath_orders', JSON.stringify(currentOrders));
+
+                    // Salvar no Supabase se disponível
+                    if (window.supabaseClient) {
+                        const lastOrder = currentOrders[currentOrders.length - 1];
+                        window.supabaseClient.from('orders').insert([{
+                            customer_email: lastOrder.customerEmail,
+                            customer_name: lastOrder.customerName || 'Cliente',
+                            product_name: lastOrder.productName,
+                            qty: lastOrder.qty,
+                            total: lastOrder.total,
+                            delivery: lastOrder.delivery
+                        }]).then(({ error }) => {
+                            if (error) console.error('[Supabase] Erro ao salvar pedido:', error);
+                            else console.log('[Supabase] Pedido salvo com sucesso');
+                        });
+                    }
                 } catch(e) {
                     console.error("Erro ao salvar pedido:", e);
                 }
