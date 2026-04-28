@@ -89,7 +89,11 @@ async function renderAdminMessages() {
         return;
     }
 
-    chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Carregando mensagens...</div>';
+    // Only show loading if we're switching chats or it's empty
+    const currentMsgs = chatMessages.querySelectorAll('.chat-msg');
+    if (currentMsgs.length === 0) {
+        chatMessages.innerHTML = '<div style="text-align: center; color: var(--text-sec); margin-top: 50px;">Carregando mensagens...</div>';
+    }
 
     try {
         const { data: history, error } = await window.supabaseClient
@@ -143,7 +147,8 @@ async function renderActiveChatsList() {
         const { data: msgs, error } = await window.supabaseClient
             .from('chat_messages')
             .select('session_id, created_at')
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .limit(100); // Otimização: buscar apenas as últimas 100 mensagens para identificar chats ativos
             
         if (error) throw error;
 
@@ -659,10 +664,6 @@ function renderRecentOrders(orders) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Restaurar seção anterior
-    const lastSection = localStorage.getItem('wandeath_admin_active_section') || 'dashboard';
-    window.showSection(lastSection);
-
     if (window.lucide) lucide.createIcons();
     
     // Background Effects (RH7 Standard)
@@ -681,7 +682,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (stored) {
             try { return JSON.parse(stored); } catch(e) {}
         }
-        // Inicializar com admins padrão
         localStorage.setItem('wandeath_admins', JSON.stringify(DEFAULT_ADMINS));
         return DEFAULT_ADMINS;
     }
@@ -691,25 +691,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         return admins.some(a => a.email === email);
     }
 
-    // Auto-detecção de admin via Supabase
     const adminOverlay = document.getElementById('admin-login-overlay');
     const autoCheck = document.getElementById('admin-auto-check');
     const manualLogin = document.getElementById('admin-manual-login');
     const errMsg = document.getElementById('admin-login-error');
 
-    // Se já está autenticado como admin nesta sessão
+    // ── Resolução de autenticação ANTES de mostrar qualquer seção ──
+    let adminAuthenticated = false;
+
+    // 1. Verificação rápida via localStorage (sem piscar)
     if (localStorage.getItem('wandeath_admin_logged') === 'true') {
         const user = JSON.parse(localStorage.getItem('wandeath_user') || '{}');
         if (user.email && isEmailAdmin(user.email)) {
-            if (adminOverlay) adminOverlay.style.display = 'none';
+            adminAuthenticated = true;
         } else {
-            // Sessão expirou ou e-mail não é mais admin
             localStorage.removeItem('wandeath_admin_logged');
         }
     }
 
-    // Verificar sessão do Supabase
-    if (adminOverlay && adminOverlay.style.display !== 'none') {
+    // 2. Se já autenticado, esconde overlay imediatamente sem nunca mostrar
+    if (adminAuthenticated) {
+        if (adminOverlay) adminOverlay.style.display = 'none';
+    } else {
+        // Precisa verificar via Supabase — mostrar overlay com loading
         if (adminOverlay) adminOverlay.style.display = 'flex';
 
         if (window.supabaseClient) {
@@ -721,22 +725,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.log('[Admin] Sessão Supabase detectada:', userEmail);
                     
                     if (isEmailAdmin(userEmail)) {
-                        // É admin! Liberar acesso
                         localStorage.setItem('wandeath_admin_logged', 'true');
                         localStorage.setItem('wandeath_user', JSON.stringify({
                             name: session.user.user_metadata.full_name || userEmail.split('@')[0],
                             email: userEmail
                         }));
+                        adminAuthenticated = true;
                         if (adminOverlay) adminOverlay.style.display = 'none';
                         addLog('Login Admin', `Sessão iniciada por ${userEmail} (auto-detecção).`);
                     } else {
-                        // Logado mas não é admin
                         if (autoCheck) autoCheck.style.display = 'none';
                         if (errMsg) { errMsg.style.display = 'block'; errMsg.textContent = `O e-mail ${userEmail} não tem permissão de administrador.`; }
                         if (manualLogin) { manualLogin.style.display = 'block'; manualLogin.querySelector('p').textContent = 'Faça login com uma conta de administrador.'; }
                     }
                 } else {
-                    // Não está logado
                     if (autoCheck) autoCheck.style.display = 'none';
                     if (manualLogin) manualLogin.style.display = 'block';
                 }
@@ -746,10 +748,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (manualLogin) manualLogin.style.display = 'block';
             }
         } else {
-            // Supabase não disponível — fallback: checar localStorage
             const user = JSON.parse(localStorage.getItem('wandeath_user') || '{}');
             if (user.email && isEmailAdmin(user.email)) {
                 localStorage.setItem('wandeath_admin_logged', 'true');
+                adminAuthenticated = true;
                 if (adminOverlay) adminOverlay.style.display = 'none';
             } else {
                 if (autoCheck) autoCheck.style.display = 'none';
@@ -757,6 +759,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
+
+    // ── Só inicializa seções DEPOIS da autenticação resolvida ──
+    const lastSection = localStorage.getItem('wandeath_admin_active_section') || 'dashboard';
+    window.showSection(lastSection);
 
     // Sidebar Navigation Listener
     const sidebarNav = document.querySelector('.sidebar-nav');

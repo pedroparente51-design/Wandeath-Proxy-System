@@ -22,6 +22,12 @@
             document.head.appendChild(link);
         }
 
+        // Prevent injection on admin pages to avoid confusion with admin chat management
+        if (window.location.pathname.includes('/admin/')) {
+            console.log('[Chatbox] Admin page detected, skipping injection.');
+            return;
+        }
+
         // Add HTML
         const chatHtml = `
             <!-- Floating WA Button -->
