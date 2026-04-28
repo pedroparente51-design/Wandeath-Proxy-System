@@ -79,32 +79,46 @@
             <!-- Dashboard Overview (Section 0) -->
             <div class="admin-section active" id="section-dashboard">
                 <div class="metrics-grid">
-                    <div class="metric-card">
+                    <div class="metric-card" id="metric-sales-today">
                         <div class="metric-icon"><i data-lucide="trending-up"></i></div>
                         <div class="metric-info">
-                            <h3>R$ 1.250,00</h3>
+                            <h3 id="metric-sales-value">R$ 0,00</h3>
                             <p>Vendas Hoje</p>
                         </div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-icon"><i data-lucide="users"></i></div>
+                    <div class="metric-card" id="metric-total-revenue">
+                        <div class="metric-icon"><i data-lucide="dollar-sign"></i></div>
                         <div class="metric-info">
-                            <h3>42</h3>
-                            <p>Novos Clientes</p>
+                            <h3 id="metric-revenue-value">R$ 0,00</h3>
+                            <p>Receita Total</p>
                         </div>
                     </div>
-                    <div class="metric-card">
+                    <div class="metric-card" id="metric-customers">
+                        <div class="metric-icon"><i data-lucide="users"></i></div>
+                        <div class="metric-info">
+                            <h3 id="metric-customers-value">0</h3>
+                            <p>Total Clientes</p>
+                        </div>
+                    </div>
+                    <div class="metric-card" id="metric-chats">
                         <div class="metric-icon"><i data-lucide="message-circle"></i></div>
                         <div class="metric-info">
-                            <h3>12</h3>
+                            <h3 id="metric-chats-value">0</h3>
                             <p>Conversas Ativas</p>
                         </div>
                     </div>
-                    <div class="metric-card">
+                    <div class="metric-card" id="metric-orders">
                         <div class="metric-icon"><i data-lucide="shopping-bag"></i></div>
                         <div class="metric-info">
-                            <h3>28</h3>
-                            <p>Pedidos Pendentes</p>
+                            <h3 id="metric-orders-value">0</h3>
+                            <p>Total Pedidos</p>
+                        </div>
+                    </div>
+                    <div class="metric-card" id="metric-products">
+                        <div class="metric-icon"><i data-lucide="package"></i></div>
+                        <div class="metric-info">
+                            <h3 id="metric-products-value">0</h3>
+                            <p>Produtos Ativos</p>
                         </div>
                     </div>
                 </div>
@@ -114,53 +128,46 @@
                         <div class="chart-header">
                             <h3>Vendas nos Últimos 7 Dias</h3>
                             <div class="chart-legend">
-                                <span class="legend-item"><span class="dot primary"></span> Vendas</span>
-                                <span class="legend-item"><span class="dot secondary"></span> Meta</span>
+                                <span class="legend-item"><span class="dot primary"></span> Vendas (R$)</span>
+                                <span class="legend-item"><span class="dot secondary"></span> Pedidos</span>
                             </div>
                         </div>
                         <div class="chart-wrapper">
-                            <div class="chart-y-axis">
-                                <span>100</span>
-                                <span>75</span>
-                                <span>50</span>
-                                <span>25</span>
-                                <span>0</span>
+                            <div class="chart-y-axis" id="chart-y-axis">
+                                <span>0</span><span>0</span><span>0</span><span>0</span><span>0</span>
                             </div>
                             <div class="chart-area">
                                 <div class="grid-lines">
                                     <span></span><span></span><span></span><span></span><span></span>
                                 </div>
-                                <div class="mock-chart">
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 60%;" data-value="60"></div>
-                                        <span>Seg</span>
-                                    </div>
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 40%;" data-value="40"></div>
-                                        <span>Ter</span>
-                                    </div>
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 80%;" data-value="80"></div>
-                                        <span>Qua</span>
-                                    </div>
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 95%;" data-value="95"></div>
-                                        <span>Qui</span>
-                                    </div>
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 50%;" data-value="50"></div>
-                                        <span>Sex</span>
-                                    </div>
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 70%;" data-value="70"></div>
-                                        <span>Sáb</span>
-                                    </div>
-                                    <div class="bar-group">
-                                        <div class="bar" style="height: 85%;" data-value="85"></div>
-                                        <span>Dom</span>
-                                    </div>
+                                <div class="mock-chart" id="chart-bars">
+                                    <!-- Bars will be dynamically generated -->
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders Table -->
+                    <div class="chart-container" style="margin-top: 20px;">
+                        <div class="chart-header">
+                            <h3>Últimos Pedidos</h3>
+                            <span id="recent-orders-count" style="font-size:12px; color:var(--text-sec);">0 pedidos</span>
+                        </div>
+                        <div class="data-table-container" style="background:transparent; padding:0; border:none;">
+                            <table class="admin-table" id="recent-orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Produto</th>
+                                        <th>Qtd</th>
+                                        <th>Total</th>
+                                        <th>Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-orders-body">
+                                    <tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-sec);">Carregando...</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

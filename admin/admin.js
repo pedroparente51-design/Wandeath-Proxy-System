@@ -456,17 +456,178 @@ window.promoteToAdmin = function(email) {
     }
 };
 
-function renderDashboardMetrics() {
+async function renderDashboardMetrics() {
     const orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
-    const totalSales = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-    const customersCount = new Set(orders.map(o => o.customerEmail)).size;
-    const metricValues = document.querySelectorAll('.metric-card h3');
-    if (metricValues.length >= 4) {
-        metricValues[0].innerText = `R$ ${totalSales.toFixed(2)}`;
-        metricValues[1].innerText = customersCount;
-        metricValues[2].innerText = '12'; // Mock
-        metricValues[3].innerText = orders.length;
+    const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
+
+    // ── 1. Vendas Hoje (filtrando por data de hoje) ──
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const todayOrders = orders.filter(o => o.date && o.date >= todayStart);
+    const todaySales = todayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+
+    const salesEl = document.getElementById('metric-sales-value');
+    if (salesEl) salesEl.innerText = `R$ ${todaySales.toFixed(2).replace('.', ',')}`;
+
+    // ── 2. Receita Total ──
+    const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+    const revenueEl = document.getElementById('metric-revenue-value');
+    if (revenueEl) revenueEl.innerText = `R$ ${totalRevenue.toFixed(2).replace('.', ',')}`;
+
+    // ── 3. Total Clientes (Supabase profiles + localStorage fallback) ──
+    let customersCount = 0;
+    const customerEmails = new Set();
+
+    if (window.supabaseClient) {
+        try {
+            const { data: profiles, error } = await window.supabaseClient
+                .from('profiles')
+                .select('email', { count: 'exact' });
+            if (!error && profiles) {
+                profiles.forEach(p => customerEmails.add(p.email));
+            }
+        } catch (e) {
+            console.warn('[Dashboard] Erro ao buscar profiles:', e);
+        }
     }
+
+    // Fallback: contar de localStorage e pedidos
+    const localUsers = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
+    localUsers.forEach(u => customerEmails.add(u.email));
+    orders.forEach(o => { if (o.customerEmail) customerEmails.add(o.customerEmail); });
+    customersCount = customerEmails.size;
+
+    const customersEl = document.getElementById('metric-customers-value');
+    if (customersEl) customersEl.innerText = customersCount;
+
+    // ── 4. Conversas Ativas (Supabase chat_messages - sessões únicas) ──
+    let activeChats = 0;
+    if (window.supabaseClient) {
+        try {
+            const { data: msgs, error } = await window.supabaseClient
+                .from('chat_messages')
+                .select('session_id');
+            if (!error && msgs) {
+                const uniqueSessions = new Set(msgs.map(m => m.session_id));
+                activeChats = uniqueSessions.size;
+            }
+        } catch (e) {
+            console.warn('[Dashboard] Erro ao buscar chats:', e);
+        }
+    }
+    const chatsEl = document.getElementById('metric-chats-value');
+    if (chatsEl) chatsEl.innerText = activeChats;
+
+    // ── 5. Total Pedidos ──
+    const ordersEl = document.getElementById('metric-orders-value');
+    if (ordersEl) ordersEl.innerText = orders.length;
+
+    // ── 6. Produtos Ativos ──
+    const productsEl = document.getElementById('metric-products-value');
+    if (productsEl) productsEl.innerText = products.length;
+
+    // ── 7. Gráfico de Vendas dos Últimos 7 Dias (dados reais) ──
+    renderSalesChart(orders);
+
+    // ── 8. Últimos Pedidos ──
+    renderRecentOrders(orders);
+
+    // Atualizar ícones do Lucide
+    if (window.lucide) lucide.createIcons();
+}
+
+function renderSalesChart(orders) {
+    const chartBars = document.getElementById('chart-bars');
+    const chartYAxis = document.getElementById('chart-y-axis');
+    if (!chartBars) return;
+
+    const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const now = new Date();
+    const days = [];
+
+    // Gerar os últimos 7 dias (de 6 dias atrás até hoje)
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        const dayEnd = dayStart + 86400000; // 24h em ms
+
+        const dayOrders = orders.filter(o => o.date && o.date >= dayStart && o.date < dayEnd);
+        const dayTotal = dayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+
+        days.push({
+            label: dayNames[d.getDay()],
+            total: dayTotal,
+            count: dayOrders.length,
+            date: d
+        });
+    }
+
+    // Encontrar valor máximo para escala do eixo Y
+    const maxVal = Math.max(...days.map(d => d.total), 1); // mínimo 1 para evitar divisão por zero
+    const roundedMax = Math.ceil(maxVal / 10) * 10 || 10; // Arredonda para cima em dezenas
+
+    // Atualizar eixo Y
+    if (chartYAxis) {
+        const steps = [roundedMax, Math.round(roundedMax * 0.75), Math.round(roundedMax * 0.5), Math.round(roundedMax * 0.25), 0];
+        chartYAxis.innerHTML = steps.map(v => `<span>R$${v}</span>`).join('');
+    }
+
+    // Renderizar barras
+    chartBars.innerHTML = days.map(day => {
+        const heightPercent = roundedMax > 0 ? (day.total / roundedMax) * 100 : 0;
+        const isToday = day.date.toDateString() === now.toDateString();
+        const barStyle = isToday ? 'background: linear-gradient(180deg, var(--primary), rgba(238,0,0,0.6));' : '';
+        const tooltip = `R$ ${day.total.toFixed(2).replace('.', ',')} • ${day.count} pedido${day.count !== 1 ? 's' : ''}`;
+        return `
+            <div class="bar-group" title="${tooltip}">
+                <div class="bar" style="height: ${Math.max(heightPercent, 2)}%; ${barStyle}" data-value="${day.total.toFixed(0)}"></div>
+                <span${isToday ? ' style="color:var(--primary); font-weight:800;"' : ''}>${day.label}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderRecentOrders(orders) {
+    const tbody = document.getElementById('recent-orders-body');
+    const countEl = document.getElementById('recent-orders-count');
+    if (!tbody) return;
+
+    if (countEl) countEl.textContent = `${orders.length} pedido${orders.length !== 1 ? 's' : ''} total`;
+
+    if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-sec);">Nenhum pedido registrado ainda.</td></tr>';
+        return;
+    }
+
+    // Mostrar os 10 pedidos mais recentes
+    const recent = [...orders].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, 10);
+
+    tbody.innerHTML = recent.map(order => {
+        const date = order.date ? new Date(order.date).toLocaleDateString('pt-BR') : '—';
+        const name = order.customerName || 'Visitante';
+        const email = order.customerEmail || '';
+        const initial = name.charAt(0).toUpperCase();
+        const total = order.total ? `R$ ${parseFloat(order.total).toFixed(2).replace('.', ',')}` : '—';
+
+        return `
+            <tr>
+                <td>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="avatar-small">${initial}</div>
+                        <div>
+                            <div style="font-weight:600; font-size:13px;">${name}</div>
+                            <div style="font-size:11px; color:var(--text-sec);">${email}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${order.productName || '—'}</td>
+                <td>${order.qty || 1}</td>
+                <td style="font-weight:700; color:#4ade80;">${total}</td>
+                <td style="color:var(--text-sec); font-size:12px;">${date}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
