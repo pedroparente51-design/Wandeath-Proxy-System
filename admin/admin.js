@@ -476,6 +476,12 @@ window.promoteToAdmin = function(email) {
 
 async function renderDashboardMetrics() {
     let orders = JSON.parse(localStorage.getItem('wandeath_orders') || '[]');
+    
+    // Normalize local dates to timestamps
+    orders = orders.map(o => ({
+        ...o,
+        date: new Date(o.date).getTime()
+    }));
 
     if (window.supabaseClient) {
         try {
