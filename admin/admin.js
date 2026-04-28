@@ -491,16 +491,18 @@ async function renderDashboardMetrics() {
                 .order('created_at', { ascending: false });
             
             if (!error && remoteOrders && remoteOrders.length > 0) {
-                // Mapear para o formato esperado pelo dashboard
-                const mappedRemote = remoteOrders.map(o => ({
-                    customerEmail: o.customer_email,
-                    customerName: o.customer_name,
-                    productName: o.product_name,
-                    qty: o.qty,
-                    total: parseFloat(o.total),
-                    date: new Date(o.created_at).getTime(),
-                    delivery: o.delivery
-                }));
+                // Mapear para o formato esperado pelo dashboard e remover o teste
+                const mappedRemote = remoteOrders
+                    .filter(o => o.customer_email !== 'test@test.com')
+                    .map(o => ({
+                        customerEmail: o.customer_email,
+                        customerName: o.customer_name,
+                        productName: o.product_name,
+                        qty: o.qty,
+                        total: parseFloat(o.total),
+                        date: new Date(o.created_at).getTime(),
+                        delivery: o.delivery
+                    }));
                 
                 // Mesclar com os dados locais, garantindo que não se percam dados antigos do localStorage
                 const allOrders = [...mappedRemote, ...orders];
