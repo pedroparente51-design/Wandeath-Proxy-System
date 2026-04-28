@@ -547,6 +547,9 @@ async function finalizePurchase() {
     if (window.appliedCoupon) {
         total = total * (1 - window.appliedCoupon.discount / 100);
     }
+    
+    // Ensure MP valid format (max 2 decimals)
+    total = Number(total.toFixed(2));
 
     const checkoutBody = document.querySelector('.checkout-body');
 
