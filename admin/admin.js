@@ -139,6 +139,9 @@ async function renderAdminMessages() {
     }
 }
 
+// Cache da última lista de sessões para não piscar ao re-renderizar
+let _lastChatSessionsJSON = '';
+
 async function renderActiveChatsList() {
     const list = document.querySelector('.chat-list');
     if (!list || !window.supabaseClient) return;
@@ -148,9 +151,10 @@ async function renderActiveChatsList() {
             .from('chat_messages')
             .select('session_id, created_at')
             .order('created_at', { ascending: false })
-            .limit(100); // Otimização: buscar apenas as últimas 100 mensagens para identificar chats ativos
+            .limit(200);
             
         if (error) throw error;
+        if (!msgs) return; // Não limpar a lista se a resposta for nula
 
         // Extract unique session_ids keeping the most recent order
         const uniqueSessions = [];
@@ -161,6 +165,11 @@ async function renderActiveChatsList() {
                 uniqueSessions.push(m.session_id);
             }
         });
+
+        // Evitar re-render se nada mudou (previne flickering)
+        const sessionsJSON = JSON.stringify(uniqueSessions) + '|' + activeChatId;
+        if (sessionsJSON === _lastChatSessionsJSON) return;
+        _lastChatSessionsJSON = sessionsJSON;
 
         let html = `
             <div class="chat-list-header">
@@ -189,7 +198,8 @@ async function renderActiveChatsList() {
         list.innerHTML = html;
         if (window.lucide) lucide.createIcons();
     } catch(e) {
-        console.error('[Wandeath] Erro carregar active chats:', e);
+        // Em caso de erro de rede, manter a lista atual sem limpar
+        console.error('[Wandeath] Erro carregar active chats (mantendo lista atual):', e);
     }
 }
 
