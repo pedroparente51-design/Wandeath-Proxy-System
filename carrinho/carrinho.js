@@ -201,7 +201,7 @@ function updateTotals(subtotal) {
 
     if (subtotalEl) subtotalEl.innerText = `R$ ${subtotal.toFixed(2)}`;
     if (totalEl) totalEl.innerText = `R$ ${total.toFixed(2)}`;
-    window.lastTotal = total;
+    window.lastTotal = Number(total.toFixed(2));
 }
 
 function applyCartCoupon() {
