@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/admin/admin.css?v=2.0.3">
 </head>
 
-<body class="rx-theme-rh7">
+<body class="rx-theme-Wandeath">
     <div id="mouse-glow"></div>
     <div class="mesh-gradient"></div>
     <div class="grid-overlay"></div>
@@ -31,13 +31,13 @@
             <p>Apenas administradores autorizados podem acessar este painel.</p>
             <div id="admin-auto-check" style="text-align:center; padding: 20px 0;">
                 <div class="loader" style="width:30px;height:30px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
-                <p style="font-size:13px; color:var(--text-sec);">Verificando sua sessão...</p>
+                <p style="font-size:13px; color:var(--text-sec);">Verificando sua sessÃ£o...</p>
             </div>
             <div id="admin-manual-login" style="display:none;">
-                <p style="font-size:13px; color:var(--text-sec); margin-bottom:16px;">Você não está logado ou não tem permissão de admin.</p>
+                <p style="font-size:13px; color:var(--text-sec); margin-bottom:16px;">VocÃª nÃ£o estÃ¡ logado ou nÃ£o tem permissÃ£o de admin.</p>
                 <a href="/login/" class="btn-admin-login" style="display:block; text-align:center; text-decoration:none; padding:14px; background:var(--primary); color:#fff; border-radius:10px; font-weight:800;">Fazer Login</a>
             </div>
-            <p id="admin-login-error" class="admin-login-error" style="display: none;">Você não é um administrador autorizado.</p>
+            <p id="admin-login-error" class="admin-login-error" style="display: none;">VocÃª nÃ£o Ã© um administrador autorizado.</p>
         </div>
     </div>
 
@@ -58,10 +58,10 @@
             <a href="javascript:void(0)" class="nav-item" id="nav-logs"><i data-lucide="file-text"></i> Log de
                 Atividades</a>
             <a href="javascript:void(0)" class="nav-item" id="nav-settings"><i data-lucide="settings"></i>
-                Configurações</a>
+                ConfiguraÃ§Ãµes</a>
         </nav>
         <div class="sidebar-footer">
-            <a href="/" class="nav-item return-btn"><i data-lucide="log-out"></i> Voltar à Loja</a>
+            <a href="/" class="nav-item return-btn"><i data-lucide="log-out"></i> Voltar Ã  Loja</a>
         </div>
     </aside>
 
@@ -126,7 +126,7 @@
                 <div class="dashboard-charts">
                     <div class="chart-container">
                         <div class="chart-header">
-                            <h3>Vendas nos Últimos 7 Dias</h3>
+                            <h3>Vendas nos Ãšltimos 7 Dias</h3>
                             <div class="chart-legend">
                                 <span class="legend-item"><span class="dot primary"></span> Vendas (R$)</span>
                                 <span class="legend-item"><span class="dot secondary"></span> Pedidos</span>
@@ -150,7 +150,7 @@
                     <!-- Recent Orders Table -->
                     <div class="chart-container" style="margin-top: 20px;">
                         <div class="chart-header">
-                            <h3>Últimos Pedidos</h3>
+                            <h3>Ãšltimos Pedidos</h3>
                             <span id="recent-orders-count" style="font-size:12px; color:var(--text-sec);">0 pedidos</span>
                         </div>
                         <div class="data-table-container" style="background:transparent; padding:0; border:none;">
@@ -215,7 +215,7 @@
                                 <input type="text" id="prod-name" placeholder="Ex: Proxy Rotativa VIP">
                             </div>
                             <div class="form-group">
-                                <label>Preço (R$)</label>
+                                <label>PreÃ§o (R$)</label>
                                 <input type="number" id="prod-price" placeholder="99.90">
                             </div>
                             <div class="form-group">
@@ -233,23 +233,23 @@
                         </div>
                         <div class="form-grid" style="margin-top: 15px;">
                             <div class="form-group">
-                                <label>Mín. de Compra</label>
+                                <label>MÃ­n. de Compra</label>
                                 <input type="number" id="prod-min" value="1">
                             </div>
                             <div class="form-group">
-                                <label>Máx. de Compra</label>
+                                <label>MÃ¡x. de Compra</label>
                                 <input type="number" id="prod-max" value="100">
                             </div>
                         </div>
                         <div class="form-grid" style="margin-top: 15px;">
                             <div class="form-group">
-                                <label>Descrição do Produto</label>
-                                <textarea id="prod-desc" rows="3" placeholder="Benefícios do produto..."></textarea>
+                                <label>DescriÃ§Ã£o do Produto</label>
+                                <textarea id="prod-desc" rows="3" placeholder="BenefÃ­cios do produto..."></textarea>
                             </div>
                             <div class="form-group">
                                 <label>Estoque / Entrega (1 item por linha)</label>
                                 <textarea id="prod-delivery" rows="3"
-                                    placeholder="Ex: ip:porta:user:pass (pule linha para o próximo item)"></textarea>
+                                    placeholder="Ex: ip:porta:user:pass (pule linha para o prÃ³ximo item)"></textarea>
                             </div>
                         </div>
                         <div class="form-grid" style="margin-top: 15px;">
@@ -293,7 +293,7 @@
                                 </select>
                             </div>
                             <div class="form-group" id="coupon-limit-group" style="display:none;">
-                                <label>Máx. de Usos</label>
+                                <label>MÃ¡x. de Usos</label>
                                 <input type="number" id="coupon-limit" placeholder="50" min="1">
                             </div>
                         </div>
@@ -320,7 +320,7 @@
                                 <th>Email</th>
                                 <th>Total Gasto</th>
                                 <th>Status</th>
-                                <th>Ações</th>
+                                <th>AÃ§Ãµes</th>
                             </tr>
                         </thead>
                         <tbody id="customers-list-body">
@@ -343,7 +343,7 @@
             <div class="admin-section" id="section-logs" style="display: none;">
                 <div class="data-table-container">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <h3>Histórico de Atividades</h3>
+                        <h3>HistÃ³rico de Atividades</h3>
                         <button onclick="clearLogs()"
                             style="background:rgba(238,0,0,0.1); color:var(--primary); border:1px solid rgba(238,0,0,0.2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:12px;">Limpar
                             Logs</button>
@@ -359,7 +359,7 @@
                 <div class="settings-dashboard">
                     <!-- Admin Management -->
                     <div class="settings-card">
-                        <h3><i data-lucide="shield"></i> Gestão de Administradores</h3>
+                        <h3><i data-lucide="shield"></i> GestÃ£o de Administradores</h3>
                         <div class="form-grid" style="margin-bottom: 20px;">
                             <div class="form-group">
                                 <label>Novo E-mail Admin</label>
@@ -367,7 +367,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Senha de Acesso</label>
-                                <input type="password" id="new-admin-pass" placeholder="••••••••">
+                                <input type="password" id="new-admin-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
                             </div>
                         </div>
                         <button onclick="addNewAdmin()" class="btn-primary-admin"

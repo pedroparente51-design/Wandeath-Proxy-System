@@ -24,7 +24,7 @@
     transform: translateX(-5px);
 }
 
-/* Main Grid: Produto na esquerda, Benefícios na direita */
+/* Main Grid: Produto na esquerda, BenefÃ­cios na direita */
 .prod-main-layout {
     display: grid;
     grid-template-columns: 1fr 340px;
@@ -381,27 +381,27 @@
     background: #cc0000;
 }
 
-/* Footer (Custom for RH7 as requested) */
-.rh7-footer {
+/* Footer (Custom for Wandeath as requested) */
+.Wandeath-footer {
     background: #050505;
     border-top: 1px solid var(--border);
     padding: 80px 0 40px;
     margin-top: 80px;
 }
 
-.rh7-footer-grid {
+.Wandeath-footer-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr 1fr;
     gap: 40px;
     margin-bottom: 40px;
 }
 
-.rh7-footer-logo {
+.Wandeath-footer-logo {
     height: 60px;
     margin-bottom: 20px;
 }
 
-.rh7-footer-desc {
+.Wandeath-footer-desc {
     font-size: 13px;
     color: var(--text-sec);
     line-height: 1.6;
@@ -409,7 +409,7 @@
     padding-right: 20px;
 }
 
-.rh7-footer-col h4 {
+.Wandeath-footer-col h4 {
     font-size: 15px;
     font-weight: 800;
     color: #fff;
@@ -417,26 +417,26 @@
     text-transform: uppercase;
 }
 
-.rh7-footer-links {
+.Wandeath-footer-links {
     list-style: none;
 }
 
-.rh7-footer-links li {
+.Wandeath-footer-links li {
     margin-bottom: 12px;
 }
 
-.rh7-footer-links a {
+.Wandeath-footer-links a {
     color: var(--text-sec);
     text-decoration: none;
     font-size: 13px;
     transition: 0.3s;
 }
 
-.rh7-footer-links a:hover {
+.Wandeath-footer-links a:hover {
     color: var(--primary);
 }
 
-.rh7-footer-diff {
+.Wandeath-footer-diff {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -445,7 +445,7 @@
     margin-bottom: 15px;
 }
 
-.rh7-footer-diff i {
+.Wandeath-footer-diff i {
     color: var(--primary);
     width: 16px;
 }
@@ -460,7 +460,7 @@
         grid-template-columns: 1fr;
     }
 
-    .rh7-footer-grid {
+    .Wandeath-footer-grid {
         grid-template-columns: 1fr;
         gap: 40px;
     }

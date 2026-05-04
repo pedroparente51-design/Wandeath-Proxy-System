@@ -1,5 +1,5 @@
 // Wandeath VIP - Carrinho Engine
-// safeRun é provido pelo home.js
+// safeRun Ã© provido pelo home.js
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.safeRun('renderCart', renderCart);
     window.safeRun('initCheckoutActions', initCheckoutActions);
     
-    // Neural Network & BG Effects (RH7 Standard)
+    // Neural Network & BG Effects (Wandeath Standard)
     window.safeRun('initNeuralNetwork', initNeuralNetwork);
     window.safeRun('initInteractiveBackground', initInteractiveBackground);
     window.safeRun('initMouseGlow', initMouseGlow);
@@ -112,7 +112,7 @@ function renderCart() {
         list.innerHTML = `
             <div class="empty-cart">
                 <div class="empty-cart-icon"><i data-lucide="shopping-cart"></i></div>
-                <h3>Seu carrinho está vazio</h3>
+                <h3>Seu carrinho estÃ¡ vazio</h3>
                 <p>Explore nossos produtos e adicione proxies de alta qualidade.</p>
                 <a href="/#produtos" class="btn-go-shop"><i data-lucide="arrow-left"></i> Ir para a Loja</a>
             </div>
@@ -147,7 +147,7 @@ function renderCart() {
             <div class="info">
                 <h5>${item.name}</h5>
                 <div class="cart-item-qty">
-                    <button onclick="window.WandeathCart.updateQty(${index}, -1)">−</button>
+                    <button onclick="window.WandeathCart.updateQty(${index}, -1)">âˆ’</button>
                     <span>${qty}</span>
                     <button onclick="window.WandeathCart.updateQty(${index}, 1)">+</button>
                 </div>
@@ -214,12 +214,12 @@ function applyCartCoupon() {
     const coupon = coupons.find(c => c.name === code);
 
     if (!coupon || (coupon.type === 'limited' && coupon.usesLeft <= 0)) {
-        msg.innerText = '❌ Cupom inválido ou esgotado!';
+        msg.innerText = 'âŒ Cupom invÃ¡lido ou esgotado!';
         msg.style.color = '#ff4a4a';
         window.currentCoupon = null;
     } else {
         window.currentCoupon = coupon;
-        msg.innerText = `✅ Cupom ${coupon.name} aplicado!`;
+        msg.innerText = `âœ… Cupom ${coupon.name} aplicado!`;
         msg.style.color = '#22c55e';
     }
     renderCart();
@@ -283,7 +283,7 @@ async function startPaymentProcess(name, email) {
                 <h2>Pague com PIX</h2>
                 <img src="data:image/png;base64,${pix.qr_code_base64}" style="width:200px; margin:20px 0;">
                 <input type="text" value="${pix.qr_code}" id="pix-raw-code" readonly style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:#fff; padding:10px; margin-bottom:10px;">
-                <button onclick="copyPix()" style="background:var(--primary); color:#fff; padding:10px 20px; border-radius:10px; border:none; cursor:pointer;">Copiar Código</button>
+                <button onclick="copyPix()" style="background:var(--primary); color:#fff; padding:10px 20px; border-radius:10px; border:none; cursor:pointer;">Copiar CÃ³digo</button>
             </div>
         `;
 
@@ -319,12 +319,12 @@ async function startPaymentProcess(name, email) {
                         } else {
                             deliveryLines = [...originalDeliveryLines];
                             for(let i=0; i < (qty - originalDeliveryLines.length); i++) {
-                                deliveryLines.push("Sem estoque automático. Contate o suporte com o ID deste pedido.");
+                                deliveryLines.push("Sem estoque automÃ¡tico. Contate o suporte com o ID deste pedido.");
                             }
                             if (prod) prod.delivery = '';
                         }
                         
-                        // Atualizar estoque no Supabase se possível
+                        // Atualizar estoque no Supabase se possÃ­vel
                         if (prod && window.supabaseClient && prod.id) {
                             window.supabaseClient.from('products').update({ delivery: prod.delivery }).eq('id', prod.id).then();
                         }
@@ -346,7 +346,7 @@ async function startPaymentProcess(name, email) {
                     
                     localStorage.setItem('wandeath_orders', JSON.stringify(currentOrders));
 
-                    // Salvar no Supabase se disponível
+                    // Salvar no Supabase se disponÃ­vel
                     if (window.supabaseClient) {
                         const lastOrder = currentOrders[currentOrders.length - 1];
                         window.supabaseClient.from('orders').insert([{
