@@ -54,15 +54,15 @@
             <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 20px;">Escolha como deseja acessar</p>
 
             <div class="checker-tabs">
-                <button class="tab-btn active" onclick="switchTab('user')">UsuÃ¡rio e Senha</button>
+                <button class="tab-btn active" onclick="switchTab('user')">Usuário e Senha</button>
                 <button class="tab-btn" onclick="switchTab('raw')">Sua Proxy</button>
             </div>
 
             <!-- Tab: User/Pass -->
             <div id="content-user" class="tab-content">
                 <div class="form-group">
-                    <label>UsuÃ¡rio</label>
-                    <input type="text" placeholder="Digite o usuÃ¡rio da proxy">
+                    <label>Usuário</label>
+                    <input type="text" placeholder="Digite o usuário da proxy">
                 </div>
                 <div class="form-group">
                     <label>Senha</label>
@@ -76,9 +76,9 @@
                     <label>ip:porta:usuario:senha</label>
                     <textarea id="proxy-input" rows="3"
                         placeholder="Ex: ip-Wandeathproxys.com:823:seu_usuario:sua_senha"></textarea>
-                    <small>Cole sua proxy completa. O usuÃ¡rio e a senha serÃ£o extraÃ­dos automaticamente.</small>
+                    <small>Cole sua proxy completa. O usuário e a senha serão extraídos automaticamente.</small>
                     <small style="color: var(--primary); font-weight: 600; margin-top: 12px;">
-                        O formato Ã© ip:porta:usuario:senha. O IP e a porta podem variar â€” o importante sÃ£o o usuÃ¡rio e a
+                        O formato é ip:porta:usuario:senha. O IP e a porta podem variar â€” o importante são o usuário e a
                         senha.
                     </small>
                 </div>
@@ -92,12 +92,12 @@
                     <span id="status-val" class="status-badge">Aguardando...</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label">LatÃªncia:</span>
+                    <span class="result-label">Latência:</span>
                     <span id="latency-val">0ms</span>
                 </div>
                 <div id="balance-info" class="balance-info"
                     style="font-size: 11px; margin-top: 10px; color: var(--text-sec);">
-                    CrÃ©ditos: <span id="balance-val">--</span>
+                    Créditos: <span id="balance-val">--</span>
                 </div>
             </div>
         </div>

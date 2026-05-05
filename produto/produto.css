@@ -24,7 +24,7 @@
     transform: translateX(-5px);
 }
 
-/* Main Grid: Produto na esquerda, BenefÃ­cios na direita */
+/* Main Grid: Produto na esquerda, Benefícios na direita */
 .prod-main-layout {
     display: grid;
     grid-template-columns: 1fr 340px;

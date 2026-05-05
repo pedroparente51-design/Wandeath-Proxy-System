@@ -1,6 +1,6 @@
 // Admin Global Functions
 window.showSection = function(sectionId) {
-    console.log('[Admin] Trocando para seÃ§Ã£o:', sectionId);
+    console.log('[Admin] Trocando para seção:', sectionId);
     
     // Update sidebar active state
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -21,12 +21,12 @@ window.showSection = function(sectionId) {
         
         const titles = {
             'dashboard': 'Dashboard Geral',
-            'chat': 'GestÃ£o de Atendimento',
+            'chat': 'Gestão de Atendimento',
             'products': 'Gerenciar Produtos',
             'coupons': 'Gerenciar Cupons',
-            'customers': 'GestÃ£o de Clientes',
-            'logs': 'HistÃ³rico de Atividades',
-            'settings': 'ConfiguraÃ§Ãµes do Site'
+            'customers': 'Gestão de Clientes',
+            'logs': 'Histórico de Atividades',
+            'settings': 'Configurações do Site'
         };
         const pageTitle = document.getElementById('page-title');
         if (pageTitle) pageTitle.textContent = titles[sectionId] || 'Painel Admin';
@@ -55,7 +55,7 @@ window.simulateAdminOAuth = function(provider) {
     popup.document.write(`
         <html style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 50px; background: ${bg}; color: #fff;">
             <h2 style="margin-top: 40px;">Conectando com ${provider}...</h2>
-            <p style="color: #aaa;">Verificando permissÃµes de administrador.</p>
+            <p style="color: #aaa;">Verificando permissões de administrador.</p>
             <div style="margin: 50px auto; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: ${color}; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
         </html>
@@ -139,7 +139,7 @@ async function renderAdminMessages() {
     }
 }
 
-// Cache da Ãºltima lista de sessÃµes para nÃ£o piscar ao re-renderizar
+// Cache da última lista de sessões para não piscar ao re-renderizar
 let _lastChatSessionsJSON = '';
 
 async function renderActiveChatsList() {
@@ -154,7 +154,7 @@ async function renderActiveChatsList() {
             .limit(200);
             
         if (error) throw error;
-        if (!msgs) return; // NÃ£o limpar a lista se a resposta for nula
+        if (!msgs) return; // Não limpar a lista se a resposta for nula
 
         // Extract unique session_ids keeping the most recent order
         const uniqueSessions = [];
@@ -188,7 +188,7 @@ async function renderActiveChatsList() {
                         <div class="session-avatar"><i data-lucide="user"></i></div>
                         <div class="session-info">
                             <h4>Cliente ${id.replace('session_', '').substring(0, 5)}</h4>
-                            <p>SessÃ£o Ativa</p>
+                            <p>Sessão Ativa</p>
                         </div>
                     </div>
                 `;
@@ -230,11 +230,11 @@ function renderAdminProducts() {
                 <h4>${prod.name}</h4>
                 <p>R$ ${parseFloat(prod.price).toFixed(2)}</p>
                 <div style="font-size:10px; color:var(--text-sec); margin-top:4px;">
-                    MÃ­n: ${prod.minQty || 1} | MÃ¡x: ${prod.maxQty || 100}
+                    Mín: ${prod.minQty || 1} | Máx: ${prod.maxQty || 100}
                 </div>
                 ${prod.youtubeUrl ? `
                     <a href="${prod.youtubeUrl}" target="_blank" style="font-size:10px; color:#ff0000; display:flex; align-items:center; gap:4px; margin-top:4px; text-decoration:none; font-weight:700;">
-                        <i data-lucide="external-link" style="width:10px;"></i> Ver VÃ­deo Tutorial
+                        <i data-lucide="external-link" style="width:10px;"></i> Ver Vídeo Tutorial
                     </a>
                 ` : ''}
             </div>
@@ -285,7 +285,7 @@ window.editProduct = function(index) {
     // Change button text
     const btn = document.getElementById('add-product-btn');
     if (btn) {
-        btn.innerHTML = '<i data-lucide="save"></i> Salvar AlteraÃ§Ãµes';
+        btn.innerHTML = '<i data-lucide="save"></i> Salvar Alterações';
         if (window.lucide) lucide.createIcons();
     }
 
@@ -387,7 +387,7 @@ async function renderAdminCustomers() {
         }
     }
 
-    // 2. Fallback: tambÃ©m ler do localStorage
+    // 2. Fallback: também ler do localStorage
     const registeredUsers = JSON.parse(localStorage.getItem('wandeath_users') || '[]');
     registeredUsers.forEach(u => {
         if (!customerMap[u.email]) {
@@ -453,7 +453,7 @@ window.updateCustomerStatus = function(email, newStatus) {
     localStorage.setItem('wandeath_customer_status', JSON.stringify(statusMap));
     
     // Log Action
-    addLog('ModeraÃ§Ã£o de Cliente', `O cliente ${email} foi marcado como "${newStatus}".`);
+    addLog('Moderação de Cliente', `O cliente ${email} foi marcado como "${newStatus}".`);
     
     renderAdminCustomers();
     console.log(`[Admin] Status de ${email} alterado para: ${newStatus}`);
@@ -462,14 +462,14 @@ window.updateCustomerStatus = function(email, newStatus) {
 window.promoteToAdmin = function(email) {
     const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
     if (admins.find(a => a.email === email)) {
-        alert('Este usuÃ¡rio jÃ¡ Ã© um administrador.');
+        alert('Este usuário já é um administrador.');
         return;
     }
-    if (confirm(`Deseja realmente tornar ${email} um administrador? Ele terÃ¡ acesso total ao painel.`)) {
+    if (confirm(`Deseja realmente tornar ${email} um administrador? Ele terá acesso total ao painel.`)) {
         admins.push({ email: email });
         localStorage.setItem('wandeath_admins', JSON.stringify(admins));
         addLog('Novo Admin Promovido', `O cliente ${email} foi promovido a administrador.`);
-        alert(`${email} agora Ã© um administrador!`);
+        alert(`${email} agora é um administrador!`);
         renderAdminsList();
     }
 };
@@ -504,7 +504,7 @@ async function renderDashboardMetrics() {
                         delivery: o.delivery
                     }));
                 
-                // Mesclar com os dados locais, garantindo que nÃ£o se percam dados antigos do localStorage
+                // Mesclar com os dados locais, garantindo que não se percam dados antigos do localStorage
                 const allOrders = [...mappedRemote, ...orders];
                 
                 // Opcional: remover duplicatas baseadas no timestamp/email se houver
@@ -567,7 +567,7 @@ async function renderDashboardMetrics() {
     const customersEl = document.getElementById('metric-customers-value');
     if (customersEl) customersEl.innerText = customersCount;
 
-    // â”€â”€ 4. Conversas Ativas (Supabase chat_messages - sessÃµes Ãºnicas) â”€â”€
+    // â”€â”€ 4. Conversas Ativas (Supabase chat_messages - sessões únicas) â”€â”€
     let activeChats = 0;
     if (window.supabaseClient) {
         try {
@@ -593,13 +593,13 @@ async function renderDashboardMetrics() {
     const productsEl = document.getElementById('metric-products-value');
     if (productsEl) productsEl.innerText = products.length;
 
-    // â”€â”€ 7. GrÃ¡fico de Vendas dos Ãšltimos 7 Dias (dados reais) â”€â”€
+    // â”€â”€ 7. Gráfico de Vendas dos Últimos 7 Dias (dados reais) â”€â”€
     renderSalesChart(orders);
 
-    // â”€â”€ 8. Ãšltimos Pedidos â”€â”€
+    // â”€â”€ 8. Últimos Pedidos â”€â”€
     renderRecentOrders(orders);
 
-    // Atualizar Ã­cones do Lucide
+    // Atualizar ícones do Lucide
     if (window.lucide) lucide.createIcons();
 }
 
@@ -608,11 +608,11 @@ function renderSalesChart(orders) {
     const chartYAxis = document.getElementById('chart-y-axis');
     if (!chartBars) return;
 
-    const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b'];
+    const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     const now = new Date();
     const days = [];
 
-    // Gerar os Ãºltimos 7 dias (de 6 dias atrÃ¡s atÃ© hoje)
+    // Gerar os últimos 7 dias (de 6 dias atrás até hoje)
     for (let i = 6; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
@@ -630,8 +630,8 @@ function renderSalesChart(orders) {
         });
     }
 
-    // Encontrar valor mÃ¡ximo para escala do eixo Y
-    const maxVal = Math.max(...days.map(d => d.total), 1); // mÃ­nimo 1 para evitar divisÃ£o por zero
+    // Encontrar valor máximo para escala do eixo Y
+    const maxVal = Math.max(...days.map(d => d.total), 1); // mínimo 1 para evitar divisão por zero
     const roundedMax = Math.ceil(maxVal / 10) * 10 || 10; // Arredonda para cima em dezenas
 
     // Atualizar eixo Y
@@ -645,7 +645,7 @@ function renderSalesChart(orders) {
         const heightPercent = roundedMax > 0 ? (day.total / roundedMax) * 100 : 0;
         const isToday = day.date.toDateString() === now.toDateString();
         const barStyle = isToday ? 'background: linear-gradient(180deg, var(--primary), rgba(238,0,0,0.6));' : '';
-        const tooltip = `R$ ${day.total.toFixed(2).replace('.', ',')} â€¢ ${day.count} pedido${day.count !== 1 ? 's' : ''}`;
+        const tooltip = `R$ ${day.total.toFixed(2).replace('.', ',')} • ${day.count} pedido${day.count !== 1 ? 's' : ''}`;
         return `
             <div class="bar-group" title="${tooltip}">
                 <div class="bar" style="height: ${Math.max(heightPercent, 2)}%; ${barStyle}" data-value="${day.total.toFixed(0)}"></div>
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof initMouseGlow === 'function') initMouseGlow();
     if (typeof initNeuralNetwork === 'function') initNeuralNetwork();
 
-    // Lista de admins padrÃ£o
+    // Lista de admins padrão
     const DEFAULT_ADMINS = [
         { email: 'workpedro002@gmail.com' },
         { email: 'wandersoncalixto123@gmail.com' },
@@ -730,10 +730,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const manualLogin = document.getElementById('admin-manual-login');
     const errMsg = document.getElementById('admin-login-error');
 
-    // â”€â”€ ResoluÃ§Ã£o de autenticaÃ§Ã£o ANTES de mostrar qualquer seÃ§Ã£o â”€â”€
+    // â”€â”€ Resolução de autenticação ANTES de mostrar qualquer seção â”€â”€
     let adminAuthenticated = false;
 
-    // 1. VerificaÃ§Ã£o rÃ¡pida via localStorage (sem piscar)
+    // 1. Verificação rápida via localStorage (sem piscar)
     if (localStorage.getItem('wandeath_admin_logged') === 'true') {
         const user = JSON.parse(localStorage.getItem('wandeath_user') || '{}');
         if (user.email && isEmailAdmin(user.email)) {
@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // 2. Se jÃ¡ autenticado, esconde overlay imediatamente sem nunca mostrar
+    // 2. Se já autenticado, esconde overlay imediatamente sem nunca mostrar
     if (adminAuthenticated) {
         if (adminOverlay) adminOverlay.style.display = 'none';
     } else {
@@ -756,7 +756,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 if (session && session.user) {
                     const userEmail = session.user.email;
-                    console.log('[Admin] SessÃ£o Supabase detectada:', userEmail);
+                    console.log('[Admin] Sessão Supabase detectada:', userEmail);
                     
                     if (isEmailAdmin(userEmail)) {
                         localStorage.setItem('wandeath_admin_logged', 'true');
@@ -766,18 +766,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }));
                         adminAuthenticated = true;
                         if (adminOverlay) adminOverlay.style.display = 'none';
-                        addLog('Login Admin', `SessÃ£o iniciada por ${userEmail} (auto-detecÃ§Ã£o).`);
+                        addLog('Login Admin', `Sessão iniciada por ${userEmail} (auto-detecção).`);
                     } else {
                         if (autoCheck) autoCheck.style.display = 'none';
-                        if (errMsg) { errMsg.style.display = 'block'; errMsg.textContent = `O e-mail ${userEmail} nÃ£o tem permissÃ£o de administrador.`; }
-                        if (manualLogin) { manualLogin.style.display = 'block'; manualLogin.querySelector('p').textContent = 'FaÃ§a login com uma conta de administrador.'; }
+                        if (errMsg) { errMsg.style.display = 'block'; errMsg.textContent = `O e-mail ${userEmail} não tem permissão de administrador.`; }
+                        if (manualLogin) { manualLogin.style.display = 'block'; manualLogin.querySelector('p').textContent = 'Faça login com uma conta de administrador.'; }
                     }
                 } else {
                     if (autoCheck) autoCheck.style.display = 'none';
                     if (manualLogin) manualLogin.style.display = 'block';
                 }
             } catch (err) {
-                console.error('[Admin] Erro ao verificar sessÃ£o:', err);
+                console.error('[Admin] Erro ao verificar sessão:', err);
                 if (autoCheck) autoCheck.style.display = 'none';
                 if (manualLogin) manualLogin.style.display = 'block';
             }
@@ -794,7 +794,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // â”€â”€ SÃ³ inicializa seÃ§Ãµes DEPOIS da autenticaÃ§Ã£o resolvida â”€â”€
+    // â”€â”€ Só inicializa seções DEPOIS da autenticação resolvida â”€â”€
     const lastSection = localStorage.getItem('wandeath_admin_active_section') || 'dashboard';
     window.showSection(lastSection);
 
@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const chatInput = document.getElementById('admin-chat-input');
     const sendMsg = async () => {
         if (!activeChatId) return alert('Selecione uma conversa primeiro!');
-        if (!window.supabaseClient) return alert('Erro de conexÃ£o!');
+        if (!window.supabaseClient) return alert('Erro de conexão!');
         const text = chatInput.value.trim();
         if (!text) return;
         
@@ -859,17 +859,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const maxQty = parseInt(document.getElementById('prod-max')?.value) || 100;
             const imageInput = document.getElementById('prod-image');
             
-            if (!name || !price) return alert('Nome e preÃ§o sÃ£o obrigatÃ³rios!');
+            if (!name || !price) return alert('Nome e preço são obrigatórios!');
 
             const defaultTags = {
                 'rotativa': 'Mais vendido',
                 'mobile': 'Premium',
-                'fixa': 'ContingÃªncia'
+                'fixa': 'Contingência'
             };
 
             let image = '';
 
-            // Se o usuÃ¡rio fez upload de imagem, comprimir e converter para base64
+            // Se o usuário fez upload de imagem, comprimir e converter para base64
             if (imageInput && imageInput.files && imageInput.files[0]) {
                 try {
                     image = await new Promise((resolve, reject) => {
@@ -911,7 +911,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // Se estÃ¡ editando, manter a imagem anterior se nÃ£o fez novo upload
+            // Se está editando, manter a imagem anterior se não fez novo upload
             const products = JSON.parse(localStorage.getItem('wandeath_products') || '[]');
             if (editingProductIndex !== null && (!imageInput || !imageInput.files || !imageInput.files[0])) {
                 image = products[editingProductIndex].image || '';
@@ -933,7 +933,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Para salvar no localStorage localmente, usamos youtubeUrl (camelCase)
             const localProdData = { ...prodData, youtubeUrl: youtubeUrl || '' };
             
-            // Para o Supabase, removemos colunas que podem nÃ£o existir ainda no DB para evitar erro fatal
+            // Para o Supabase, removemos colunas que podem não existir ainda no DB para evitar erro fatal
             const supabaseProdData = { ...prodData };
             delete supabaseProdData.minqty;
             delete supabaseProdData.maxqty;
@@ -941,7 +941,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             delete supabaseProdData.maxQty;
 
             try {
-                // PRIMEIRO, salva localmente para garantir que campos que nÃ£o vÃ£o pro DB (como min/max) persistam!
+                // PRIMEIRO, salva localmente para garantir que campos que não vão pro DB (como min/max) persistam!
                 if (editingProductIndex !== null) {
                     products[editingProductIndex] = { ...products[editingProductIndex], ...localProdData };
                 } else {
@@ -955,14 +955,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const { error } = await window.supabaseClient.from('products').update(supabaseProdData).eq('id', products[editingProductIndex].id);
                         if (error) {
                             console.error('[Supabase Update Error]', error);
-                            alert('AtenÃ§Ã£o: Houve um erro no banco (' + error.message + '). O produto foi salvo apenas localmente.');
+                            alert('Atenção: Houve um erro no banco (' + error.message + '). O produto foi salvo apenas localmente.');
                         }
                     } else {
                         // Insert in Supabase
                         const { error } = await window.supabaseClient.from('products').insert([supabaseProdData]);
                         if (error) {
                             console.error('[Supabase Insert Error]', error);
-                            alert('AtenÃ§Ã£o: Houve um erro no banco (' + error.message + '). O produto foi salvo apenas localmente.');
+                            alert('Atenção: Houve um erro no banco (' + error.message + '). O produto foi salvo apenas localmente.');
                         }
                     }
                     // Sincroniza do supabase de volta (vai fazer merge com o que acabamos de salvar no localStorage)
@@ -1017,7 +1017,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const type = document.getElementById('coupon-type').value;
             const limit = document.getElementById('coupon-limit')?.value || 50;
 
-            if (!name || !pct) return alert('Nome e desconto sÃ£o obrigatÃ³rios!');
+            if (!name || !pct) return alert('Nome e desconto são obrigatórios!');
 
             const coupons = JSON.parse(localStorage.getItem('wandeath_coupons') || '[]');
             coupons.push({
@@ -1083,7 +1083,7 @@ function renderAdminLogs() {
 }
 
 window.clearLogs = function() {
-    if (confirm('Deseja realmente limpar todo o histÃ³rico de logs?')) {
+    if (confirm('Deseja realmente limpar todo o histórico de logs?')) {
         localStorage.setItem('wandeath_admin_logs', '[]');
         renderAdminLogs();
     }
@@ -1120,7 +1120,7 @@ window.addNewAdmin = function() {
     if (!email) return alert('Preencha o e-mail!');
 
     const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
-    if (admins.find(a => a.email === email)) return alert('Este e-mail jÃ¡ Ã© administrador!');
+    if (admins.find(a => a.email === email)) return alert('Este e-mail já é administrador!');
 
     admins.push({ email });
     localStorage.setItem('wandeath_admins', JSON.stringify(admins));
@@ -1136,7 +1136,7 @@ window.removeAdmin = function(index) {
     const admins = JSON.parse(localStorage.getItem('wandeath_admins') || '[]');
     const removedEmail = admins[index].email;
     
-    if (confirm(`Remover as permissÃµes de admin de ${removedEmail}?`)) {
+    if (confirm(`Remover as permissões de admin de ${removedEmail}?`)) {
         admins.splice(index, 1);
         localStorage.setItem('wandeath_admins', JSON.stringify(admins));
         addLog('Admin Removido', `O administrador ${removedEmail} foi removido.`);
