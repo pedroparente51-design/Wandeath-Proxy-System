@@ -36,10 +36,10 @@ jobs:
             
             echo "🔑 Ajustando permissões..."
             # Usando sudo para garantir que as permissões sejam aplicadas
-            sudo chown -R deployer:www-data /var/www/$TARGET
-            sudo chmod -R 775 /var/www/$TARGET
+            echo "S3Nh000054326" | sudo -S chown -R deployer:www-data /var/www/$TARGET
+            echo "S3Nh000054326" | sudo -S chmod -R 775 /var/www/$TARGET
             
             echo "🌐 Recarregando Nginx..."
-            sudo systemctl restart nginx
+            echo "S3Nh000054326" | sudo -S systemctl restart nginx
             
             echo "✅ DEPLOY FINALIZADO COM SUCESSO!"
