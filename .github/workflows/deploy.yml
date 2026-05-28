@@ -40,6 +40,6 @@ jobs:
             sudo chmod -R 775 /var/www/$TARGET
             
             echo "🌐 Recarregando Nginx..."
-            sudo systemctl reload nginx
+            sudo systemctl restart nginx
             
             echo "✅ DEPLOY FINALIZADO COM SUCESSO!"
