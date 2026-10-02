@@ -1,8 +1,12 @@
+<div align="center">
+
 # Proxy System & Digital Solutions
 
 <p align="center">
   <strong>Plataforma de e-commerce e gerenciamento de Proxies com foco em performance, automação e experiência do usuário.</strong>
 </p>
+
+</div>
 
 <p align="center">
   <img src="https://img.shields.io/badge/HTML5-0A0A0A?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
